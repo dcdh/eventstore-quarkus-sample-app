@@ -2,15 +2,14 @@ package com.damdamdeo.eventsourcing;
 
 import com.damdamdeo.eventsourcing.domain.Event;
 import com.damdamdeo.eventsourcing.domain.EventRepository;
-import com.wineforex.order.domain.OrderAggregate;
-import com.wineforex.order.domain.OrderAggregateRootRepository;
-import com.wineforex.order.domain.event.CreateOrderEventPayload;
+import com.damdamdeo.order.domain.OrderAggregate;
+import com.damdamdeo.order.domain.OrderAggregateRootRepository;
+import com.damdamdeo.order.domain.event.CreateOrderEventPayload;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.containsString;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;

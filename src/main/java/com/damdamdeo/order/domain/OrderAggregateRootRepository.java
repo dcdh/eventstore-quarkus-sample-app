@@ -1,7 +1,6 @@
-package com.wineforex.order.domain;
+package com.damdamdeo.order.domain;
 
 import com.damdamdeo.eventsourcing.domain.AbstractAggregateRootRepository;
-import com.wineforex.order.domain.OrderAggregate;
 
 import javax.enterprise.context.ApplicationScoped;
 
@@ -12,5 +11,7 @@ public class OrderAggregateRootRepository extends AbstractAggregateRootRepositor
     protected OrderAggregate createNewInstance() {
         return new OrderAggregate();
     }
+
+    // TODO method pour checker les unicités !
 
 }

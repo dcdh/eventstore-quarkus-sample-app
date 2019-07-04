@@ -17,7 +17,7 @@ public abstract class AggregateRoot implements Serializable {
         payload.apply(this);
         this.version++;
         this.unsavedEvents.add(new Event(UUID.randomUUID(),
-                Objects.requireNonNull(aggregateRootId, "aggregateRootId must not be null please ensure it was set by the creational event !"),
+                Objects.requireNonNull(aggregateRootId, "orderId must not be null please ensure it was set by the creational event !"),
                 this.getClass().getSimpleName(),
                 payload.getClass().getSimpleName().replaceFirst("(^.+)Payload$", "$1"),
                 this.version,

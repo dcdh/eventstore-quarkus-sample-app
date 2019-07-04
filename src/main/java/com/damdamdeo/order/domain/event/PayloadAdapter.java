@@ -1,4 +1,4 @@
-package com.wineforex.order.domain.event;
+package com.damdamdeo.order.domain.event;
 
 import com.damdamdeo.eventsourcing.domain.Payload;
 
@@ -21,6 +21,11 @@ public class PayloadAdapter implements JsonbAdapter<Payload, JsonObject> {
                         .add("articleName", ((CreateOrderEventPayload) payload).articleName())
                         .add("quantity", ((CreateOrderEventPayload) payload).quantity())
                         .build();
+            case "SendOrderEventPayload":
+                return Json.createObjectBuilder()
+                        .add(DISCRIMINATOR, payloadTypeSimpleName)
+                        .add("orderId", ((SendOrderEventPayload) payload).orderId())
+                        .build();
             default:
                 throw new IllegalStateException("Unknown type : " + payloadTypeSimpleName);
         }
@@ -33,6 +38,8 @@ public class PayloadAdapter implements JsonbAdapter<Payload, JsonObject> {
                 return new CreateOrderEventPayload(payload.getString("orderId"),
                         payload.getString("articleName"),
                         payload.getJsonNumber("quantity").longValue());
+            case "SendOrderEventPayload":
+                return new SendOrderEventPayload(payload.getString("orderId"));
             default:
                 throw new IllegalStateException("Unknown type : " + payload.getString(DISCRIMINATOR));
         }

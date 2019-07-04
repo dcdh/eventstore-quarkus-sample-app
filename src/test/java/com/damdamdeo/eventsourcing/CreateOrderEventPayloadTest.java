@@ -1,8 +1,8 @@
 package com.damdamdeo.eventsourcing;
 
 import com.damdamdeo.eventsourcing.domain.Payload;
-import com.wineforex.order.domain.event.CreateOrderEventPayload;
-import com.wineforex.order.domain.event.PayloadAdapter;
+import com.damdamdeo.order.domain.event.CreateOrderEventPayload;
+import com.damdamdeo.order.domain.event.PayloadAdapter;
 import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;

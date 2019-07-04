@@ -1,7 +1,7 @@
-package com.wineforex.order.domain.event;
+package com.damdamdeo.order.domain.event;
 
 import com.damdamdeo.eventsourcing.domain.Payload;
-import com.wineforex.order.domain.OrderAggregate;
+import com.damdamdeo.order.domain.OrderAggregate;
 
 import java.util.Objects;
 

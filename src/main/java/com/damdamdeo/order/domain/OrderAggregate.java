@@ -1,18 +1,27 @@
-package com.wineforex.order.domain;
+package com.damdamdeo.order.domain;
 
 import com.damdamdeo.eventsourcing.domain.AggregateRoot;
-import com.wineforex.order.domain.event.CreateOrderEventPayload;
+import com.damdamdeo.order.api.Order;
+import com.damdamdeo.order.domain.event.CreateOrderEventPayload;
+import com.damdamdeo.order.domain.event.SendOrderEventPayload;
 
-public class OrderAggregate extends AggregateRoot {
+public class OrderAggregate extends AggregateRoot implements Order {
 
     private String articleName;
 
     private Long quantity;
 
+    private Boolean send;
+
     public void on(final CreateOrderEventPayload createOrderEventPayload) {
         this.aggregateRootId = createOrderEventPayload.orderId();
         this.articleName = createOrderEventPayload.articleName();
         this.quantity = createOrderEventPayload.quantity();
+        this.send = Boolean.FALSE;
+    }
+
+    public void on(final SendOrderEventPayload sendOrderEventPayload) {
+        this.send = Boolean.TRUE;
     }
 
     @Override
@@ -20,16 +29,28 @@ public class OrderAggregate extends AggregateRoot {
         return "OrderAggregate{" +
                 "articleName='" + articleName + '\'' +
                 ", quantity=" + quantity +
-                ", aggregateRootId='" + aggregateRootId + '\'' +
+                ", send=" + send +
                 '}';
     }
 
+    @Override
+    public String orderId() {
+        return aggregateRootId;
+    }
+
+    @Override
     public String articleName() {
         return articleName;
     }
 
+    @Override
     public Long quantity() {
         return quantity;
+    }
+
+    @Override
+    public Boolean send() {
+        return send;
     }
 
 }

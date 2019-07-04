@@ -4,7 +4,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.wineforex</groupId>
-    <artifactId>wineforex-backenduser-write-app</artifactId>
+    <artifactId>eventstore-quarkus-sample-app</artifactId>
     <version>1.0-SNAPSHOT</version>
     <properties>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -29,6 +29,14 @@
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-resteasy</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-resteasy-jsonb</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-smallrye-openapi</artifactId>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>

@@ -4,6 +4,7 @@ import com.damdamdeo.eventsourcing.domain.Event;
 import com.damdamdeo.eventsourcing.domain.EventRepository;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.control.ActivateRequestContext;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
@@ -26,6 +27,7 @@ public class JpaEventRepository implements EventRepository {
     }
 
     @Override
+    @ActivateRequestContext
     public List<Event> load(final String aggregateRootId, final String aggregateRootType) {
         return em.createNamedQuery("Events.findByAggregateRootIdOrderByVersionAsc", EventEntity.class)
                 .setParameter("aggregateRootId", aggregateRootId)

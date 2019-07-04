@@ -12,7 +12,7 @@
  */
 package com.damdamdeo.eventsourcing.infrastructure.hibernate.user.types;
 
-import com.wineforex.order.domain.event.PayloadAdapter;
+import com.damdamdeo.order.domain.event.PayloadAdapter;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.internal.util.ReflectHelper;
