@@ -2,6 +2,7 @@ package com.damdamdeo.order.domain;
 
 import com.damdamdeo.eventsourcing.domain.Event;
 import com.damdamdeo.eventsourcing.domain.EventRepository;
+import com.damdamdeo.order.api.OrderAggregateRootRepository;
 import com.damdamdeo.order.domain.event.CreateOrderEventPayload;
 import com.damdamdeo.order.domain.event.SendOrderEventPayload;
 import io.quarkus.test.junit.QuarkusTest;

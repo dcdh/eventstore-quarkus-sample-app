@@ -4,16 +4,19 @@ import com.damdamdeo.eventsourcing.domain.AggregateRootProjection;
 import com.damdamdeo.eventsourcing.domain.AggregateRootProjectionRepository;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
+import java.util.Objects;
 import java.util.Optional;
 
 @ApplicationScoped
 public class JpaAggregateRootProjectionRepository implements AggregateRootProjectionRepository {
 
-    @Inject
-    EntityManager em;
+    final EntityManager em;
+
+    public JpaAggregateRootProjectionRepository(final EntityManager em) {
+        this.em = Objects.requireNonNull(em);
+    }
 
     @Override
     @Transactional

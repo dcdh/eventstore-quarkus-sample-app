@@ -1,9 +1,9 @@
 package com.damdamdeo.order.interfaces;
 
 import com.damdamdeo.order.api.Order;
+import com.damdamdeo.order.api.OrderAggregateRootRepository;
 import com.damdamdeo.order.api.OrderIdAlreadyAffectedException;
 import com.damdamdeo.order.domain.OrderAggregateRoot;
-import com.damdamdeo.order.domain.OrderAggregateRootRepository;
 import com.damdamdeo.order.domain.OrderCommand;
 import com.damdamdeo.order.domain.event.CreateOrderEventPayload;
 

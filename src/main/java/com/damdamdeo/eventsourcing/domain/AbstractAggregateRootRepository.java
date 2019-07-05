@@ -1,20 +1,15 @@
 package com.damdamdeo.eventsourcing.domain;
 
-import javax.inject.Inject;
 import java.util.List;
 import java.util.Objects;
 
 public abstract class AbstractAggregateRootRepository<T extends AggregateRoot> implements AggregateRootRepository<T> {
 
-    @Inject
-    EventRepository eventRepository;
-
-    @Inject
-    AggregateRootProjectionRepository aggregateRootProjectionRepository;
-
     @Override
     public T save(final T aggregateRoot) {
         Objects.requireNonNull(aggregateRoot);
+        final EventRepository eventRepository = eventRepository();
+        final AggregateRootProjectionRepository aggregateRootProjectionRepository = aggregateRootProjectionRepository();
         eventRepository.save(aggregateRoot.unsavedEvents());
         aggregateRoot.deleteUnsavedEvents();
         aggregateRootProjectionRepository.save(new AggregateRootProjection(aggregateRoot));
@@ -24,6 +19,7 @@ public abstract class AbstractAggregateRootRepository<T extends AggregateRoot> i
     @Override
     public T load(final String aggregateRootId) throws UnknownAggregateRootException {
         Objects.requireNonNull(aggregateRootId);
+        final EventRepository eventRepository = eventRepository();
         final T instance = createNewInstance();
         final List<Event> events = eventRepository.load(aggregateRootId, instance.getClass().getSimpleName());
         if (events.size() == 0) {
@@ -34,5 +30,9 @@ public abstract class AbstractAggregateRootRepository<T extends AggregateRoot> i
     }
 
     protected abstract T createNewInstance();
+
+    protected abstract EventRepository eventRepository();
+
+    protected abstract AggregateRootProjectionRepository aggregateRootProjectionRepository();
 
 }

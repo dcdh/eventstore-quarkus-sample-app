@@ -3,15 +3,16 @@
 
 Prio:
 
-tests !!!
-avec BDD !!!
+pour faire mes tests je devrai passer injection par constructor !
 
-TODO : native !!!
+- tests !!!
+- avec BDD !!!
+- native !!!
 
 TODO extraire en librairie
 
-bdd cucumber domain
-
+kafka (via debezium)
+query
 
 est ce que j'aurais pu avoir ce schema
 - aggregat
@@ -19,21 +20,9 @@ est ce que j'aurais pu avoir ce schema
 -> internal version lié à JPA ???
 - liste d'event sur l'aggregat
 
-faire les tests
-faire un test avec database pour la serialization
-
-
-...je devrais creer un evenstore autonome...
-
 1. model backenduser
 1. consumer rest
 1. producer kafka
-
-
-regarder l'archive wineforex dans le google drive !!!!
-
-faire un endpoint avec un test sur getConstructeur new Instance
-faire un endpoint pour serialiser une map !!!
 
 ## infra
 

@@ -5,18 +5,21 @@ import com.damdamdeo.eventsourcing.domain.EventRepository;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.control.ActivateRequestContext;
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class JpaEventRepository implements EventRepository {
 
-    @Inject
-    EntityManager em;
+    final EntityManager em;
+
+    public JpaEventRepository(final EntityManager em) {
+        this.em = Objects.requireNonNull(em);
+    }
 
     @Transactional
     @Override

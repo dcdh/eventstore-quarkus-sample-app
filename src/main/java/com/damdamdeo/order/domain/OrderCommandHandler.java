@@ -1,16 +1,13 @@
 package com.damdamdeo.order.domain;
 
 import com.damdamdeo.order.api.Order;
+import com.damdamdeo.order.api.OrderAggregateRootRepository;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import javax.transaction.Transactional;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -22,8 +19,11 @@ public class OrderCommandHandler {
     private List<ExecutorService> threadPools;
     private Set<String> handledAggregateRootIdsInExactlyOnce;
 
-    @Inject
-    OrderAggregateRootRepository orderAggregateRootRepository;
+    final OrderAggregateRootRepository orderAggregateRootRepository;
+
+    public OrderCommandHandler(final OrderAggregateRootRepository orderAggregateRootRepository) {
+        this.orderAggregateRootRepository = Objects.requireNonNull(orderAggregateRootRepository);
+    }
 
     @PostConstruct
     public void init() {

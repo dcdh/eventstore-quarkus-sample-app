@@ -9,3 +9,6 @@
 > psql -d eventstore -U postgres
 
 > DROP SCHEMA public CASCADE;CREATE SCHEMA public;
+
+## docker compose
+
