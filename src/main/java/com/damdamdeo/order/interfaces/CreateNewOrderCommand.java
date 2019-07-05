@@ -1,7 +1,7 @@
 package com.damdamdeo.order.interfaces;
 
 import com.damdamdeo.order.api.Order;
-import com.damdamdeo.order.domain.OrderAggregate;
+import com.damdamdeo.order.domain.OrderAggregateRoot;
 import com.damdamdeo.order.domain.OrderAggregateRootRepository;
 import com.damdamdeo.order.domain.OrderCommand;
 import com.damdamdeo.order.domain.event.CreateOrderEventPayload;
@@ -68,11 +68,11 @@ public class CreateNewOrderCommand implements OrderCommand {
     @Override
     public Order handle(final OrderAggregateRootRepository orderAggregateRootRepository) {
         // TODO check if name not already used :)
-        final OrderAggregate orderAggregate = new OrderAggregate();
-        orderAggregate.apply(new CreateOrderEventPayload(orderId,
+        final OrderAggregateRoot orderAggregateRoot = new OrderAggregateRoot();
+        orderAggregateRoot.apply(new CreateOrderEventPayload(orderId,
                 articleName,
                 quantity));
-        return orderAggregateRootRepository.save(orderAggregate);
+        return orderAggregateRootRepository.save(orderAggregateRoot);
     }
 
 }

@@ -1,5 +1,23 @@
 1. eventstore
 
+
+Prio:
+
+bdd cucumber domain
+
+snapshot !!! nope AggregateRootProjection
+
+test avec regle unicité !!! dans le handler : exposer via le rest une methode de recherche le tout en passant par le snapshot !!!
+
+revoir le format jsonb !!!
+
+tests !!!
+avec BDD !!!
+
+TODO : native !!!
+
+TODO extraire en librairie
+
 faire les tests
 ajouter vertx !
 faire un test avec database pour la serialization

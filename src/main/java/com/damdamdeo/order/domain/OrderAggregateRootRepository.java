@@ -5,11 +5,11 @@ import com.damdamdeo.eventsourcing.domain.AbstractAggregateRootRepository;
 import javax.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
-public class OrderAggregateRootRepository extends AbstractAggregateRootRepository<OrderAggregate> {
+public class OrderAggregateRootRepository extends AbstractAggregateRootRepository<OrderAggregateRoot> {
 
     @Override
-    protected OrderAggregate createNewInstance() {
-        return new OrderAggregate();
+    protected OrderAggregateRoot createNewInstance() {
+        return new OrderAggregateRoot();
     }
 
     // TODO method pour checker les unicités !

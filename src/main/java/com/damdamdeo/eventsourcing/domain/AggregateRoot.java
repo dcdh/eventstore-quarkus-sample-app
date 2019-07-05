@@ -7,7 +7,7 @@ public abstract class AggregateRoot implements Serializable {
 
     protected String aggregateRootId;
     private final transient List<Event> unsavedEvents = new LinkedList<>();
-    private Long version = -1l;
+    protected Long version = -1l;
 
     public void apply(final Payload payload) {
         this.apply(payload, new HashMap<>());

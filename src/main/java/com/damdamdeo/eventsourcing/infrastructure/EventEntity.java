@@ -2,8 +2,8 @@ package com.damdamdeo.eventsourcing.infrastructure;
 
 import com.damdamdeo.eventsourcing.domain.Event;
 import com.damdamdeo.eventsourcing.domain.Payload;
-import com.damdamdeo.eventsourcing.infrastructure.hibernate.user.types.JSONBUserType;
-import org.hibernate.annotations.Parameter;
+import com.damdamdeo.eventsourcing.infrastructure.hibernate.user.types.JSONBMetadataUserType;
+import com.damdamdeo.eventsourcing.infrastructure.hibernate.user.types.JSONBPayloadUserType;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
@@ -11,14 +11,11 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
-@TypeDef(name = "jsonbMetaData", typeClass = JSONBUserType.class, parameters = {
-        @Parameter(name = JSONBUserType.CLASS,
-                value = "java.util.HashMap")})
-@TypeDef(name = "jsonbPayload", typeClass = JSONBUserType.class, parameters = {
-        @Parameter(name = JSONBUserType.CLASS,
-                value = "com.damdamdeo.eventsourcing.domain.Payload")})
+@TypeDef(name = "jsonbMetaData", typeClass = JSONBMetadataUserType.class)
+@TypeDef(name = "jsonbPayload", typeClass = JSONBPayloadUserType.class)
 @Table(name = "Event")
 @Entity
 @NamedQuery(name = "Events.findByAggregateRootIdOrderByVersionAsc",
@@ -26,10 +23,6 @@ import java.util.UUID;
 public class EventEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @NotNull
     @Type(type = "pg-uuid")
     private UUID eventId;
 
@@ -78,6 +71,19 @@ public class EventEntity {
                 creationDate,
                 payload,
                 metaData);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        EventEntity that = (EventEntity) o;
+        return Objects.equals(eventId, that.eventId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(eventId);
     }
 
 }

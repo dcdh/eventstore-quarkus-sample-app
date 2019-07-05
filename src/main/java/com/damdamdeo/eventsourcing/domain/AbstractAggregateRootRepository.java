@@ -9,11 +9,15 @@ public abstract class AbstractAggregateRootRepository<T extends AggregateRoot> i
     @Inject
     EventRepository eventRepository;
 
+    @Inject
+    AggregateRootProjectionRepository aggregateRootProjectionRepository;
+
     @Override
     public T save(final T aggregateRoot) {
         Objects.requireNonNull(aggregateRoot);
         eventRepository.save(aggregateRoot.unsavedEvents());
         aggregateRoot.deleteUnsavedEvents();
+        aggregateRootProjectionRepository.save(new AggregateRootProjection(aggregateRoot));
         return aggregateRoot;
     }
 

@@ -34,15 +34,28 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
+-- Name: aggregaterootprojection; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.aggregaterootprojection (
+    aggregaterootid character varying(255) NOT NULL,
+    aggregateroottype character varying(255) NOT NULL,
+    aggregateroot jsonb,
+    version bigint
+);
+
+
+ALTER TABLE public.aggregaterootprojection OWNER TO postgres;
+
+--
 -- Name: event; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.event (
-    id bigint NOT NULL,
+    eventid uuid NOT NULL,
     aggregaterootid character varying(255),
     aggregateroottype character varying(255),
     creationdate timestamp without time zone,
-    eventid uuid,
     eventtype character varying(255),
     metadata jsonb,
     payload jsonb,
@@ -53,46 +66,11 @@ CREATE TABLE public.event (
 ALTER TABLE public.event OWNER TO postgres;
 
 --
--- Name: event_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: aggregaterootprojection aggregaterootprojection_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-CREATE SEQUENCE public.event_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.event_id_seq OWNER TO postgres;
-
---
--- Name: event_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
-ALTER SEQUENCE public.event_id_seq OWNED BY public.event.id;
-
-
---
--- Name: event id; Type: DEFAULT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.event ALTER COLUMN id SET DEFAULT nextval('public.event_id_seq'::regclass);
-
-
---
--- Data for Name: event; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.event (id, aggregaterootid, aggregateroottype, creationdate, eventid, eventtype, metadata, payload, version) FROM stdin;
-\.
-
-
---
--- Name: event_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.event_id_seq', 1, false);
+ALTER TABLE ONLY public.aggregaterootprojection
+    ADD CONSTRAINT aggregaterootprojection_pkey PRIMARY KEY (aggregaterootid, aggregateroottype);
 
 
 --
@@ -100,9 +78,10 @@ SELECT pg_catalog.setval('public.event_id_seq', 1, false);
 --
 
 ALTER TABLE ONLY public.event
-    ADD CONSTRAINT event_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT event_pkey PRIMARY KEY (eventid);
 
 
 --
 -- PostgreSQL database dump complete
 --
+

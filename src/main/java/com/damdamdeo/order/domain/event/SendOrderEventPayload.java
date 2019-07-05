@@ -1,11 +1,11 @@
 package com.damdamdeo.order.domain.event;
 
 import com.damdamdeo.eventsourcing.domain.Payload;
-import com.damdamdeo.order.domain.OrderAggregate;
+import com.damdamdeo.order.domain.OrderAggregateRoot;
 
 import java.util.Objects;
 
-public class SendOrderEventPayload extends Payload<OrderAggregate> {
+public class SendOrderEventPayload extends Payload<OrderAggregateRoot> {
 
     private final String orderId;
 
@@ -18,7 +18,7 @@ public class SendOrderEventPayload extends Payload<OrderAggregate> {
     }
 
     @Override
-    protected void apply(final OrderAggregate aggregateRoot) {
+    protected void apply(final OrderAggregateRoot aggregateRoot) {
         aggregateRoot.on(this);
     }
 

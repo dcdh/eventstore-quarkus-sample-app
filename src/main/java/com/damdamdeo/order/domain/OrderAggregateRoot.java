@@ -5,13 +5,29 @@ import com.damdamdeo.order.api.Order;
 import com.damdamdeo.order.domain.event.CreateOrderEventPayload;
 import com.damdamdeo.order.domain.event.SendOrderEventPayload;
 
-public class OrderAggregate extends AggregateRoot implements Order {
+import java.util.Objects;
+
+public class OrderAggregateRoot extends AggregateRoot implements Order {
 
     private String articleName;
 
     private Long quantity;
 
     private Boolean send;
+
+    public OrderAggregateRoot() {}
+
+    public OrderAggregateRoot(final String aggregateRootId,
+                              final String articleName,
+                              final Long quantity,
+                              final Boolean send,
+                              final Long version) {
+        this.aggregateRootId = Objects.requireNonNull(aggregateRootId);
+        this.articleName = Objects.requireNonNull(articleName);
+        this.quantity = Objects.requireNonNull(quantity);
+        this.send = Objects.requireNonNull(send);
+        this.version = Objects.requireNonNull(version);
+    }
 
     public void on(final CreateOrderEventPayload createOrderEventPayload) {
         this.aggregateRootId = createOrderEventPayload.orderId();
@@ -26,7 +42,7 @@ public class OrderAggregate extends AggregateRoot implements Order {
 
     @Override
     public String toString() {
-        return "OrderAggregate{" +
+        return "OrderAggregateRoot{" +
                 "articleName='" + articleName + '\'' +
                 ", quantity=" + quantity +
                 ", send=" + send +
