@@ -1,6 +1,7 @@
 package com.damdamdeo.order.interfaces;
 
 import com.damdamdeo.order.api.Order;
+import com.damdamdeo.order.api.OrderIdAlreadyAffectedException;
 import com.damdamdeo.order.domain.OrderAggregateRoot;
 import com.damdamdeo.order.domain.OrderAggregateRootRepository;
 import com.damdamdeo.order.domain.OrderCommand;
@@ -67,7 +68,9 @@ public class CreateNewOrderCommand implements OrderCommand {
 
     @Override
     public Order handle(final OrderAggregateRootRepository orderAggregateRootRepository) {
-        // TODO check if name not already used :)
+        if (orderAggregateRootRepository.isOrderIdAffected(orderId)) {
+            throw new OrderIdAlreadyAffectedException(orderId);
+        }
         final OrderAggregateRoot orderAggregateRoot = new OrderAggregateRoot();
         orderAggregateRoot.apply(new CreateOrderEventPayload(orderId,
                 articleName,

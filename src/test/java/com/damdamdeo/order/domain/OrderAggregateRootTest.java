@@ -1,45 +1,27 @@
-package com.damdamdeo.eventsourcing;
+package com.damdamdeo.order.domain;
 
 import com.damdamdeo.eventsourcing.domain.Event;
 import com.damdamdeo.eventsourcing.domain.EventRepository;
-import com.damdamdeo.order.domain.OrderAggregateRoot;
-import com.damdamdeo.order.domain.OrderAggregateRootRepository;
 import com.damdamdeo.order.domain.event.CreateOrderEventPayload;
 import com.damdamdeo.order.domain.event.SendOrderEventPayload;
 import io.quarkus.test.junit.QuarkusTest;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static io.restassured.RestAssured.given;
-
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.transaction.Transactional;
-
 import java.util.Collections;
 import java.util.List;
 
-import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @QuarkusTest
-public class OrderAggregateRootRootTest {
+public class OrderAggregateRootTest extends AbstractOrderTest {
 
     @Inject
     OrderAggregateRootRepository orderAggregateRootRepository;
 
     @Inject
     EventRepository eventRepository;
-
-    @Inject
-    EntityManager em;
-
-    @BeforeEach
-    @Transactional
-    public void setup() {
-        em.createQuery("DELETE FROM EventEntity").executeUpdate();
-    }
 
     @Test
     public void should_create_order() {
@@ -90,42 +72,5 @@ public class OrderAggregateRootRootTest {
         assertEquals(2, events.size());
         assertEquals(new SendOrderEventPayload("orderId"), events.get(1).payload());
     }
-
-    @Test
-    public void should_api_create_order() {
-        given()
-                .contentType("application/json")
-                .body("{\"articleName\":\"articleName\", \"orderId\":\"orderId\", \"quantity\":10}")
-                .when()
-                .post("/orders/createNewOrder")
-                .then()
-                .statusCode(200)
-                .body("orderId", equalTo("orderId"))
-                .body("articleName", equalTo("articleName"))
-                .body("quantity", equalTo(10))
-                .body("version", equalTo(0))
-        ;
-    }
-
-    @Test
-    public void should_api_send_order() {
-        given()
-                .contentType("application/json")
-                .body("{\"articleName\":\"articleName\", \"orderId\":\"orderId\", \"quantity\":10}")
-                .when()
-                .post("/orders/createNewOrder")
-                .then()
-                .statusCode(200);
-        given()
-                .contentType("application/json")
-                .body("{\"orderId\":\"orderId\"}")
-                .when()
-                .post("/orders/sendOrder")
-                .then()
-                .statusCode(200)
-                .body("send", equalTo(Boolean.TRUE))
-                .body("version", equalTo(1));
-    }
-
 
 }

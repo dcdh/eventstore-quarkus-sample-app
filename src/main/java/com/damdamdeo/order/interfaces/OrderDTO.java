@@ -1,7 +1,9 @@
 package com.damdamdeo.order.interfaces;
 
 import com.damdamdeo.order.api.Order;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 
+@RegisterForReflection
 public class OrderDTO {
 
     public String orderId;

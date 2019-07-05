@@ -21,14 +21,14 @@ public class OrderEndpoint {
     @POST
     @Path("/createNewOrder")
     @Consumes(MediaType.APPLICATION_JSON)
-    public OrderDTO createNewOrder(final CreateNewOrderCommand createNewOrderCommand) {
+    public OrderDTO createNewOrder(final CreateNewOrderCommand createNewOrderCommand) throws Throwable {
         return new OrderDTO(orderCommandHandler.handle(createNewOrderCommand));
     }
 
     @POST
     @Path("/sendOrder")
     @Consumes(MediaType.APPLICATION_JSON)
-    public OrderDTO sendOrderCommand(final SendOrderCommand sendOrderCommand) {
+    public OrderDTO sendOrderCommand(final SendOrderCommand sendOrderCommand) throws Throwable {
         return new OrderDTO(orderCommandHandler.handle(sendOrderCommand));
     }
 

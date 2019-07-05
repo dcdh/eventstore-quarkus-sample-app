@@ -3,14 +3,6 @@
 
 Prio:
 
-bdd cucumber domain
-
-snapshot !!! nope AggregateRootProjection
-
-test avec regle unicité !!! dans le handler : exposer via le rest une methode de recherche le tout en passant par le snapshot !!!
-
-revoir le format jsonb !!!
-
 tests !!!
 avec BDD !!!
 
@@ -18,8 +10,16 @@ TODO : native !!!
 
 TODO extraire en librairie
 
+bdd cucumber domain
+
+
+est ce que j'aurais pu avoir ce schema
+- aggregat
+-> version correspondant au nombre d'element dans la liste ?
+-> internal version lié à JPA ???
+- liste d'event sur l'aggregat
+
 faire les tests
-ajouter vertx !
 faire un test avec database pour la serialization
 
 

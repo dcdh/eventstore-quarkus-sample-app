@@ -7,7 +7,10 @@ import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -17,6 +20,7 @@ public class OrderCommandHandler {
 
     private ExecutorService exactlyOnceCommandExecutor;
     private List<ExecutorService> threadPools;
+    private Set<String> handledAggregateRootIdsInExactlyOnce;
 
     @Inject
     OrderAggregateRootRepository orderAggregateRootRepository;
@@ -29,6 +33,7 @@ public class OrderCommandHandler {
                 .mapToObj(i -> Executors.newSingleThreadExecutor())
                 .collect(Collectors.toList());
         this.threadPools = new CopyOnWriteArrayList<>(list);
+        this.handledAggregateRootIdsInExactlyOnce = Collections.synchronizedSet(new HashSet<>());
     }
 
     @PreDestroy
@@ -37,10 +42,13 @@ public class OrderCommandHandler {
         this.threadPools.stream().forEach(ExecutorService::shutdown);
     }
 
-    @Transactional(value = Transactional.TxType.NOT_SUPPORTED)
-    public Order handle(final OrderCommand orderCommand) {
+    @Transactional
+    public Order handle(final OrderCommand orderCommand) throws Throwable {
         final ExecutorService executorServiceToExecuteCommand;
         if (orderCommand.exactlyOnceCommandExecution()) {
+            executorServiceToExecuteCommand = this.exactlyOnceCommandExecutor;
+            this.handledAggregateRootIdsInExactlyOnce.add(orderCommand.orderId());
+        } else if (this.handledAggregateRootIdsInExactlyOnce.contains(orderCommand.orderId())) {
             executorServiceToExecuteCommand = this.exactlyOnceCommandExecutor;
         } else if (orderCommand.orderId() == null) {
             executorServiceToExecuteCommand = this.threadPools.get(0);
@@ -49,11 +57,15 @@ public class OrderCommandHandler {
             executorServiceToExecuteCommand = threadPools.get(threadIdx);
         }
         try {
-            return executorServiceToExecuteCommand.submit(() -> orderCommand.handle(orderAggregateRootRepository)).get();
+            return executorServiceToExecuteCommand.submit(() -> {
+                final Order order = orderCommand.handle(orderAggregateRootRepository);
+                this.handledAggregateRootIdsInExactlyOnce.remove(order.orderId());
+                return order;
+            }).get();
         } catch (final InterruptedException e) {
             throw new RuntimeException(e);
         } catch (final ExecutionException e) {
-            throw new RuntimeException(e);
+            throw e.getCause();
         }
     }
 
