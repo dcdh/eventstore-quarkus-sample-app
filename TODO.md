@@ -3,17 +3,24 @@ Dans ce cas je vais certainement devoir introduire une dependence à javax.entre
 Compliqué ... car je passe des arguments injecté dans la Command
 => KO
 
-1. finir les tests
-1. extraire lib
-Comment faire avec FlyWay ???
+1. mettre en place debezium : OK
+
+1. creer un multimodule
 
 1. extraire write
-1. run local avec docker compose : posgresql version debezium, kafka
 1. creer query avec kafka + test Envers... pour kafka utiliser l'api rest pendant les tests pour simuler debezium
+1. notification avec envoie mail + peeble dans un greenmail :)
+
 1. openshift (jenkins, environnement, test acceptance globale)
 
 Attention: query + write même répository !
 microservice notification &vec greenmail !
+
+debezium merge les event dans un seul stream !
+kafka rest api...
+
+tester peeble + mail dans la notification !
+en natif !
 
 ## infra
 
