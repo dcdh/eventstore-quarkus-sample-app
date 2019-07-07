@@ -1,4 +1,4 @@
-package com.damdamdeo.eventsourcing;
+package com.damdamdeo.order.domain;
 
 import org.json.JSONException;
 import org.junit.jupiter.api.Test;

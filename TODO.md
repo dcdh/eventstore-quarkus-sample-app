@@ -1,36 +1,23 @@
-1. eventstore
+1. extraire le command handler dans la partie eventsourcing (via la notion d'abstraction ou pas...)
+Dans ce cas je vais certainement devoir introduire une dependence à javax.entreprise.api...
+Compliqué ... car je passe des arguments injecté dans la Command
+=> KO
 
+1. finir les tests
+1. extraire lib
+Comment faire avec FlyWay ???
 
-Prio:
+1. extraire write
+1. run local avec docker compose : posgresql version debezium, kafka
+1. creer query avec kafka + test Envers... pour kafka utiliser l'api rest pendant les tests pour simuler debezium
+1. openshift (jenkins, environnement, test acceptance globale)
 
-pour faire mes tests je devrai passer injection par constructor !
-
-- tests !!!
-- avec BDD !!!
-- native !!!
-
-TODO extraire en librairie
-
-kafka (via debezium)
-query
-
-est ce que j'aurais pu avoir ce schema
-- aggregat
--> version correspondant au nombre d'element dans la liste ?
--> internal version lié à JPA ???
-- liste d'event sur l'aggregat
-
-1. model backenduser
-1. consumer rest
-1. producer kafka
+Attention: query + write même répository !
+microservice notification &vec greenmail !
 
 ## infra
 
 generer une lib pour l'eventstore...
-
-je dois stocker les payload en json...
-metadata en json... metadata via cle valeur ???
-
 
 jpa
 postgresql

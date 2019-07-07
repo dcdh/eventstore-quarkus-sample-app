@@ -1,4 +1,4 @@
-package com.damdamdeo.eventsourcing;
+package com.damdamdeo.order.domain;
 
 import com.damdamdeo.eventsourcing.domain.Payload;
 import com.damdamdeo.order.domain.event.CreateOrderEventPayload;
