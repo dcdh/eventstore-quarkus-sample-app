@@ -4,9 +4,9 @@ Compliqué ... car je passe des arguments injecté dans la Command
 => KO
 
 1. mettre en place debezium : OK
-1. remplacer Order par Todo :)
+1. remplacer Order par Todo :) OK
 
-1. creer un multimodule
+1. creer un multimodule 
 
 1. extraire write
 1. creer query avec kafka + test Envers... pour kafka utiliser l'api rest pendant les tests pour simuler debezium
