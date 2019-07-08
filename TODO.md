@@ -4,6 +4,7 @@ Compliqué ... car je passe des arguments injecté dans la Command
 => KO
 
 1. mettre en place debezium : OK
+1. remplacer Order par Todo :)
 
 1. creer un multimodule
 

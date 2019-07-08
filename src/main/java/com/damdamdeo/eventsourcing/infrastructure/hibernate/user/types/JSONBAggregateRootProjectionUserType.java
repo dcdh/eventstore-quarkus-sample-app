@@ -1,7 +1,7 @@
 package com.damdamdeo.eventsourcing.infrastructure.hibernate.user.types;
 
 import com.damdamdeo.eventsourcing.domain.AggregateRoot;
-import com.damdamdeo.order.domain.AggregateRootAdapter;
+import com.damdamdeo.todo.domain.AggregateRootAdapter;
 
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;

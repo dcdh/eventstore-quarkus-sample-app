@@ -1,7 +1,7 @@
 package com.damdamdeo.eventsourcing.infrastructure.hibernate.user.types;
 
 import com.damdamdeo.eventsourcing.domain.Payload;
-import com.damdamdeo.order.domain.event.PayloadAdapter;
+import com.damdamdeo.todo.domain.event.PayloadAdapter;
 
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;

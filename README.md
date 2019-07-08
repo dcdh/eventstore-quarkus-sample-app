@@ -29,9 +29,9 @@ https://github.com/debezium/debezium-examples/tree/master/tutorial
 
 > il y a une conf à réaliser !
 
-curl -i -X POST -H "Accept:application/json" -H  "Content-Type:application/json" http://localhost:8083/connectors/ -d '{"name": "order-connector", "config": {"connector.class": "io.debezium.connector.postgresql.PostgresConnector", "tasks.max": "1", "database.hostname": "eventstore", "database.port": "5432", "database.user": "postgres", "database.password": "postgres", "database.dbname" : "eventstore", "database.server.name": "eventstore", "schema.whitelist": "public"}}'
+curl -i -X POST -H "Accept:application/json" -H  "Content-Type:application/json" http://localhost:8083/connectors/ -d '{"name": "todo-connector", "config": {"connector.class": "io.debezium.connector.postgresql.PostgresConnector", "tasks.max": "1", "database.hostname": "eventstore", "database.port": "5432", "database.user": "postgres", "database.password": "postgres", "database.dbname" : "eventstore", "database.server.name": "eventstore", "schema.whitelist": "public"}}'
 
-curl -X DELETE http://localhost:8083/connectors/order-connector
+curl -X DELETE http://localhost:8083/connectors/todo-connector
 
 curl -X DELETE http://localhost:8082/topics/eventstore.public.aggregaterootprojection
 flute 405 !!! impossible de supprimer un topic depuis l'api rest ...
