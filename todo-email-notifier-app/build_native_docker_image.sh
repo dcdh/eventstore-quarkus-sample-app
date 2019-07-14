@@ -1,2 +1,2 @@
 #!/bin/bash
-./mvnw package -Pnative -Dnative-image.container-runtime=docker
+./mvnw clean package -Pnative -Dnative-image.container-runtime=docker
