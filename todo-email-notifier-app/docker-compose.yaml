@@ -61,9 +61,3 @@ services:
     ports:
       - 1025:1025
       - 8025:8025
-
-#  smtp-server-for-it:
-#    image: andreptb/smtp-server-for-it
-#    ports:
-#      - 25:25
-#      - 8085:8080
