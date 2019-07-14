@@ -22,6 +22,7 @@ https://github.com/linkedin/cruise-control-ui/wiki
 
 https://github.com/Landoop/kafka-topics-ui/issues/91
 
+> docker rm $(docker ps -aq) && docker-compose up
 
 ## debezium
 
@@ -29,7 +30,7 @@ https://github.com/debezium/debezium-examples/tree/master/tutorial
 
 > il y a une conf à réaliser !
 
-curl -i -X POST -H "Accept:application/json" -H  "Content-Type:application/json" http://localhost:8083/connectors/ -d '{"name": "todo-connector", "config": {"connector.class": "io.debezium.connector.postgresql.PostgresConnector", "tasks.max": "1", "database.hostname": "eventstore", "database.port": "5432", "database.user": "postgres", "database.password": "postgres", "database.dbname" : "eventstore", "database.server.name": "eventstore", "schema.whitelist": "public"}}'
+curl -i -X POST -H "Accept:application/json" -H  "Content-Type:application/json" http://localhost:8083/connectors/ -d '{"name": "todo-connector", "config": {"connector.class": "io.debezium.connector.postgresql.PostgresConnector", "tasks.max": "1", "database.hostname": "eventstore", "database.port": "5432", "database.user": "postgres", "database.password": "postgres", "database.dbname" : "eventstore", "database.server.name": "eventstore", "schema.whitelist": "public", "transforms": "route", "transforms.route.type": "org.apache.kafka.connect.transforms.RegexRouter", "transforms.route.regex": "([^.]+)\\.([^.]+)\\.([^.]+)", "transforms.route.replacement": "$3"}}'
 
 curl -X DELETE http://localhost:8083/connectors/todo-connector
 

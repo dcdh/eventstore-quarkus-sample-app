@@ -7,10 +7,15 @@ Compliqué ... car je passe des arguments injecté dans la Command
 1. remplacer Order par Todo :) OK
 
 1. creer un multimodule 
+1. passer par une api commune !! todo-api
+
 
 1. extraire write
 1. creer query avec kafka + test Envers... pour kafka utiliser l'api rest pendant les tests pour simuler debezium
+
 1. notification avec envoie mail + peeble dans un greenmail :)
+> passer par une base de données pour stocker les events traités !
+
 
 1. openshift (jenkins, environnement, test acceptance globale)
 

@@ -17,7 +17,7 @@ services:
       - zookeeper
     environment:
       - ZOOKEEPER_CONNECT=zookeeper:2181
-      - CREATE_TOPICS=event:1:1:compact,aggregaterootprojection:1:1:compact,flyway_schema_history:1:1:compact
+      - CREATE_TOPICS=event:1:1:compact,aggregaterootprojection:1:1:compact,flyway_schema_history:1:1:compact,test:1:1:compact
 
   kafka-rest:
     image: confluentinc/cp-kafka-rest:5.2.2-1
@@ -47,29 +47,6 @@ services:
       - zookeeper
       - kafka-rest
 
-  connect:
-    image: debezium/connect:0.10
-    ports:
-      - 8083:8083
-    links:
-      - kafka
-      - eventstore
-    environment:
-      - BOOTSTRAP_SERVERS=kafka:9092
-      - GROUP_ID=1
-      - CONFIG_STORAGE_TOPIC=my_connect_configs
-      - OFFSET_STORAGE_TOPIC=my_connect_offsets
-      - STATUS_STORAGE_TOPIC=my_connect_statuses
-
-  eventstore:
-    image: debezium/postgres:11-alpine
-    ports:
-      - 5432:5432
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=eventstore
-
   todo-query:
     image: postgres:11-alpine
     ports:
@@ -78,12 +55,3 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=todoquery
-
-  todo-email-notifier:
-    image: postgres:11-alpine
-    ports:
-      - 5434:5432
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=todoemailnotifier
