@@ -22,7 +22,7 @@ public class MailerEmailNotification implements EmailNotifier {
     ReactiveMailer mailer;
 
     @Override
-    public void notify(final String content, final String subject) {
+    public void notify(final String subject, final String content) {
         LOGGER.log(Level.INFO, "email notification with subject ''{0}'' and content ''{1}''", new Object[] {subject, content});
         mailer.send(Mail.withHtml(sendTo, subject, content));
     }

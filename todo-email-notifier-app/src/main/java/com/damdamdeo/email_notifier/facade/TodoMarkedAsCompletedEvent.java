@@ -33,7 +33,7 @@ public class TodoMarkedAsCompletedEvent {
                 return todoToMarkAsCompleted.description();
             }
         });
-        emailNotifier.notify(content, "Todo marked as completed");
+        emailNotifier.notify("Todo marked as completed", content);
     }
 
 }

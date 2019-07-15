@@ -37,7 +37,7 @@ public class TodoCreatedEvent {
                 return todoToCreate.description();
             }
         });
-        emailNotifier.notify(content, "New Todo created");
+        emailNotifier.notify("New Todo created", content);
     }
 
 }
