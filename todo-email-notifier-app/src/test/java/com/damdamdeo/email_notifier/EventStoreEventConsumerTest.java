@@ -11,7 +11,7 @@ import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
 
 @QuarkusTest
 public class EventStoreEventConsumerTest {
@@ -38,9 +38,10 @@ public class EventStoreEventConsumerTest {
     }
 
     @Test
-    public void should_send_email() {
+    public void should_send_email() throws Exception {
         // Given
         emailNotifier.notify("content", "subject");
+        Thread.sleep(1000);
 
         // Then
         given(new RequestSpecBuilder().setBaseUri("http://localhost").setPort(8025).build())
@@ -59,30 +60,26 @@ public class EventStoreEventConsumerTest {
         Thread.sleep(1000);
 
         // Then
-//        given()
-//                .get("/todos/todoId")
-//                .then()
-//                .statusCode(200)
-//                .body(JsonSchemaValidator.matchesJsonSchemaInClasspath("expected/todo.json"))
-//                .body("todoId", equalTo("todoId"))
-//                .body("description", equalTo("lorem ipsum"))
-//                .body("todoStatus", equalTo("IN_PROGRESS"))
-//                .body("version", equalTo(0));
+        given(new RequestSpecBuilder().setBaseUri("http://localhost").setPort(8025).build())
+                .when()
+                .get("/api/v1/messages")
+                .then()
+                .statusCode(200)
+                .body("[0].Content.Headers.Subject[0]", equalTo("New Todo created"))
+                .body("[0].MIME.Parts[0].MIME.Parts[0].Body", containsString("lorem ipsum"));
 
         // When
-//        kafkaDebeziumProducer.produce("TodoMarkedAsCompletedEvent.json");
-//        Thread.sleep(1000);
+        kafkaDebeziumProducer.produce("TodoMarkedAsCompletedEvent.json");
+        Thread.sleep(1000);
 
         // Then
-//        given()
-//                .get("/todos/todoId")
-//                .then()
-//                .statusCode(200)
-//                .body(JsonSchemaValidator.matchesJsonSchemaInClasspath("expected/todo.json"))
-//                .body("todoId", equalTo("todoId"))
-//                .body("description", equalTo("lorem ipsum"))
-//                .body("todoStatus", equalTo("COMPLETED"))
-//                .body("version", equalTo(1));
+        given(new RequestSpecBuilder().setBaseUri("http://localhost").setPort(8025).build())
+                .when()
+                .get("/api/v1/messages")
+                .then()
+                .statusCode(200)
+                .body("[0].Content.Headers.Subject[0]", equalTo("Todo marked as completed"))
+                .body("[0].MIME.Parts[0].MIME.Parts[0].Body", containsString("lorem ipsum"));
     }
 
 }

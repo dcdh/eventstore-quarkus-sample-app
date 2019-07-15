@@ -1,4 +1,4 @@
-> docker rm $(docker ps -aq) && docker-compose up
+> docker kill $(docker ps -aq); docker rm $(docker ps -aq); docker-compose up
 
 > http://localhost:9991/#/cluster/default/topic/n/event/data
 

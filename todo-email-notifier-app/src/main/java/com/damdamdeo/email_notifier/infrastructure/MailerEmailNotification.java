@@ -2,7 +2,7 @@ package com.damdamdeo.email_notifier.infrastructure;
 
 import com.damdamdeo.email_notifier.domain.EmailNotifier;
 import io.quarkus.mailer.Mail;
-import io.quarkus.mailer.Mailer;
+import io.quarkus.mailer.ReactiveMailer;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -19,7 +19,7 @@ public class MailerEmailNotification implements EmailNotifier {
     String sendTo;
 
     @Inject
-    Mailer mailer;
+    ReactiveMailer mailer;
 
     @Override
     public void notify(final String content, final String subject) {
