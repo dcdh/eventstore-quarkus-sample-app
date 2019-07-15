@@ -7,6 +7,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import java.util.concurrent.CompletionStage;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,9 +23,9 @@ public class MailerEmailNotification implements EmailNotifier {
     ReactiveMailer mailer;
 
     @Override
-    public void notify(final String subject, final String content) {
+    public CompletionStage<Void> notify(final String subject, final String content) {
         LOGGER.log(Level.INFO, "email notification with subject ''{0}'' and content ''{1}''", new Object[] {subject, content});
-        mailer.send(Mail.withHtml(sendTo, subject, content));
+        return mailer.send(Mail.withHtml(sendTo, subject, content));
     }
 
 }

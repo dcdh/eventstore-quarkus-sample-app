@@ -9,6 +9,7 @@ import io.vertx.core.json.JsonObject;
 
 import javax.persistence.EntityManager;
 import java.io.IOException;
+import java.util.concurrent.CompletionStage;
 
 public class TodoCreatedEvent {
 
@@ -20,10 +21,10 @@ public class TodoCreatedEvent {
         this.description = jsonObject.getString("description");
     }
 
-    public void handle(final Long version,
-            final EntityManager em,
-            final TemplateGenerator templateGenerator,
-            final EmailNotifier emailNotifier) throws IOException {
+    public CompletionStage<Void> handle(final Long version,
+                                        final EntityManager em,
+                                        final TemplateGenerator templateGenerator,
+                                        final EmailNotifier emailNotifier) throws IOException {
         final TodoEntity todoToCreate = new TodoEntity(todoId, description, TodoStatus.IN_PROGRESS, version);
         em.merge(todoToCreate);
         final String content = templateGenerator.generate(new TodoCreated() {
@@ -37,7 +38,7 @@ public class TodoCreatedEvent {
                 return todoToCreate.description();
             }
         });
-        emailNotifier.notify("New Todo created", content);
+        return emailNotifier.notify("New Todo created", content);
     }
 
 }

@@ -59,12 +59,10 @@ public class EventStoreEventConsumer {
                             switch (eventType) {
                                 case "TodoCreatedEvent":
                                     final JsonObject todoCreatedEvent = new JsonObject(eventPayload);
-                                    new TodoCreatedEvent(todoCreatedEvent).handle(version, em, templateGenerator, emailNotifier);
-                                    break;
+                                    return new TodoCreatedEvent(todoCreatedEvent).handle(version, em, templateGenerator, emailNotifier);
                                 case "TodoMarkedAsCompletedEvent":
                                     final JsonObject todoMarkedAsCompletedEvent = new JsonObject(eventPayload);
-                                    new TodoMarkedAsCompletedEvent(todoMarkedAsCompletedEvent).handle(version, em, templateGenerator, emailNotifier);
-                                    break;
+                                    return new TodoMarkedAsCompletedEvent(todoMarkedAsCompletedEvent).handle(version, em, templateGenerator, emailNotifier);
                                 default:
                                     LOGGER.log(Level.INFO, String.format("eventType '%s' not supported for eventId '%s'", eventType, eventId));
                                     break;

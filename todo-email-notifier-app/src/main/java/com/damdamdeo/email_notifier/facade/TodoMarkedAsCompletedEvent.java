@@ -6,6 +6,7 @@ import io.vertx.core.json.JsonObject;
 
 import javax.persistence.EntityManager;
 import java.io.IOException;
+import java.util.concurrent.CompletionStage;
 
 public class TodoMarkedAsCompletedEvent {
 
@@ -15,10 +16,10 @@ public class TodoMarkedAsCompletedEvent {
         this.todoId = jsonObject.getString("todoId");
     }
 
-    public void handle(final Long version,
-                       final EntityManager em,
-                       final TemplateGenerator templateGenerator,
-                       final EmailNotifier emailNotifier) throws IOException {
+    public CompletionStage<Void> handle(final Long version,
+                                        final EntityManager em,
+                                        final TemplateGenerator templateGenerator,
+                                        final EmailNotifier emailNotifier) throws IOException {
         final TodoEntity todoToMarkAsCompleted = em.find(TodoEntity.class, todoId);
         todoToMarkAsCompleted.markAsCompleted(version);
         em.merge(todoToMarkAsCompleted);
@@ -33,7 +34,7 @@ public class TodoMarkedAsCompletedEvent {
                 return todoToMarkAsCompleted.description();
             }
         });
-        emailNotifier.notify("Todo marked as completed", content);
+        return emailNotifier.notify("Todo marked as completed", content);
     }
 
 }
