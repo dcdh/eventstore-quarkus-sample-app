@@ -52,3 +52,22 @@ actif:
 acheteur avec manageBy
 vendeur avec manageBy
 dans le manageBy tu as si actif, ... (voir le status du coup tu peux le deduire si actif via le status...)
+
+
+
+prio:
+
+
+3. passage à openshift
+-> utiliser streamzi !!!
+- jenkins
+- script creation env !
+- pipeline compilation pour chaque microservice
+- pipeline native to prod...
+> projet staging
+> utilise docker pour initialiser l'env
+> run test e2e
+> tag vers la production !
+
+
+pas de joins gris mais des joins epoxy

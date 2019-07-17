@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: todo-write-app-pipeline
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    annotations:
+      pipeline.alpha.openshift.io/uses: '[{"name": "todo-write-app", "namespace": "", "kind": "DeploymentConfig"}]'
+    creationTimestamp: null
+    labels:
+      name: todo-write-app
+    name: todo-write-app
+  spec:
+    strategy:
+      jenkinsPipelineStrategy:
+        jenkinsfile: |-
+          try {
+            // TODO charger l'ensemble des containers
+            // TODO packager le jar en natif
+            // TODO builder via openshift l'image et la tager en staging...
+          } catch (err) {
+             echo "in catch block"
+             echo "Caught: ${err}"
+             currentBuild.result = 'FAILURE'
+             throw err
+          }
+      type: JenkinsPipeline
