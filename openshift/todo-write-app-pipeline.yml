@@ -1,28 +1,27 @@
+kind: BuildConfig
 apiVersion: v1
-kind: Template
 metadata:
   name: todo-write-app-pipeline
-- apiVersion: v1
-  kind: BuildConfig
-  metadata:
-    annotations:
-      pipeline.alpha.openshift.io/uses: '[{"name": "todo-write-app", "namespace": "", "kind": "DeploymentConfig"}]'
-    creationTimestamp: null
-    labels:
-      name: todo-write-app
-    name: todo-write-app
-  spec:
-    strategy:
-      jenkinsPipelineStrategy:
-        jenkinsfile: |-
-          try {
-            // TODO charger l'ensemble des containers
-            // TODO packager le jar en natif
-            // TODO builder via openshift l'image et la tager en staging...
-          } catch (err) {
-             echo "in catch block"
-             echo "Caught: ${err}"
-             currentBuild.result = 'FAILURE'
-             throw err
-          }
+spec:
+  strategy:
+    jenkinsPipelineStrategy:
+      jenkinsfile: |-
+        try {
+           timeout(time: 20, unit: 'MINUTES') {
+              node("jenkins-agent-maven-35-graalvm-centos7") {
+                stage("Checkout") {
+                  git url: "https://github.com/dcdh/eventstore-quarkus-sample-app.git", branch: "master"
+                }
+                stage("Build native") {
+                  sh "mvn package -Pnative"
+
+                }
+              }
+           }
+        } catch (err) {
+           echo "in catch block"
+           echo "Caught: ${err}"
+           currentBuild.result = 'FAILURE'
+           throw err
+        }
       type: JenkinsPipeline
