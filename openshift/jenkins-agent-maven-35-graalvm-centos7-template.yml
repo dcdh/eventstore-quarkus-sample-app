@@ -1,5 +1,7 @@
 apiVersion: v1
 kind: Template
+metadata:
+  name: jenkins-agent-maven-35-graalvm-centos7-template
 objects:
 - apiVersion: v1
   kind: PersistentVolumeClaim
