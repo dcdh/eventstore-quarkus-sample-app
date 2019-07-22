@@ -13,8 +13,7 @@ spec:
                   git url: "https://github.com/dcdh/eventstore-quarkus-sample-app.git", branch: "master"
                 }
                 stage("Build native") {
-                  sh "mvn package -Pnative"
-
+                  sh "cd todo-write-app && mvn clean package -Pnative -Dquarkus-profile=staging"
                 }
               }
            }
