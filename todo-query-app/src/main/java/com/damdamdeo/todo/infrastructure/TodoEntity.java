@@ -2,6 +2,7 @@ package com.damdamdeo.todo.infrastructure;
 
 import com.damdamdeo.todo.domain.Todo;
 import com.damdamdeo.todo.domain.TodoStatus;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -10,6 +11,7 @@ import javax.persistence.Id;
 import java.util.Objects;
 
 @Entity
+@Audited
 public class TodoEntity implements Todo {
 
     @Id
