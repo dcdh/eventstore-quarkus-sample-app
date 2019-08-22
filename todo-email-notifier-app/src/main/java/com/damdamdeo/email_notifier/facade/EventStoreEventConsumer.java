@@ -54,18 +54,24 @@ public class EventStoreEventConsumer {
                         final String aggregateroottype = after.getString("aggregateroottype");
                         if ("TodoAggregateRoot".equals(aggregateroottype)) {
                             final String eventType = after.getString("eventtype");
+                            final String eventid = after.getString("eventid");
                             final String eventPayload = after.getString("payload");
                             final Long version = after.getLong("version");
+                            final TodoEvent todoEvent;
                             switch (eventType) {
                                 case "TodoCreatedEvent":
-                                    final JsonObject todoCreatedEvent = new JsonObject(eventPayload);
-                                    return new TodoCreatedEvent(todoCreatedEvent).handle(version, em, templateGenerator, emailNotifier);
+                                    todoEvent = new TodoCreatedEvent(eventPayload);
+                                    break;
                                 case "TodoMarkedAsCompletedEvent":
-                                    final JsonObject todoMarkedAsCompletedEvent = new JsonObject(eventPayload);
-                                    return new TodoMarkedAsCompletedEvent(todoMarkedAsCompletedEvent).handle(version, em, templateGenerator, emailNotifier);
+                                    todoEvent = new TodoMarkedAsCompletedEvent(eventPayload);
+                                    break;
                                 default:
+                                    todoEvent = null;
                                     LOGGER.log(Level.INFO, String.format("eventType '%s' not supported for eventId '%s'", eventType, eventId));
                                     break;
+                            }
+                            if (todoEvent != null) {
+                                todoEvent.handle(eventid, version, em, templateGenerator, emailNotifier);
                             }
                         } else {
                             LOGGER.log(Level.INFO, String.format("Unsupported aggregate root type '%s' for eventId '%s'", aggregateroottype, eventId));

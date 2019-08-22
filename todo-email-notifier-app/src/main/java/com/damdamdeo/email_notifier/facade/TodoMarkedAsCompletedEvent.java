@@ -8,20 +8,23 @@ import javax.persistence.EntityManager;
 import java.io.IOException;
 import java.util.concurrent.CompletionStage;
 
-public class TodoMarkedAsCompletedEvent {
+public class TodoMarkedAsCompletedEvent implements TodoEvent {
 
     private final String todoId;
 
-    public TodoMarkedAsCompletedEvent(final JsonObject jsonObject) {
+    public TodoMarkedAsCompletedEvent(final String eventPayload) {
+        final JsonObject jsonObject = new JsonObject(eventPayload);
         this.todoId = jsonObject.getString("todoId");
     }
 
-    public CompletionStage<Void> handle(final Long version,
+    @Override
+    public CompletionStage<Void> handle(final String eventId,
+                                        final Long version,
                                         final EntityManager em,
                                         final TemplateGenerator templateGenerator,
                                         final EmailNotifier emailNotifier) throws IOException {
         final TodoEntity todoToMarkAsCompleted = em.find(TodoEntity.class, todoId);
-        todoToMarkAsCompleted.markAsCompleted(version);
+        todoToMarkAsCompleted.markAsCompleted(eventId, version);
         em.merge(todoToMarkAsCompleted);
         final String content = templateGenerator.generate(new TodoMarkedAsCompleted() {
             @Override

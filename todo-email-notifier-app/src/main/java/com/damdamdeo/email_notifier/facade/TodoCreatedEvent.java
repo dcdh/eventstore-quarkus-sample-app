@@ -11,21 +11,24 @@ import javax.persistence.EntityManager;
 import java.io.IOException;
 import java.util.concurrent.CompletionStage;
 
-public class TodoCreatedEvent {
+public class TodoCreatedEvent implements TodoEvent {
 
     private final String todoId;
     private final String description;
 
-    public TodoCreatedEvent(final JsonObject jsonObject) {
+    public TodoCreatedEvent(final String eventPayload) {
+        final JsonObject jsonObject = new JsonObject(eventPayload);
         this.todoId = jsonObject.getString("todoId");
         this.description = jsonObject.getString("description");
     }
 
-    public CompletionStage<Void> handle(final Long version,
+    @Override
+    public CompletionStage<Void> handle(final String eventId,
+                                        final Long version,
                                         final EntityManager em,
                                         final TemplateGenerator templateGenerator,
                                         final EmailNotifier emailNotifier) throws IOException {
-        final TodoEntity todoToCreate = new TodoEntity(todoId, description, TodoStatus.IN_PROGRESS, version);
+        final TodoEntity todoToCreate = new TodoEntity(todoId, description, TodoStatus.IN_PROGRESS, eventId, version);
         em.merge(todoToCreate);
         final String content = templateGenerator.generate(new TodoCreated() {
             @Override

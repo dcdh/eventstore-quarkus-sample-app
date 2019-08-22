@@ -52,9 +52,11 @@ public class EventStoreEventConsumer {
                         final String aggregateroottype = after.getString("aggregateroottype");
                         if ("TodoAggregateRoot".equals(aggregateroottype)) {
                             final String eventType = after.getString("eventtype");
+                            final String eventid = after.getString("eventid");
                             final String eventPayload = after.getString("payload");
                             final Long version = after.getLong("version");
                             switch (eventType) {
+                                // /!\ prendre exemple sur l'email notifier qui est codé d'une façon plus agréable (method handler !)
                                 case "TodoCreatedEvent":
                                     final JsonObject todoCreatedEvent = new JsonObject(eventPayload);
                                     final TodoEntity todoToCreate = new TodoEntity(

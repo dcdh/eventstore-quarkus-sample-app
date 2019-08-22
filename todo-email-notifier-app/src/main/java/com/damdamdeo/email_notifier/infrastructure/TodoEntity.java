@@ -20,6 +20,8 @@ public class TodoEntity implements Todo {
     @Enumerated(EnumType.STRING)
     private TodoStatus todoStatus;
 
+    private String currentEventId;
+
     private Long version;
 
     public TodoEntity() {}
@@ -27,10 +29,12 @@ public class TodoEntity implements Todo {
     public TodoEntity(final String todoId,
                       final String description,
                       final TodoStatus todoStatus,
+                      final String currentEventId,
                       final Long version) {
         this.todoId = todoId;
         this.description = description;
         this.todoStatus = todoStatus;
+        this.currentEventId = currentEventId;
         this.version = version;
     }
 
@@ -38,11 +42,13 @@ public class TodoEntity implements Todo {
         this(todo.todoId(),
                 todo.description(),
                 todo.todoStatus(),
+                todo.currentEventId(),
                 todo.version());
     }
 
-    public void markAsCompleted(final Long version) {
+    public void markAsCompleted(final String currentEventId, final Long version) {
         this.todoStatus = TodoStatus.COMPLETED;
+        this.currentEventId = currentEventId;
         this.version = version;
     }
 
@@ -59,6 +65,11 @@ public class TodoEntity implements Todo {
     @Override
     public TodoStatus todoStatus() {
         return todoStatus;
+    }
+
+    @Override
+    public String currentEventId() {
+        return currentEventId;
     }
 
     @Override
@@ -85,6 +96,7 @@ public class TodoEntity implements Todo {
                 "todoId='" + todoId + '\'' +
                 ", description='" + description + '\'' +
                 ", todoStatus=" + todoStatus +
+                ", currentEventId='" + currentEventId + '\'' +
                 ", version=" + version +
                 '}';
     }
