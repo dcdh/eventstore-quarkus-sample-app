@@ -8,6 +8,8 @@ public interface Todo {
 
     TodoStatus todoStatus();
 
+    String currentEventId();
+
     Long version();
 
 }

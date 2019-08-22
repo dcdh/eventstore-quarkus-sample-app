@@ -63,13 +63,14 @@ public class EventStoreEventConsumer {
                                             todoCreatedEvent.getString("todoId"),
                                             todoCreatedEvent.getString("description"),
                                             TodoStatus.IN_PROGRESS,
+                                            eventid,
                                             version);
                                     em.merge(todoToCreate);
                                     break;
                                 case "TodoMarkedAsCompletedEvent":
                                     final JsonObject todoMarkedAsCompletedEvent = new JsonObject(eventPayload);
                                     final TodoEntity todoToMarkAsCompleted = em.find(TodoEntity.class, todoMarkedAsCompletedEvent.getString("todoId"));
-                                    todoToMarkAsCompleted.markAsCompleted(version);
+                                    todoToMarkAsCompleted.markAsCompleted(eventid, version);
                                     em.merge(todoToMarkAsCompleted);
                                     break;
                                 default:

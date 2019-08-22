@@ -35,6 +35,7 @@ CREATE TABLE public.todoentity_aud (
     revtype smallint,
     description character varying(255),
     todostatus character varying(255),
+    currenteventid character varying(255),
     version bigint
 );
 

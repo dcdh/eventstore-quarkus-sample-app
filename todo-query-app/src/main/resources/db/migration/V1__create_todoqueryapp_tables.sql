@@ -40,6 +40,7 @@ CREATE TABLE public.todoentity (
     todoid character varying(255) NOT NULL,
     description character varying(255),
     todostatus character varying(255),
+    currenteventid character varying(255),
     version bigint
 );
 
