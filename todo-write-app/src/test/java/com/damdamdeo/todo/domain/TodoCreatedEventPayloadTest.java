@@ -1,8 +1,7 @@
 package com.damdamdeo.todo.domain;
 
-import com.damdamdeo.eventsourcing.domain.Payload;
-import com.damdamdeo.todo.domain.event.PayloadAdapter;
-import com.damdamdeo.todo.domain.event.TodoCreatedEventPayload;
+import com.damdamdeo.todo.aggregate.event.TodoCreatedEventPayload;
+import com.damdamdeo.todo.user.type.DefaultEventPayloadsAdapter;
 import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -16,34 +15,34 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TodoCreatedEventPayloadTest {
 
-    private static final Jsonb MAPPER = JsonbBuilder.create(new JsonbConfig().withFormatting(true)
-            .withAdapters(new PayloadAdapter())
-    );
+    private static final Jsonb MAPPER = JsonbBuilder.create(new JsonbConfig()
+            .withFormatting(true)
+            .withAdapters(new DefaultEventPayloadsAdapter()));
 
     @Test
     public void should_serialize() throws JSONException {
         // Given
-        final Payload eventPayload = new TodoCreatedEventPayload("todoId", "lorem ipsum");
+        final TodoCreatedEventPayload todoCreatedEventPayload = new TodoCreatedEventPayload("todoId", "lorem ipsum");
 
         // When
-        final String json = MAPPER.toJson(eventPayload);
+        final String json = MAPPER.toJson(todoCreatedEventPayload);
 
         // Then
         JSONAssert.assertEquals(
-                "{\"@class\": \"TodoCreatedEventPayload\", \"todoId\":\"todoId\", \"description\":\"lorem ipsum\"}", json, JSONCompareMode.STRICT);
+                "{\"@payloadType\": \"TodoCreatedEventPayload\", \"@aggregaterootType\": \"TodoAggregateRoot\", \"todoId\":\"todoId\", \"description\":\"lorem ipsum\"}", json, JSONCompareMode.STRICT);
     }
 
     @Test
     public void should_deserialize() {
         // Given
-        final String json = "{\"@class\": \"TodoCreatedEventPayload\", \"todoId\":\"todoId\", \"description\":\"lorem ipsum\"}";
+        final String json = "{\"@payloadType\": \"TodoCreatedEventPayload\", \"@aggregaterootType\": \"TodoAggregateRoot\", \"todoId\":\"todoId\", \"description\":\"lorem ipsum\"}";
 
         // When
-        final TodoCreatedEventPayload payload = (TodoCreatedEventPayload) MAPPER.fromJson(json, Payload.class);
+        final TodoCreatedEventPayload todoCreatedEventPayload = MAPPER.fromJson(json, TodoCreatedEventPayload.class);
 
         // Then
-        assertEquals("todoId", payload.todoId());
-        assertEquals("lorem ipsum", payload.description());
+        assertEquals("todoId", todoCreatedEventPayload.todoId());
+        assertEquals("lorem ipsum", todoCreatedEventPayload.description());
     }
 
 }

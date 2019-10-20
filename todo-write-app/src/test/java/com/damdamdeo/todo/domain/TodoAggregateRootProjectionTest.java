@@ -1,7 +1,8 @@
 package com.damdamdeo.todo.domain;
 
-import com.damdamdeo.eventsourcing.domain.AggregateRoot;
+import com.damdamdeo.todo.aggregate.TodoAggregateRoot;
 import com.damdamdeo.todo.api.TodoStatus;
+import com.damdamdeo.todo.user.type.DefaultAggregateRootAdapter;
 import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -17,7 +18,7 @@ public class TodoAggregateRootProjectionTest {
 
     private static final Jsonb MAPPER = JsonbBuilder.create(new JsonbConfig()
             .withFormatting(true)
-            .withAdapters(new AggregateRootAdapter()));
+            .withAdapters(new DefaultAggregateRootAdapter()));
 
     @Test
     public void should_serialize() throws JSONException {
@@ -32,16 +33,16 @@ public class TodoAggregateRootProjectionTest {
 
         // Then
         JSONAssert.assertEquals(
-                "{\"@class\": \"TodoAggregateRoot\", \"aggregateRootId\": \"todoId\", \"description\": \"lorem ipsum\", \"todoStatus\": \"IN_PROGRESS\", \"version\": 1}", json, JSONCompareMode.STRICT);
+                "{\"@aggregaterootType\": \"TodoAggregateRoot\", \"aggregateRootId\": \"todoId\", \"description\": \"lorem ipsum\", \"todoStatus\": \"IN_PROGRESS\", \"version\": 1}", json, JSONCompareMode.STRICT);
     }
 
     @Test
     public void should_deserialize() {
         // Given
-        final String json = "{\"@class\": \"TodoAggregateRoot\", \"aggregateRootId\": \"todoId\", \"description\": \"lorem ipsum\", \"todoStatus\": \"IN_PROGRESS\", \"version\": 1}";
+        final String json = "{\"@aggregaterootType\": \"TodoAggregateRoot\", \"aggregateRootId\": \"todoId\", \"description\": \"lorem ipsum\", \"todoStatus\": \"IN_PROGRESS\", \"version\": 1}";
 
         // When
-        final TodoAggregateRoot todoAggregateRoot = (TodoAggregateRoot) MAPPER.fromJson(json, AggregateRoot.class);
+        final TodoAggregateRoot todoAggregateRoot = MAPPER.fromJson(json, TodoAggregateRoot.class);
 
         // Then
         assertEquals("todoId", todoAggregateRoot.aggregateRootId());
