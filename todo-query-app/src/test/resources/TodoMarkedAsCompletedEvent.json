@@ -227,7 +227,7 @@
         "creationdate": 1562890044922000,
         "eventtype": "TodoMarkedAsCompletedEvent",
         "metadata": "{}",
-        "payload": "{\"@class\": \"TodoMarkedAsCompletedEventPayload\", \"todoId\": \"todoId\"}",
+        "eventpayload": "{\"@aggregaterootType\": \"TodoAggregateRoot\", \"@payloadType\": \"TodoMarkedAsCompletedEventPayload\", \"todoId\": \"todoId\"}",
         "version": 1
       },
       "source": {

@@ -227,7 +227,7 @@
         "creationdate": 1562890044742000,
         "eventtype": "TodoCreatedEvent",
         "metadata": "{}",
-        "payload": "{\"@class\": \"TodoCreatedEventPayload\", \"todoId\": \"todoId\", \"description\": \"lorem ipsum\"}",
+        "eventpayload": "{\"@aggregaterootType\": \"TodoAggregateRoot\", \"@payloadType\": \"TodoCreatedEventPayload\", \"todoId\": \"todoId\", \"description\": \"lorem ipsum\"}",
         "version": 0
       },
       "source": {

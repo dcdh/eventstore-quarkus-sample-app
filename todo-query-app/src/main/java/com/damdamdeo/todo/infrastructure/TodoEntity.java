@@ -4,10 +4,7 @@ import com.damdamdeo.todo.domain.Todo;
 import com.damdamdeo.todo.domain.TodoStatus;
 import org.hibernate.envers.Audited;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
