@@ -1,2 +1,2 @@
 #!/bin/bash
-./mvnw compile quarkus:dev
+./mvnw clean compile quarkus:dev
