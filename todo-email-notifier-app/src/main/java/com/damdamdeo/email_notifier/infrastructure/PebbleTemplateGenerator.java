@@ -6,14 +6,14 @@ import com.damdamdeo.email_notifier.domain.TodoMarkedAsCompleted;
 import com.mitchellbosecke.pebble.PebbleEngine;
 import com.mitchellbosecke.pebble.template.PebbleTemplate;
 
-import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.Dependent;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
-@ApplicationScoped
+@Dependent
 public class PebbleTemplateGenerator implements TemplateGenerator {
 
     private static final PebbleTemplate todoCreatedTemplate;

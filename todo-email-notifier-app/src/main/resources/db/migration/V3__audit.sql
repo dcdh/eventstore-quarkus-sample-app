@@ -9,10 +9,6 @@ CREATE SEQUENCE public.hibernate_sequence
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER TABLE public.hibernate_sequence OWNER TO postgres;
-
-
 --
 -- Name: revinfo; Type: TABLE; Schema: public; Owner: postgres
 --
@@ -21,9 +17,6 @@ CREATE TABLE public.revinfo (
     rev integer NOT NULL,
     revtstmp bigint
 );
-
-
-ALTER TABLE public.revinfo OWNER TO postgres;
 
 --
 -- Name: todoentity_aud; Type: TABLE; Schema: public; Owner: postgres
@@ -38,10 +31,6 @@ CREATE TABLE public.todoentity_aud (
     currenteventid character varying(255),
     version bigint
 );
-
-
-ALTER TABLE public.todoentity_aud OWNER TO postgres;
-
 
 
 --

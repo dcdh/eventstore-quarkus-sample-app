@@ -16,9 +16,11 @@ import javax.transaction.Transactional;
 
 import java.util.List;
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.TimeUnit;
 
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -43,7 +45,8 @@ public class EventStoreEventConsumerTest {
                 .then()
                 .statusCode(200);
         em.createQuery("DELETE FROM TodoEntity").executeUpdate();
-        em.createQuery("DELETE FROM KafkaEventEntity").executeUpdate();
+        em.createQuery("DELETE FROM EventConsumerConsumedEntity").executeUpdate();
+        em.createQuery("DELETE FROM EventConsumedEntity").executeUpdate();
 
         em.createNativeQuery("DELETE FROM todoentity_aud").executeUpdate();
         em.createNativeQuery("DELETE FROM revinfo").executeUpdate();
@@ -70,20 +73,39 @@ public class EventStoreEventConsumerTest {
     public void should_consume_todo_created_event_and_todo_marked_as_completed_event() throws Exception {
         // When
         kafkaDebeziumProducer.produce("TodoCreatedEvent.json");
-        Thread.sleep(1000);
+        await().atMost(10, TimeUnit.SECONDS).until(() ->
+                given(new RequestSpecBuilder().setBaseUri("http://localhost").setPort(8025).build())
+                        .when()
+                        .get("/api/v1/messages")
+                        .then()
+                        .log().all()
+                        .statusCode(200)
+                        .extract()
+                        .body()
+                        .jsonPath().getList("$").size() == 1);
 
         // Then
         given(new RequestSpecBuilder().setBaseUri("http://localhost").setPort(8025).build())
                 .when()
                 .get("/api/v1/messages")
                 .then()
+                .log().all()
                 .statusCode(200)
                 .body("[0].Content.Headers.Subject[0]", equalTo("New Todo created"))
                 .body("[0].MIME.Parts[0].MIME.Parts[0].Body", containsString("lorem ipsum"));
 
         // When
         kafkaDebeziumProducer.produce("TodoMarkedAsCompletedEvent.json");
-        Thread.sleep(1000);
+        await().atMost(10, TimeUnit.SECONDS).until(() ->
+                given(new RequestSpecBuilder().setBaseUri("http://localhost").setPort(8025).build())
+                        .when()
+                        .get("/api/v1/messages")
+                        .then()
+                        .log().all()
+                        .statusCode(200)
+                        .extract()
+                        .body()
+                        .jsonPath().getList("$").size() == 2);
 
         // Then
         given(new RequestSpecBuilder().setBaseUri("http://localhost").setPort(8025).build())
@@ -104,6 +126,7 @@ public class EventStoreEventConsumerTest {
         assertEquals(2, todos.size());
         assertThat(todos).containsExactly(new TodoEntity("todoId", "lorem ipsum", TodoStatus.IN_PROGRESS, "873ecba4-3f2e-4663-b9f1-b912e17bfc9b", 0l),
                 new TodoEntity("todoId", "lorem ipsum", TodoStatus.COMPLETED, "27f243d6-ba3a-468f-8435-4537e86ae64b", 1l));
+
     }
 
 }
