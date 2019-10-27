@@ -78,7 +78,7 @@ objects:
                                         envVar(key: 'POSTGRESQL_PASSWORD', value: 'postgrespassword'),
                                         envVar(key: 'POSTGRESQL_DATABASE', value: 'eventstore')
                                       ]),
-                    containerTemplate(name: 'centos-quarkus-maven',
+                    containerTemplate(name: 'maven',
                                       image: 'quay.io/quarkus/centos-quarkus-maven:19.2.0.1',
                                       resourceLimitMemory: '512Mi',
                                       command: "cat",
@@ -116,11 +116,22 @@ objects:
               <profiles>
                 <profile>
                   <id>nexus3</id>
-                  <properties>
-                    <altDeploymentRepository>nexus3-snapshot-repository::default::http://$NEXUS_SERVICE_HOST:$NEXUS_SERVICE_PORT/repository/maven-snapshots/</altDeploymentRepository>
-                    <altSnapshotDeploymentRepository>nexus3-snapshot-repository::default::http://$NEXUS_SERVICE_HOST:$NEXUS_SERVICE_PORT/repository/maven-snapshots/</altSnapshotDeploymentRepository>
-                    <altReleaseDeploymentRepository>nexus3-release-repository::default::https://$NEXUS_SERVICE_HOST:$NEXUS_SERVICE_PORT/repository/maven-releases/</altReleaseDeploymentRepository>
-                  </properties>
+                  <repositories>
+                    <repository>
+                      <id>central</id>
+                      <url>http://$NEXUS_SERVICE_HOST:$NEXUS_SERVICE_PORT/repository/maven-all-public</url>
+                      <releases><enabled>true</enabled></releases>
+                      <snapshots><enabled>true</enabled></snapshots>
+                    </repository>
+                  </repositories>
+                  <pluginRepositories>
+                    <pluginRepository>
+                      <id>central</id>
+                      <url>http://$NEXUS_SERVICE_HOST:$NEXUS_SERVICE_PORT/repository/maven-all-public</url>
+                      <releases><enabled>true</enabled></releases>
+                      <snapshots><enabled>true</enabled></snapshots>
+                    </pluginRepository>
+                  </pluginRepositories>
                 </profile>
               </profiles>
 
@@ -162,11 +173,12 @@ objects:
                       sh "echo '${applicationProperties}' > $HOME/workspace/ci/ci-todo-write-app-build-pipeline/todo-write-app/src/test/resources/application.properties"
                     }
                     stage("test, install and build native") {
-                      container("centos-quarkus-maven") {
-                        def status = sh(returnStatus: true, script: "mvn $mavenSettingsXmlPathOption package -pl todo-write-app -Pnative -Dnative-image.container-runtime=docker")
+                      container("maven") {
+                        echo "mvn $mavenSettingsXmlPathOption clean test install -pl todo-write-app"
+                        sleep 99999999999
+                        def status = sh(returnStatus: true, script: "mvn $mavenSettingsXmlPathOption clean test install -pl todo-write-app")
                         if (status != 0) {
-                          containerLog 'kafka'
-                          containerLog 'connect'
+                          containerLog 'centos-quarkus-maven'
                           currentBuild.result = 'FAILURE'
                         }
                       }
