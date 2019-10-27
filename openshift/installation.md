@@ -10,8 +10,8 @@ docker pull openshift/jenkins-slave-nodejs-centos7:v3.11 && \
     docker pull landoop/kafka-topics-ui:0.9.4 && \
     docker pull debezium/connect:0.10 && \
     docker pull debezium/postgres:11-alpine && \
-    docker pull postgres:11-alpine
-
+    docker pull postgres:11-alpine && \
+    docker pull quay.io/quarkus/centos-quarkus-maven:19.2.0.1
 
 ## Debezium
 
@@ -77,5 +77,5 @@ EOF
 
 ## Pipeline
 
-oc create -f todo-write-app-pipeline.yml -n staging
+oc create -f openshift/todo-write-app-pipeline.yml -n ci
 
