@@ -4,4 +4,7 @@ import from catalog
 
     echo "192.168.56.101  jenkins-staging.apps.192.168.56.101       jenkins-staging.apps.192.168.56.101" >> /etc/hosts
 
-oc create -f jenkins-agent-maven-35-graalvm-centos7-objects.yml -n staging
+sources:
+https://github.com/openshift/origin/blob/master/examples/jenkins/pipeline/maven-pipeline.yaml
+
+oc policy add-role-to-user edit system:serviceaccount:ci:default -n ci

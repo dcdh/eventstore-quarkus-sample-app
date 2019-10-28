@@ -5,6 +5,41 @@ labels:
 metadata:
   name: todo-write-app-build-pipeline-template
 objects:
+  - apiVersion: v1
+    kind: ImageStream
+    metadata:
+      labels:
+        app: todo-write-app
+      name: todo-write-app
+    spec: {}
+    status:
+      dockerImageRepository: ""
+  - apiVersion: v1
+    kind: BuildConfig
+    metadata:
+      labels:
+        app: todo-write-app-docker
+      name: todo-write-app-docker
+    spec:
+      output:
+        to:
+          kind: ImageStreamTag
+          name: todo-write-app:latest
+      postCommit: {}
+      resources: {}
+      runPolicy: Serial
+      source:
+        dockerfile: |-
+          FROM fabric8/java-alpine-openjdk8-jre
+          ENV JAVA_OPTIONS="-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager"
+          ENV AB_ENABLED=jmx_exporter
+          COPY target/lib/* /deployments/lib/
+          COPY target/*-runner.jar /deployments/app.jar
+          ENTRYPOINT [ "/deployments/run-java.sh" ]
+        type: Docker
+      strategy:
+        type: Docker
+      triggers: []
   - apiVersion: "v1"
     kind: "PersistentVolumeClaim"
     metadata:
@@ -31,9 +66,11 @@ objects:
       strategy:
         jenkinsPipelineStrategy:
           jenkinsfile: |-
+            // TODO tager l'image avec la date et la version du commit !
             try {
               timeout(time: 60, unit: 'MINUTES') {
                 def label = "event-data-spreader-${UUID.randomUUID().toString()}"
+                def appName = "todo-write-app"
                 podTemplate(
                   label: label,
                   cloud: 'openshift', //This needs to match the cloud name in jenkins-kubernetes-plugin config
@@ -170,18 +207,42 @@ objects:
 
             quarkus.http.port=8084
             """
-                      sh "echo '${applicationProperties}' > $HOME/workspace/ci/ci-todo-write-app-build-pipeline/todo-write-app/src/test/resources/application.properties"
+                      sh "echo '${applicationProperties}' > $HOME/workspace/ci/ci-todo-write-app-build-pipeline/${appName}/src/test/resources/application.properties"
                     }
-                    stage("test, install and build native") {
+                    stage("build jar") {
                       container("maven") {
-                        echo "mvn $mavenSettingsXmlPathOption clean test install -pl todo-write-app"
-                        sleep 99999999999
-                        def status = sh(returnStatus: true, script: "mvn $mavenSettingsXmlPathOption clean test install -pl todo-write-app")
+                        echo "mvn $mavenSettingsXmlPathOption clean test install -pl ${appName}"
+                        def status = sh(returnStatus: true, script: "mvn $mavenSettingsXmlPathOption clean test install -pl ${appName}")
                         if (status != 0) {
                           containerLog 'centos-quarkus-maven'
                           currentBuild.result = 'FAILURE'
+                          return
                         }
                       }
+                    }
+                    stage("build image") {
+                      def status = sh(returnStdout: true, script: "oc start-build ${appName}-docker --from-dir=$HOME/workspace/ci/ci-todo-write-app-build-pipeline/${appName}")
+                      def result = status.split("\n").find{ it.matches("^build.*${appName}.*started") }
+                      if(!result) {
+                        echo "ERROR: No started build found for ${appName}"
+                        currentBuild.result = 'FAILURE'
+                        return
+                      }
+                      def startedBuild = result.replaceAll("build [^0-9a-zA-Z]*", "").replaceAll("[^0-9a-zA-Z]* started", "").replaceFirst("^.*/", "")
+                      echo "Build ${startedBuild} has started. Now watching it ..."
+                      openshift.withCluster() {
+                        openshift.withProject() {
+                          def build = openshift.selector('builds', "${startedBuild}")
+                          build.untilEach {
+                            def object = it.object()
+                            if(object.status.phase == "Failed") {
+                              error("Build ${startedBuild} failed")
+                            }
+                            return object.status.phase == "Complete"
+                          }
+                        }
+                      }
+                      // TODO create an UAT environment and deploy in it automatically !
                     }
                   }
                 }

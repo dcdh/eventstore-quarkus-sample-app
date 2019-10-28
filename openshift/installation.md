@@ -11,7 +11,8 @@ docker pull openshift/jenkins-slave-nodejs-centos7:v3.11 && \
     docker pull debezium/connect:0.10 && \
     docker pull debezium/postgres:11-alpine && \
     docker pull postgres:11-alpine && \
-    docker pull quay.io/quarkus/centos-quarkus-maven:19.2.0.1
+    docker pull quay.io/quarkus/centos-quarkus-maven:19.2.0.1 && \
+    docker pull fabric8/java-alpine-openjdk8-jre
 
 ## Debezium
 
