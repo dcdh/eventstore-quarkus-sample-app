@@ -79,3 +79,5 @@ EOF
 ## Pipeline
 
 oc process -f openshift/todo-write-app-pipeline.yml | oc create -f - -n ci
+
+oc process -f openshift/todo-query-app-pipeline.yml | oc create -f - -n ci
