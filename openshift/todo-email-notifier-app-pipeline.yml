@@ -1,1 +1,269 @@
-TODO
+apiVersion: v1
+kind: Template
+labels:
+  template: todo-email-notifier-app-build-pipeline-template
+metadata:
+  name: todo-email-notifier-app-build-pipeline-template
+objects:
+  - apiVersion: v1
+    kind: ImageStream
+    metadata:
+      labels:
+        app: todo-email-notifier-app
+      name: todo-email-notifier-app
+    spec: {}
+    status:
+      dockerImageRepository: ""
+  - apiVersion: v1
+    kind: BuildConfig
+    metadata:
+      labels:
+        app: todo-email-notifier-app-docker
+      name: todo-email-notifier-app-docker
+    spec:
+      output:
+        to:
+          kind: ImageStreamTag
+          name: todo-email-notifier-app:latest
+      postCommit: {}
+      resources: {}
+      runPolicy: Serial
+      source:
+        dockerfile: |-
+          FROM fabric8/java-alpine-openjdk8-jre
+          ENV JAVA_OPTIONS="-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager"
+          ENV AB_ENABLED=jmx_exporter
+          COPY target/lib/* /deployments/lib/
+          COPY target/*-runner.jar /deployments/app.jar
+          ENTRYPOINT [ "/deployments/run-java.sh" ]
+        type: Docker
+      strategy:
+        type: Docker
+      triggers: []
+  - apiVersion: "v1"
+    kind: "PersistentVolumeClaim"
+    metadata:
+      name: "maven-repo-todo-email-notifier-app"
+      namespace: "kubernetes-plugin"
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 10Gi
+  - apiVersion: v1
+    kind: BuildConfig
+    metadata:
+      labels:
+        name: todo-email-notifier-app-build-pipeline
+      name: todo-email-notifier-app-build-pipeline
+    spec:
+      nodeSelector: {}
+      output: {}
+      postCommit: {}
+      resources: {}
+      serviceAccount: builder
+      strategy:
+        jenkinsPipelineStrategy:
+          jenkinsfile: |-
+            // TODO tager l'image avec la date et la version du commit ! dans des labels :)
+            // passer par oc label node node001.krenger.ch mylabel=myvalue
+            try {
+              timeout(time: 60, unit: 'MINUTES') {
+                def label = "event-data-spreader-${UUID.randomUUID().toString()}"
+                def appName = "todo-email-notifier-app"
+                podTemplate(
+                  label: label,
+                  cloud: 'openshift', //This needs to match the cloud name in jenkins-kubernetes-plugin config
+                  containers: [
+                    //Jenkins agent. Also executes the integration test. Having a 'jnlp' container is mandatory.
+                    containerTemplate(name: 'jnlp',
+                                      image: 'openshift/jenkins-agent-maven-35-centos7:v3.11',
+                                      resourceLimitMemory: '512Mi',
+                                      args: '${computer.jnlpmac} ${computer.name}',
+                                      envVars: [
+                                        //Heap for mvn and surefire process is 1/4 of resourceLimitMemory by default
+                                        envVar(key: 'JNLP_MAX_HEAP_UPPER_BOUND_MB', value: '64')
+                                      ]),
+                    containerTemplate(name: 'zookeeper',
+                                      image: 'debezium/zookeeper:0.10',
+                                      resourceLimitMemory: '128Mi'),
+                    containerTemplate(name: 'kafka',
+                                      image: 'debezium/kafka:0.10',
+                                      resourceLimitMemory: '512Mi',
+                                      envVars: [
+                                        envVar(key: 'ZOOKEEPER_CONNECT', value: 'localhost:2181'),
+                                        envVar(key: 'HOST_NAME', value: 'localhost'),
+                                        envVar(key: 'ADVERTISED_HOST_NAME', value: 'localhost'),
+                                        envVar(key: 'CREATE_TOPICS', value: 'event-query:1:1:compact,event:1:1:compact,aggregaterootprojection:1:1:compact,flyway_schema_history:1:1:compact,test:1:1:compact')
+                                      ]),
+                    containerTemplate(name: 'connect',
+                                      image: 'debezium/connect:0.10',
+                                      resourceLimitMemory: '1Gi',
+                                      envVars: [
+                                        envVar(key: 'BOOTSTRAP_SERVERS', value: 'localhost:9092'),
+                                        envVar(key: 'HOST_NAME', value: 'localhost'),
+                                        envVar(key: 'GROUP_ID', value: '1'),
+                                        envVar(key: 'CONFIG_STORAGE_TOPIC', value: 'my_connect_configs'),
+                                        envVar(key: 'OFFSET_STORAGE_TOPIC', value: 'my_connect_offsets'),
+                                        envVar(key: 'STATUS_STORAGE_TOPIC', value: 'my_connect_statuses')
+                                      ]),
+                    containerTemplate(name: 'database',
+                                      image: 'dcdh1983/postgresql-10-debezium-centos7:latest',
+                                      resourceLimitMemory: '128Mi',
+                                      envVars: [
+                                        envVar(key: 'POSTGRESQL_USER', value: 'postgresuser'),
+                                        envVar(key: 'POSTGRESQL_PASSWORD', value: 'postgrespassword'),
+                                        envVar(key: 'POSTGRESQL_DATABASE', value: 'todoemailnotifier')
+                                      ]),
+                    containerTemplate(name: 'mailhog',
+                                      image: 'mailhog/mailhog:v1.0.0',
+                                      resourceLimitMemory: '32Mi',
+                                      command: "cat",
+                                      ttyEnabled: true),
+                    containerTemplate(name: 'maven',
+                                      image: 'quay.io/quarkus/centos-quarkus-maven:19.2.0.1',
+                                      resourceLimitMemory: '512Mi',
+                                      command: "cat",
+                                      ttyEnabled: true),
+                    containerTemplate(name: 'debug',
+                                      image: 'busybox',
+                                      resourceLimitMemory: '128Mi',
+                                      command: "cat",
+                                      ttyEnabled: true)
+                  ],
+                  volumes: [
+                    persistentVolumeClaim(mountPath: '/home/jenkins/.m2/repository', claimName: 'maven-repo-todo-email-notifier-app', readOnly: false)
+                  ]) {
+                  node(label) {
+                    String mavenSettingsXmlPathOption = "-s /home/jenkins/settings.xml"
+                    stage("prepare env") {
+                      container('jnlp') {
+                        String settingsXml = """
+            <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+                      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                      xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+                      https://maven.apache.org/xsd/settings-1.0.0.xsd">
+              <servers>
+                <server>
+                  <id>nexus3-snapshot-repository</id>
+                  <username>admin</username>
+                  <password>admin123</password>
+                </server>
+                <server>
+                  <id>nexus3-release-repository</id>
+                  <username>admin</username>
+                  <password>admin123</password>
+                </server>
+              </servers>
+              <profiles>
+                <profile>
+                  <id>nexus3</id>
+                  <repositories>
+                    <repository>
+                      <id>central</id>
+                      <url>http://$NEXUS_SERVICE_HOST:$NEXUS_SERVICE_PORT/repository/maven-all-public</url>
+                      <releases><enabled>true</enabled></releases>
+                      <snapshots><enabled>true</enabled></snapshots>
+                    </repository>
+                  </repositories>
+                  <pluginRepositories>
+                    <pluginRepository>
+                      <id>central</id>
+                      <url>http://$NEXUS_SERVICE_HOST:$NEXUS_SERVICE_PORT/repository/maven-all-public</url>
+                      <releases><enabled>true</enabled></releases>
+                      <snapshots><enabled>true</enabled></snapshots>
+                    </pluginRepository>
+                  </pluginRepositories>
+                </profile>
+              </profiles>
+
+              <activeProfiles>
+                <activeProfile>nexus3</activeProfile>
+              </activeProfiles>
+
+              <mirrors>
+                <mirror>
+                  <id>nexus</id>
+                  <mirrorOf>*</mirrorOf>
+                  <url>http://$NEXUS_SERVICE_HOST:$NEXUS_SERVICE_PORT/repository/maven-all-public/</url>
+                </mirror>
+              </mirrors>
+            </settings>
+            """
+                        sh "echo '${settingsXml}' > $HOME/settings.xml"
+                      }
+                    }
+                    stage("checkout") {
+                      git url: "https://github.com/dcdh/eventstore-quarkus-sample-app.git", branch: "master"
+                    }
+                    stage("prepare test") {
+                      String applicationProperties = """
+            quarkus.datasource.url=jdbc:postgresql://localhost:5432/todoemailnotifier
+            quarkus.datasource.driver=org.postgresql.Driver
+            quarkus.datasource.username=postgresuser
+            quarkus.datasource.password=postgrespassword
+
+            quarkus.hibernate-orm.database.generation=none
+
+            quarkus.flyway.migrate-at-start=true
+
+            quarkus.swagger-ui.always-include=true
+
+            quarkus.mailer.mock=false
+            quarkus.mailer.from=test@quarkus.io
+            quarkus.mailer.host=localhost
+            quarkus.mailer.port=1025
+            quarkus.mailer.ssl=false
+            quarkus.mailer.username=
+            quarkus.mailer.password=
+
+            sendTo=damien.clementdhuart@gmail.com
+            """
+                      sh "echo '${applicationProperties}' > $HOME/workspace/ci/ci-todo-email-notifier-app-build-pipeline/${appName}/src/test/resources/application.properties"
+                    }
+                    stage("build jar") {
+                      container("maven") {
+                        echo "mvn $mavenSettingsXmlPathOption clean test install -pl ${appName}"
+                        def status = sh(returnStatus: true, script: "mvn $mavenSettingsXmlPathOption clean test install -pl ${appName}")
+                        if (status != 0) {
+                          containerLog 'maven'
+                          currentBuild.result = 'FAILURE'
+                          return
+                        }
+                      }
+                    }
+                    stage("build image") {
+                      def status = sh(returnStdout: true, script: "oc start-build ${appName}-docker --from-dir=$HOME/workspace/ci/ci-todo-email-notifier-app-build-pipeline/${appName}")
+                      def result = status.split("\n").find{ it.matches("^build.*${appName}.*started") }
+                      if(!result) {
+                        echo "ERROR: No started build found for ${appName}"
+                        currentBuild.result = 'FAILURE'
+                        return
+                      }
+                      def startedBuild = result.replaceAll("build [^0-9a-zA-Z]*", "").replaceAll("[^0-9a-zA-Z]* started", "").replaceFirst("^.*/", "")
+                      echo "Build ${startedBuild} has started. Now watching it ..."
+                      openshift.withCluster() {
+                        openshift.withProject() {
+                          def build = openshift.selector('builds', "${startedBuild}")
+                          build.untilEach {
+                            def object = it.object()
+                            if(object.status.phase == "Failed") {
+                              error("Build ${startedBuild} failed")
+                            }
+                            return object.status.phase == "Complete"
+                          }
+                        }
+                      }
+                      // TODO create an UAT environment and deploy in it automatically !
+                    }
+                  }
+                }
+              }
+            } catch (err) {
+              echo "in catch block"
+              echo "Caught: ${err}"
+              currentBuild.result = 'FAILURE'
+              throw err
+            }
+        type: JenkinsPipeline

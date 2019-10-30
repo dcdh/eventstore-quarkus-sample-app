@@ -12,7 +12,8 @@ docker pull openshift/jenkins-slave-nodejs-centos7:v3.11 && \
     docker pull debezium/postgres:11-alpine && \
     docker pull postgres:11-alpine && \
     docker pull quay.io/quarkus/centos-quarkus-maven:19.2.0.1 && \
-    docker pull fabric8/java-alpine-openjdk8-jre
+    docker pull fabric8/java-alpine-openjdk8-jre && \
+    docker pull mailhog/mailhog:v1.0.0
 
 ## Debezium
 
@@ -81,3 +82,5 @@ EOF
 oc process -f openshift/todo-write-app-pipeline.yml | oc create -f - -n ci
 
 oc process -f openshift/todo-query-app-pipeline.yml | oc create -f - -n ci
+
+oc process -f openshift/todo-email-notifier-app-pipeline.yml | oc create -f - -n ci
