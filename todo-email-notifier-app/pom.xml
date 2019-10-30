@@ -10,7 +10,7 @@
     <artifactId>todo-email-notifier-app</artifactId>
     <properties>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <surefire-plugin.version>2.22.0</surefire-plugin.version>
+        <surefire-plugin.version>2.5</surefire-plugin.version>
         <quarkus.version>0.27.0</quarkus.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
