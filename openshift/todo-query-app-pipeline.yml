@@ -215,7 +215,7 @@ objects:
                         echo "mvn $mavenSettingsXmlPathOption clean test install -pl ${appName}"
                         def status = sh(returnStatus: true, script: "mvn $mavenSettingsXmlPathOption clean test install -pl ${appName}")
                         if (status != 0) {
-                          containerLog 'centos-quarkus-maven'
+                          containerLog 'maven'
                           currentBuild.result = 'FAILURE'
                           return
                         }
