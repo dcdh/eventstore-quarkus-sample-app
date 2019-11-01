@@ -47,6 +47,16 @@ oc new-app postgresql-persistent -p DATABASE_SERVICE_NAME=todo-query -p POSTGRES
 
 oc new-app postgresql-persistent -p DATABASE_SERVICE_NAME=todo-email-notifier -p POSTGRESQL_USER=postgresuser -p POSTGRESQL_PASSWORD=postgrespassword -p POSTGRESQL_DATABASE=todo-email-notifier -p POSTGRESQL_VERSION=9.6 -l name=todo-email-notifier
 
+## Mailhog
+
+oc process -f openshift/mailhog-template.yml | oc create -f -
+
+
+
+
+
+
+
 
 /**
 oc exec -i -c kafka broker-kafka-0 -- curl -X POST \

@@ -26,6 +26,18 @@ objects:
       sessionAffinity: None
     status:
       loadBalancer: {}
+  - apiVersion: route.openshift.io/v1
+    kind: Route
+    metadata:
+      name: mailhog
+    spec:
+      port:
+        targetPort: web
+      to:
+        kind: Service
+        name: mailhog
+        weight: 100
+      wildcardPolicy: None
   - apiVersion: v1
     kind: DeploymentConfig
     metadata:
