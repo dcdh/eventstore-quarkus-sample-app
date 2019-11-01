@@ -67,6 +67,8 @@ objects:
                     -Djava.util.logging.manager=org.jboss.logmanager.LogManager
                     -Dquarkus.datasource.url=jdbc:postgresql://eventstore.$(OPENSHIFT_NAMESPACE).svc:5432/eventstore
                     -Dquarkus.http.port=8080
+                    -Dquarkus.datasource.username=postgresuser
+                    -Dquarkus.datasource.password=postgrespassword
                     -Xmx256m
               imagePullPolicy: IfNotPresent
               livenessProbe:
