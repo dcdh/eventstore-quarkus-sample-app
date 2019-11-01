@@ -1,0 +1,68 @@
+apiVersion: v1
+kind: Template
+labels:
+  template: todo-app-go-production-pipeline-template
+metadata:
+  name: todo-app-go-production-pipeline-template
+objects:
+  - apiVersion: v1
+    kind: BuildConfig
+    metadata:
+      labels:
+        name: todo-app-go-production-pipeline
+      name: todo-app-go-production-pipeline
+    spec:
+      nodeSelector: {}
+      output: {}
+      postCommit: {}
+      resources: {}
+      serviceAccount: builder
+      strategy:
+        jenkinsPipelineStrategy:
+          jenkinsfile: |-
+            try {
+              timeout(time: 60, unit: 'MINUTES') {
+                def label = "event-data-spreader-${UUID.randomUUID().toString()}"
+                def appName = "todo-write-app"
+                podTemplate(
+                  label: label,
+                  cloud: 'openshift', //This needs to match the cloud name in jenkins-kubernetes-plugin config
+                  containers: [
+                    //Jenkins agent. Also executes the integration test. Having a 'jnlp' container is mandatory.
+                    containerTemplate(name: 'jnlp',
+                                      image: 'openshift/jenkins-agent-maven-35-centos7:v3.11',
+                                      resourceLimitMemory: '512Mi',
+                                      args: '${computer.jnlpmac} ${computer.name}',
+                                      envVars: [
+                                        //Heap for mvn and surefire process is 1/4 of resourceLimitMemory by default
+                                        envVar(key: 'JNLP_MAX_HEAP_UPPER_BOUND_MB', value: '64')
+                                      ])
+                  ]) {
+                  node(label) {
+                    stage("run e2e") {
+                      // TODO
+                    }
+                    stage("Promote production") {
+                      openshift.withCluster() {
+                        openshift.tag("todo-write-app:ci", "todo-write-app:production")
+                        openshift.selector("dc", "todo-write-app").rollout().latest()
+                        def latestDeploymentVersion = openshift.selector("dc", "todo-write-app").object().status.latestVersion
+                        def rc = openshift.selector("rc", "todo-write-app-${latestDeploymentVersion}")
+                        timeout (time: 10, unit: 'MINUTES') {
+                          rc.untilEach(1) {
+                            def rcMap = it.object()
+                            return (rcMap.status.replicas.equals(rcMap.status.readyReplicas))
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            } catch (err) {
+              echo "in catch block"
+              echo "Caught: ${err}"
+              currentBuild.result = 'FAILURE'
+              throw err
+            }
+        type: JenkinsPipeline
