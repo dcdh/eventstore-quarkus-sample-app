@@ -13,7 +13,8 @@ docker pull openshift/jenkins-slave-nodejs-centos7:v3.11 && \
     docker pull postgres:11-alpine && \
     docker pull quay.io/quarkus/centos-quarkus-maven:19.2.0.1 && \
     docker pull fabric8/java-alpine-openjdk8-jre && \
-    docker pull mailhog/mailhog:v1.0.0
+    docker pull mailhog/mailhog:v1.0.0 && \
+    docker pull centos:8
 
 ## Debezium
 
@@ -56,34 +57,6 @@ oc process -f openshift/mailhog-template.yml | oc create -f -
 ### Write
 
 oc process -f openshift/todo-write-app-template.yml | oc create -f -
-
-TODO passer par un init container pour "activer" debezium... (faire un test via la ligne de commande ... )
-
-/**
-oc exec -i -c kafka broker-kafka-0 -- curl -X POST \
-    -H "Accept:application/json" \
-    -H "Content-Type:application/json" \
-    http://debezium-connect-api:8083/connectors -d @- <<'EOF'
-
-{
-    "name": "todo-connector",
-    "config": {
-        "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
-        "tasks.max": "1",
-        "database.hostname": "eventstore.staging.svc",
-        "database.port": "5432",
-        "database.user": "postgresuser",
-        "database.password": "postgrespassword",
-        "database.dbname" : "eventstore",
-        "database.server.name": "eventstore.staging.svc",
-        "schema.whitelist": "public",
-        "transforms": "route",
-        "transforms.route.type": "org.apache.kafka.connect.transforms.RegexRouter",
-        "transforms.route.regex": "([^.]+)\\.([^.]+)\\.([^.]+)",
-        "transforms.route.replacement": "$3"
-    }
-}
-EOF
 
 ### Query
 
