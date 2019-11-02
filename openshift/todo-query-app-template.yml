@@ -66,6 +66,7 @@ objects:
                     -Dquarkus.http.host=0.0.0.0
                     -Djava.util.logging.manager=org.jboss.logmanager.LogManager
                     -Dquarkus.datasource.url=jdbc:postgresql://todo-query.$(OPENSHIFT_NAMESPACE).svc:5432/todo-query
+                    -Dsmallrye.messaging.source.event.bootstrap.servers=broker-kafka-bootstrap.$(OPENSHIFT_NAMESPACE).svc:9092
                     -Dquarkus.http.port=8080
                     -Dquarkus.datasource.username=postgresuser
                     -Dquarkus.datasource.password=postgrespassword
