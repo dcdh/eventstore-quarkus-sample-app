@@ -72,6 +72,21 @@ objects:
                         }
                       }
                     }
+                    stage("Promote todo email notifier app to production") {
+                      openshift.withCluster() {
+                        openshift.tag("ci/todo-email-notifier-app:latest", "production/todo-email-notifier-app:latest")
+                        openshift.withProject("production") {
+                          def latestDeploymentVersion = openshift.selector("dc", "todo-email-notifier-app").object().status.latestVersion
+                          def rc = openshift.selector("rc", "todo-email-notifier-app-${latestDeploymentVersion}")
+                          timeout (time: 10, unit: 'MINUTES') {
+                            rc.untilEach(1) {
+                              def rcMap = it.object()
+                              return (rcMap.status.replicas.equals(rcMap.status.readyReplicas))
+                            }
+                          }
+                        }
+                      }
+                    }
                   }
                 }
               }

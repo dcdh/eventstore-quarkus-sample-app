@@ -89,7 +89,9 @@ EOF
 
 oc process -f openshift/todo-query-app-template.yml | oc create -f -
 
+### Email notification
 
+oc process -f openshift/todo-email-notifier-app-template.yml | oc create -f -
 
 ## Pipeline
 
