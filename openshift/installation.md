@@ -85,6 +85,9 @@ oc exec -i -c kafka broker-kafka-0 -- curl -X POST \
 }
 EOF
 
+### Query
+
+oc process -f openshift/todo-query-app-template.yml | oc create -f -
 
 
 

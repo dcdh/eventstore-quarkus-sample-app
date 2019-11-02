@@ -57,6 +57,21 @@ objects:
                         }
                       }
                     }
+                    stage("Promote todo query app to production") {
+                      openshift.withCluster() {
+                        openshift.tag("ci/todo-query-app:latest", "production/todo-query-app:latest")
+                        openshift.withProject("production") {
+                          def latestDeploymentVersion = openshift.selector("dc", "todo-query-app").object().status.latestVersion
+                          def rc = openshift.selector("rc", "todo-query-app-${latestDeploymentVersion}")
+                          timeout (time: 10, unit: 'MINUTES') {
+                            rc.untilEach(1) {
+                              def rcMap = it.object()
+                              return (rcMap.status.replicas.equals(rcMap.status.readyReplicas))
+                            }
+                          }
+                        }
+                      }
+                    }
                   }
                 }
               }
