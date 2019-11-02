@@ -42,16 +42,17 @@ objects:
                     stage("run e2e") {
                       // TODO
                     }
-                    stage("Promote production") {
+                    stage("Promote todo write app to production") {
                       openshift.withCluster() {
-                        openshift.tag("todo-write-app:ci", "todo-write-app:production")
-                        openshift.selector("dc", "todo-write-app").rollout().latest()
-                        def latestDeploymentVersion = openshift.selector("dc", "todo-write-app").object().status.latestVersion
-                        def rc = openshift.selector("rc", "todo-write-app-${latestDeploymentVersion}")
-                        timeout (time: 10, unit: 'MINUTES') {
-                          rc.untilEach(1) {
-                            def rcMap = it.object()
-                            return (rcMap.status.replicas.equals(rcMap.status.readyReplicas))
+                        openshift.tag("ci/todo-write-app:latest", "production/todo-write-app:latest")
+                        openshift.withProject("production") {
+                          def latestDeploymentVersion = openshift.selector("dc", "todo-write-app").object().status.latestVersion
+                          def rc = openshift.selector("rc", "todo-write-app-${latestDeploymentVersion}")
+                          timeout (time: 10, unit: 'MINUTES') {
+                            rc.untilEach(1) {
+                              def rcMap = it.object()
+                              return (rcMap.status.replicas.equals(rcMap.status.readyReplicas))
+                            }
                           }
                         }
                       }

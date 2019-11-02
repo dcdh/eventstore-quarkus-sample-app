@@ -51,12 +51,13 @@ oc new-app postgresql-persistent -p DATABASE_SERVICE_NAME=todo-email-notifier -p
 
 oc process -f openshift/mailhog-template.yml | oc create -f -
 
+## Todo apps
 
+### Write
 
+oc process -f openshift/todo-write-app-template.yml | oc create -f -
 
-
-
-
+TODO passer par un init container pour "activer" debezium... (faire un test via la ligne de commande ... )
 
 /**
 oc exec -i -c kafka broker-kafka-0 -- curl -X POST \
@@ -94,3 +95,10 @@ oc process -f openshift/todo-write-app-pipeline.yml | oc create -f - -n ci
 oc process -f openshift/todo-query-app-pipeline.yml | oc create -f - -n ci
 
 oc process -f openshift/todo-email-notifier-app-pipeline.yml | oc create -f - -n ci
+
+### production
+
+> #oc policy add-role-to-user edit system:serviceaccount:ci:default -n production
+> allow serviceaccount to tag image in production project
+
+oc process -f openshift/todo-app-go-production-pipeline.yml | oc create -f - -n ci
