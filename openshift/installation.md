@@ -16,7 +16,11 @@ docker pull openshift/jenkins-slave-nodejs-centos7:v3.11 && \
     docker pull mailhog/mailhog:v1.0.0 && \
     docker pull centos:8
 
-## Debezium
+## Production
+
+oc project production
+
+### Debezium
 
 docker pull strimzi/operator:0.12.1 && \
     docker pull strimzi/kafka:0.12.1-kafka-2.2.1 && \
@@ -40,33 +44,23 @@ mkdir -p plugins && cd plugins && \
 curl http://central.maven.org/maven2/io/debezium/debezium-connector-postgres/0.9.5.Final/debezium-connector-postgres-0.9.5.Final-plugin.tar.gz | tar xz; && \
 oc start-build debezium-connect --from-dir=. --follow
 
-## Postgres
+### todo-write-app
 
-oc new-app postgresql-persistent -p DATABASE_SERVICE_NAME=eventstore -p POSTGRESQL_USER=postgresuser -p POSTGRESQL_PASSWORD=postgrespassword -p POSTGRESQL_DATABASE=eventstore -p POSTGRESQL_VERSION=9.6 -l name=eventstore
+oc new-app postgresql-persistent -p DATABASE_SERVICE_NAME=eventstore -p POSTGRESQL_USER=postgresuser -p POSTGRESQL_PASSWORD=postgrespassword -p POSTGRESQL_DATABASE=eventstore -p POSTGRESQL_VERSION=10-debezium-centos7-latest -l app=todo-write-app
+oc process -f openshift/todo-write-app-template.yml -l app=todo-write-app | oc create -f -
 
-oc new-app postgresql-persistent -p DATABASE_SERVICE_NAME=todo-query -p POSTGRESQL_USER=postgresuser -p POSTGRESQL_PASSWORD=postgrespassword -p POSTGRESQL_DATABASE=todo-query -p POSTGRESQL_VERSION=9.6 -l name=todo-query
+### todo-query-app
 
-oc new-app postgresql-persistent -p DATABASE_SERVICE_NAME=todo-email-notifier -p POSTGRESQL_USER=postgresuser -p POSTGRESQL_PASSWORD=postgrespassword -p POSTGRESQL_DATABASE=todo-email-notifier -p POSTGRESQL_VERSION=9.6 -l name=todo-email-notifier
+oc new-app postgresql-persistent -p DATABASE_SERVICE_NAME=todo-query -p POSTGRESQL_USER=postgresuser -p POSTGRESQL_PASSWORD=postgrespassword -p POSTGRESQL_DATABASE=todo-query -p POSTGRESQL_VERSION=10 -l app=todo-query-app
+oc process -f openshift/todo-query-app-template.yml -l app=todo-query-app | oc create -f -
 
-## Mailhog
+### todo-email-notifier-app
 
-oc process -f openshift/mailhog-template.yml | oc create -f -
+oc new-app postgresql-persistent -p DATABASE_SERVICE_NAME=todo-email-notifier -p POSTGRESQL_USER=postgresuser -p POSTGRESQL_PASSWORD=postgrespassword -p POSTGRESQL_DATABASE=todo-email-notifier -p POSTGRESQL_VERSION=10 -l app=todo-email-notifier-app
+oc process -f openshift/mailhog-template.yml -l app=todo-email-notifier-app | oc create -f -
+oc process -f openshift/todo-email-notifier-app-template.yml -l app=todo-email-notifier-app | oc create -f -
 
-## Todo apps
-
-### Write
-
-oc process -f openshift/todo-write-app-template.yml | oc create -f -
-
-### Query
-
-oc process -f openshift/todo-query-app-template.yml | oc create -f -
-
-### Email notification
-
-oc process -f openshift/todo-email-notifier-app-template.yml | oc create -f -
-
-## Pipeline
+## Pipeline CI
 
 oc process -f openshift/jenkins/pipeline-infrastructure.yml | oc create -f - -n ci
 
@@ -75,8 +69,6 @@ oc process -f openshift/jenkins/todo-write-app-pipeline.yml | oc create -f - -n 
 oc process -f openshift/jenkins/todo-query-app-pipeline.yml | oc create -f - -n ci
 
 oc process -f openshift/jenkins/todo-email-notifier-app-pipeline.yml | oc create -f - -n ci
-
-### production
 
 > #oc policy add-role-to-user edit system:serviceaccount:ci:default -n production
 > allow serviceaccount to tag image in production project
