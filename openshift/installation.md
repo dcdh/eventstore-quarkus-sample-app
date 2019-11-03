@@ -68,6 +68,8 @@ oc process -f openshift/todo-email-notifier-app-template.yml | oc create -f -
 
 ## Pipeline
 
+oc process -f openshift/pipeline-infrastructure.yml | oc create -f - -n ci
+
 oc process -f openshift/todo-write-app-pipeline.yml | oc create -f - -n ci
 
 oc process -f openshift/todo-query-app-pipeline.yml | oc create -f - -n ci

@@ -40,17 +40,6 @@ objects:
       strategy:
         type: Docker
       triggers: []
-  - apiVersion: "v1"
-    kind: "PersistentVolumeClaim"
-    metadata:
-      name: "maven-repo-todo-email-notifier-app"
-      namespace: "kubernetes-plugin"
-    spec:
-      accessModes:
-        - ReadWriteOnce
-      resources:
-        requests:
-          storage: 10Gi
   - apiVersion: v1
     kind: BuildConfig
     metadata:
@@ -133,7 +122,7 @@ objects:
                                       ttyEnabled: true)
                   ],
                   volumes: [
-                    persistentVolumeClaim(mountPath: '/home/jenkins/.m2/repository', claimName: 'maven-repo-todo-email-notifier-app', readOnly: false)
+                    persistentVolumeClaim(mountPath: '/home/jenkins/.m2/repository', claimName: 'maven-pvc', readOnly: false)
                   ]) {
                   node(label) {
                     String mavenSettingsXmlPathOption = "-s /home/jenkins/settings.xml"
