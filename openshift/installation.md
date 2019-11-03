@@ -68,17 +68,17 @@ oc process -f openshift/todo-email-notifier-app-template.yml | oc create -f -
 
 ## Pipeline
 
-oc process -f openshift/pipeline-infrastructure.yml | oc create -f - -n ci
+oc process -f openshift/jenkins/pipeline-infrastructure.yml | oc create -f - -n ci
 
-oc process -f openshift/todo-write-app-pipeline.yml | oc create -f - -n ci
+oc process -f openshift/jenkins/todo-write-app-pipeline.yml | oc create -f - -n ci
 
-oc process -f openshift/todo-query-app-pipeline.yml | oc create -f - -n ci
+oc process -f openshift/jenkins/todo-query-app-pipeline.yml | oc create -f - -n ci
 
-oc process -f openshift/todo-email-notifier-app-pipeline.yml | oc create -f - -n ci
+oc process -f openshift/jenkins/todo-email-notifier-app-pipeline.yml | oc create -f - -n ci
 
 ### production
 
 > #oc policy add-role-to-user edit system:serviceaccount:ci:default -n production
 > allow serviceaccount to tag image in production project
 
-oc process -f openshift/todo-app-go-production-pipeline.yml | oc create -f - -n ci
+oc process -f openshift/jenkins/todo-app-go-production-pipeline.yml | oc create -f - -n ci
