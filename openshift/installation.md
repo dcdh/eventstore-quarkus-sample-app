@@ -20,29 +20,34 @@ docker pull openshift/jenkins-slave-nodejs-centos7:v3.11 && \
 
 oc project production
 
+### strimzi (kafka)
+
+https://debezium.io/documentation/reference/0.10/operations/openshift.html
+
+docker pull strimzi/operator:0.14.0 && \
+    docker pull strimzi/kafka:0.14.0-kafka-2.3.0 && \
+    docker pull strimzi/operator:0.14.0 && \
+    docker pull strimzi/kafka-bridge:0.14.0
+
+export STRIMZI_VERSION=0.14.0
+git clone -b $STRIMZI_VERSION https://github.com/strimzi/strimzi-kafka-operator
+cd strimzi-kafka-operator
+
+oc create -f install/cluster-operator && oc create -f examples/templates/cluster-operator
+
+oc process strimzi-persistent -p CLUSTER_NAME=broker -p ZOOKEEPER_NODE_COUNT=1 -p KAFKA_NODE_COUNT=1 -p KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1 -p KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=1 | oc apply -f -
+
 ### Debezium
 
-docker pull strimzi/operator:0.12.1 && \
-    docker pull strimzi/kafka:0.12.1-kafka-2.2.1 && \
-    docker pull docker.io/openshift/origin-docker-builder:v3.11.0
-    
+oc process strimzi-connect-s2i -p CLUSTER_NAME=debezium -p KAFKA_CONNECT_BOOTSTRAP_SERVERS=broker-kafka-bootstrap:9092 -p KAFKA_CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR=1 -p KAFKA_CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR=1 -p KAFKA_CONNECT_STATUS_STORAGE_REPLICATION_FACTOR=1 -p KAFKA_CONNECT_VALUE_CONVERTER_SCHEMAS_ENABLE=false -p KAFKA_CONNECT_KEY_CONVERTER_SCHEMAS_ENABLE=false | oc apply -f -
 
-git clone -b 0.12.1 https://github.com/strimzi/strimzi-kafka-operator
-cd strimzi-kafka-operator
-oc project staging
-
-oc create -f install/cluster-operator ; oc create -f examples/templates/cluster-operator ; \
-    oc adm policy add-cluster-role-to-user strimzi-cluster-operator-namespaced --serviceaccount strimzi-cluster-operator ; \
-    oc adm policy add-cluster-role-to-user strimzi-entity-operator --serviceaccount strimzi-cluster-operator ; \
-    oc adm policy add-cluster-role-to-user strimzi-topic-operator --serviceaccount strimzi-cluster-operator
-
-oc new-app strimzi-persistent -p CLUSTER_NAME=broker
-
-oc new-app strimzi-connect-s2i -p CLUSTER_NAME=debezium -p KAFKA_CONNECT_BOOTSTRAP_SERVERS=broker-kafka:9092
-
+export DEBEZIUM_VERSION=0.10.0.Final
 mkdir -p plugins && cd plugins && \
-curl http://central.maven.org/maven2/io/debezium/debezium-connector-postgres/0.9.5.Final/debezium-connector-postgres-0.9.5.Final-plugin.tar.gz | tar xz; && \
-oc start-build debezium-connect --from-dir=. --follow
+for PLUGIN in {mongodb,mysql,postgres}; do \
+    curl http://central.maven.org/maven2/io/debezium/debezium-connector-$PLUGIN/$DEBEZIUM_VERSION/debezium-connector-$PLUGIN-$DEBEZIUM_VERSION-plugin.tar.gz | tar xz; \
+done && \
+oc start-build debezium-connect --from-dir=. --follow && \
+cd .. && rm -rf plugins
 
 ### todo-write-app
 
