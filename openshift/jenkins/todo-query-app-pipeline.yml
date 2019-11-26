@@ -105,11 +105,6 @@ objects:
                                         envVar(key: 'POSTGRESQL_PASSWORD', value: 'postgrespassword'),
                                         envVar(key: 'POSTGRESQL_DATABASE', value: 'todoquery')
                                       ]),
-                    containerTemplate(name: 'maven',
-                                      image: 'quay.io/quarkus/centos-quarkus-maven:19.2.0.1',
-                                      resourceLimitMemory: '512Mi',
-                                      command: "cat",
-                                      ttyEnabled: true),
                     containerTemplate(name: 'debug',
                                       image: 'busybox',
                                       resourceLimitMemory: '128Mi',
@@ -200,14 +195,12 @@ objects:
                       sh "echo '${applicationProperties}' > $HOME/workspace/ci/ci-todo-query-app-build-pipeline/${appName}/src/test/resources/application.properties"
                     }
                     stage("build jar") {
-                      container("maven") {
-                        echo "mvn $mavenSettingsXmlPathOption clean test install -pl ${appName}"
-                        def status = sh(returnStatus: true, script: "mvn $mavenSettingsXmlPathOption clean test install -pl ${appName}")
-                        if (status != 0) {
-                          containerLog 'maven'
-                          currentBuild.result = 'FAILURE'
-                          return
-                        }
+                      echo "mvn $mavenSettingsXmlPathOption clean test install -pl ${appName}"
+                      def status = sh(returnStatus: true, script: "mvn $mavenSettingsXmlPathOption clean test install -pl ${appName}")
+                      if (status != 0) {
+                        containerLog 'jnlp'
+                        currentBuild.result = 'FAILURE'
+                        return
                       }
                     }
                     stage("build image") {
