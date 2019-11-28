@@ -59,7 +59,7 @@ objects:
             // passer par oc label node node001.krenger.ch mylabel=myvalue
             try {
               timeout(time: 60, unit: 'MINUTES') {
-                def label = "event-data-spreader-${UUID.randomUUID().toString()}"
+                def label = "todo-email-notifier-app-${UUID.randomUUID().toString()}"
                 def appName = "todo-email-notifier-app"
                 podTemplate(
                   label: label,
@@ -108,7 +108,6 @@ objects:
                     containerTemplate(name: 'mailhog',
                                       image: 'mailhog/mailhog:v1.0.0',
                                       resourceLimitMemory: '32Mi',
-                                      command: "cat",
                                       ttyEnabled: true),
                     containerTemplate(name: 'debug',
                                       image: 'busybox',
@@ -183,6 +182,17 @@ objects:
                     }
                     stage("prepare test") {
                       String applicationProperties = """
+            smallrye.messaging.source.event.type=io.smallrye.reactive.messaging.kafka.Kafka
+            smallrye.messaging.source.event.connector=smallrye-kafka
+            smallrye.messaging.source.event.topic=event
+            smallrye.messaging.source.event.bootstrap.servers=localhost:9092
+            smallrye.messaging.source.event.key.deserializer=io.vertx.kafka.client.serialization.JsonObjectDeserializer
+            smallrye.messaging.source.event.value.deserializer=io.vertx.kafka.client.serialization.JsonObjectDeserializer
+            smallrye.messaging.source.event.group.id=todo-email-notifier
+
+            # earliest obligatoire lors de la relance du service et des tests !!!
+            smallrye.messaging.source.event.auto.offset.reset=earliest
+
             quarkus.datasource.url=jdbc:postgresql://localhost:5432/todoemailnotifier
             quarkus.datasource.driver=org.postgresql.Driver
             quarkus.datasource.username=postgresuser

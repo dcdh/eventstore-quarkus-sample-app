@@ -59,7 +59,7 @@ objects:
             // passer par oc label node node001.krenger.ch mylabel=myvalue
             try {
               timeout(time: 60, unit: 'MINUTES') {
-                def label = "event-data-spreader-${UUID.randomUUID().toString()}"
+                def label = "todo-query-app-${UUID.randomUUID().toString()}"
                 def appName = "todo-query-app"
                 podTemplate(
                   label: label,
@@ -178,19 +178,27 @@ objects:
                     }
                     stage("prepare test") {
                       String applicationProperties = """
+            smallrye.messaging.source.event.type=io.smallrye.reactive.messaging.kafka.Kafka
+            smallrye.messaging.source.event.connector=smallrye-kafka
+            smallrye.messaging.source.event.topic=event
+            smallrye.messaging.source.event.bootstrap.servers=localhost:9092
+            smallrye.messaging.source.event.key.deserializer=io.vertx.kafka.client.serialization.JsonObjectDeserializer
+            smallrye.messaging.source.event.value.deserializer=io.vertx.kafka.client.serialization.JsonObjectDeserializer
+            smallrye.messaging.source.event.group.id=todo-query-app
+
+            # earliest obligatoire lors de la relance du service et des tests !!!
+            smallrye.messaging.source.event.auto.offset.reset=earliest
+
             quarkus.datasource.url=jdbc:postgresql://localhost:5432/todoquery
             quarkus.datasource.driver=org.postgresql.Driver
-            quarkus.datasource.username=postgresuser
-            quarkus.datasource.password=postgrespassword
+            quarkus.datasource.username=postgres
+            quarkus.datasource.password=postgres
 
             quarkus.hibernate-orm.database.generation=none
-            quarkus.hibernate-orm.dialect=com.damdamdeo.eventdataspreader.writeside.eventsourcing.infrastructure.hibernate.JSONBPostgreSQLDialect
 
             quarkus.flyway.migrate-at-start=true
 
             quarkus.swagger-ui.always-include=true
-
-            quarkus.http.port=8084
             """
                       sh "echo '${applicationProperties}' > $HOME/workspace/ci/ci-todo-query-app-build-pipeline/${appName}/src/test/resources/application.properties"
                     }

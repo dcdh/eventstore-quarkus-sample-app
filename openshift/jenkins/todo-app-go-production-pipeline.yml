@@ -22,7 +22,7 @@ objects:
           jenkinsfile: |-
             try {
               timeout(time: 60, unit: 'MINUTES') {
-                def label = "event-data-spreader-${UUID.randomUUID().toString()}"
+                def label = "todo-write-app-${UUID.randomUUID().toString()}"
                 def appName = "todo-write-app"
                 podTemplate(
                   label: label,

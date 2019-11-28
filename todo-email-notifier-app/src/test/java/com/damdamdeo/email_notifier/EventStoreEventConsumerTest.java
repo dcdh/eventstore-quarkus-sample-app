@@ -4,7 +4,6 @@ import com.damdamdeo.email_notifier.domain.EmailNotifier;
 import com.damdamdeo.email_notifier.domain.TodoStatus;
 import com.damdamdeo.email_notifier.infrastructure.TodoEntity;
 import io.quarkus.test.junit.QuarkusTest;
-import io.restassured.builder.RequestSpecBuilder;
 import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.query.AuditEntity;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,13 +36,17 @@ public class EventStoreEventConsumerTest {
     EmailNotifier emailNotifier;
 
     @BeforeEach
-    @Transactional
-    public void setup() {
-        given(new RequestSpecBuilder().setBaseUri("http://localhost").setPort(8025).build())
+    public void cleanMessages() {
+        given()
                 .when()
-                .delete("/api/v1/messages")
+                .delete("http://localhost:8025/api/v1/messages")
                 .then()
                 .statusCode(200);
+    }
+
+    @BeforeEach
+    @Transactional
+    public void setup() {
         em.createQuery("DELETE FROM TodoEntity").executeUpdate();
         em.createQuery("DELETE FROM EventConsumerConsumedEntity").executeUpdate();
         em.createQuery("DELETE FROM EventConsumedEntity").executeUpdate();
@@ -60,9 +63,9 @@ public class EventStoreEventConsumerTest {
         completionStage.toCompletableFuture().get();
 
         // Then
-        given(new RequestSpecBuilder().setBaseUri("http://localhost").setPort(8025).build())
+        given()
                 .when()
-                .get("/api/v1/messages")
+                .get("http://localhost:8025/api/v1/messages")
                 .then()
                 .statusCode(200)
                 .body("[0].Content.Headers.Subject[0]", equalTo("subject"))
@@ -74,9 +77,9 @@ public class EventStoreEventConsumerTest {
         // When
         kafkaDebeziumProducer.produce("TodoCreatedEvent.json");
         await().atMost(10, TimeUnit.SECONDS).until(() ->
-                given(new RequestSpecBuilder().setBaseUri("http://localhost").setPort(8025).build())
+                given()
                         .when()
-                        .get("/api/v1/messages")
+                        .get("http://localhost:8025/api/v1/messages")
                         .then()
                         .log().all()
                         .statusCode(200)
@@ -85,9 +88,9 @@ public class EventStoreEventConsumerTest {
                         .jsonPath().getList("$").size() == 1);
 
         // Then
-        given(new RequestSpecBuilder().setBaseUri("http://localhost").setPort(8025).build())
+        given()
                 .when()
-                .get("/api/v1/messages")
+                .get("http://localhost:8025/api/v1/messages")
                 .then()
                 .log().all()
                 .statusCode(200)
@@ -97,9 +100,9 @@ public class EventStoreEventConsumerTest {
         // When
         kafkaDebeziumProducer.produce("TodoMarkedAsCompletedEvent.json");
         await().atMost(10, TimeUnit.SECONDS).until(() ->
-                given(new RequestSpecBuilder().setBaseUri("http://localhost").setPort(8025).build())
+                given()
                         .when()
-                        .get("/api/v1/messages")
+                        .get("http://localhost:8025/api/v1/messages")
                         .then()
                         .log().all()
                         .statusCode(200)
@@ -108,9 +111,9 @@ public class EventStoreEventConsumerTest {
                         .jsonPath().getList("$").size() == 2);
 
         // Then
-        given(new RequestSpecBuilder().setBaseUri("http://localhost").setPort(8025).build())
+        given()
                 .when()
-                .get("/api/v1/messages")
+                .get("http://localhost:8025/api/v1/messages")
                 .then()
                 .statusCode(200)
                 .body("[0].Content.Headers.Subject[0]", equalTo("Todo marked as completed"))

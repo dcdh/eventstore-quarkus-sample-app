@@ -11,7 +11,7 @@ docker pull openshift/jenkins-slave-nodejs-centos7:v3.11 && \
     docker pull debezium/connect:0.10 && \
     docker pull debezium/postgres:11-alpine && \
     docker pull postgres:11-alpine && \
-    docker pull quay.io/quarkus/centos-quarkus-maven:19.2.0.1 && \
+    docker pull quay.io/quarkus/centos-quarkus-maven:19.2.1 && \
     docker pull fabric8/java-alpine-openjdk8-jre && \
     docker pull mailhog/mailhog:v1.0.0 && \
     docker pull centos:8
@@ -64,6 +64,21 @@ oc process -f openshift/todo-query-app-template.yml -l app=todo-query-app | oc c
 oc new-app postgresql-persistent -p DATABASE_SERVICE_NAME=todo-email-notifier -p POSTGRESQL_USER=postgresuser -p POSTGRESQL_PASSWORD=postgrespassword -p POSTGRESQL_DATABASE=todo-email-notifier -p POSTGRESQL_VERSION=10 -l app=todo-email-notifier-app
 oc process -f openshift/mailhog-template.yml -l app=todo-email-notifier-app | oc create -f -
 oc process -f openshift/todo-email-notifier-app-template.yml -l app=todo-email-notifier-app | oc create -f -
+
+## e2e
+
+docker pull postgrest/postgrest:v6.0.2
+
+oc project e2e
+
+TODO faire un pipeline pour runner les tests e2e
+dans mon pipeline je dois reseter l'environnement e2e
+est ce que je peux me connecter à un container d'un pod pour executer une commande ? a mon avis je dois faire un oc exec !!!
+https://docs.openshift.com/container-platform/3.11/dev_guide/executing_remote_commands.html
+
+putain mega compliqué de purger une queue kafka ... à mon avis le plus simple est de jouer sur la retention des messages !!!
+voir comment configurer Strimzi pour le définir !!!
+
 
 ## Pipeline CI
 

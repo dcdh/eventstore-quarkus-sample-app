@@ -58,7 +58,7 @@ objects:
             // TODO tager l'image avec la date et la version du commit !
             try {
               timeout(time: 60, unit: 'MINUTES') {
-                def label = "event-data-spreader-${UUID.randomUUID().toString()}"
+                def label = "todo-write-app-${UUID.randomUUID().toString()}"
                 def appName = "todo-write-app"
                 podTemplate(
                   label: label,
@@ -179,8 +179,8 @@ objects:
                       String applicationProperties = """
             quarkus.datasource.url=jdbc:postgresql://localhost:5432/eventstore
             quarkus.datasource.driver=org.postgresql.Driver
-            quarkus.datasource.username=postgresuser
-            quarkus.datasource.password=postgrespassword
+            quarkus.datasource.username=postgres
+            quarkus.datasource.password=postgres
 
             quarkus.hibernate-orm.database.generation=none
             quarkus.hibernate-orm.dialect=com.damdamdeo.eventdataspreader.writeside.eventsourcing.infrastructure.hibernate.JSONBPostgreSQLDialect
@@ -188,8 +188,6 @@ objects:
             quarkus.flyway.migrate-at-start=true
 
             quarkus.swagger-ui.always-include=true
-
-            quarkus.http.port=8084
             """
                       sh "echo '${applicationProperties}' > $HOME/workspace/ci/ci-todo-write-app-build-pipeline/${appName}/src/test/resources/application.properties"
                     }
