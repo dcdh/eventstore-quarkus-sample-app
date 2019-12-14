@@ -73,6 +73,7 @@ objects:
                                         //Heap for mvn and surefire process is 1/4 of resourceLimitMemory by default
                                         envVar(key: 'JNLP_MAX_HEAP_UPPER_BOUND_MB', value: '64')
                                       ]),
+                    containerTemplate(name: 'maven', image: 'maven:3.6.3-jdk-8-slim', ttyEnabled: true, command: 'cat'),
                     containerTemplate(name: 'zookeeper',
                                       image: 'debezium/zookeeper:0.10',
                                       resourceLimitMemory: '128Mi'),
@@ -104,8 +105,8 @@ objects:
                                         envVar(key: 'POSTGRESQL_PASSWORD', value: 'postgrespassword'),
                                         envVar(key: 'POSTGRESQL_DATABASE', value: 'eventstore')
                                       ]),
-                    containerTemplate(name: 'debug',
-                                      image: 'busybox',
+                    containerTemplate(name: 'tools',
+                                      image: 'giantswarm/tiny-tools',
                                       resourceLimitMemory: '128Mi',
                                       command: "cat",
                                       ttyEnabled: true)
@@ -114,7 +115,7 @@ objects:
                     persistentVolumeClaim(mountPath: '/home/jenkins/.m2/repository', claimName: 'maven-pvc', readOnly: false)
                   ]) {
                   node(label) {
-                    String mavenSettingsXmlPathOption = "-s /home/jenkins/settings.xml"
+                    String mavenSettingsXmlPathOption = "-s $HOME/settings.xml"
                     stage("prepare env") {
                       container('jnlp') {
                         String settingsXml = """
@@ -189,24 +190,46 @@ objects:
 
             quarkus.swagger-ui.always-include=true
             """
-                      sh "echo '${applicationProperties}' > $HOME/workspace/ci/ci-todo-write-app-build-pipeline/${appName}/src/test/resources/application.properties"
+                      writeFile(file: "${appName}/src/test/resources/application.properties", text: "${applicationProperties}")
+                    }
+                    stage("wait for containers to be ready") {
+                      // The readiness probe is not available in containerTemplate. I do not know why ???
+                      // no need to test zookeper and kafka as they will be up when connect is ok :)
+                      container("connect") {
+                        sh """
+            while [ `curl --fail -o /dev/null -s -X GET -w "%{http_code}" http://localhost:8083` -ne 200 ]
+            do
+              echo "waiting for connect container"
+              sleep 2
+            done
+                        """
+                      }
+                      container("database") {
+                        sh """
+            while `/usr/libexec/check-container --live` ; [ \$? -ne 0 ]
+            do
+              echo "waiting for database container"
+              sleep 2
+            done
+                        """
+                      }
                     }
                     stage("build jar") {
-                      echo "mvn $mavenSettingsXmlPathOption clean test install -pl ${appName}"
-                      def status = sh(returnStatus: true, script: "mvn $mavenSettingsXmlPathOption clean test install -pl ${appName}")
-                      if (status != 0) {
-                        containerLog 'jnlp'
-                        currentBuild.result = 'FAILURE'
-                        return
+                      container("maven") {
+                        echo "mvn $mavenSettingsXmlPathOption clean test install -pl ${appName}"
+                        def status = sh(returnStatus: true, script: "mvn $mavenSettingsXmlPathOption clean test install -pl ${appName}")
+                        if (status != 0) {
+                          containerLog 'maven'
+                          throw new Exception("Fail to build jar")
+                        }
                       }
                     }
                     stage("build image") {
-                      def status = sh(returnStdout: true, script: "oc start-build ${appName}-docker --from-dir=$HOME/workspace/ci/ci-todo-write-app-build-pipeline/${appName}")
+                      def status = sh(returnStdout: true, script: "oc start-build ${appName}-docker --from-dir=$WORKSPACE/${appName}/")
                       def result = status.split("\n").find{ it.matches("^build.*${appName}.*started") }
                       if(!result) {
                         echo "ERROR: No started build found for ${appName}"
-                        currentBuild.result = 'FAILURE'
-                        return
+                        throw new Exception("Fail to build image")
                       }
                       def startedBuild = result.replaceAll("build [^0-9a-zA-Z]*", "").replaceAll("[^0-9a-zA-Z]* started", "").replaceFirst("^.*/", "")
                       echo "Build ${startedBuild} has started. Now watching it ..."
@@ -231,6 +254,12 @@ objects:
               echo "in catch block"
               echo "Caught: ${err}"
               currentBuild.result = 'FAILURE'
+              containerLog 'jnlp'
+              containerLog 'maven'
+              containerLog 'zookeeper'
+              containerLog 'kafka'
+              containerLog 'connect'
+              containerLog 'database'
               throw err
             }
         type: JenkinsPipeline

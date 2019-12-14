@@ -68,12 +68,13 @@ objects:
                     //Jenkins agent. Also executes the integration test. Having a 'jnlp' container is mandatory.
                     containerTemplate(name: 'jnlp',
                                       image: 'openshift/jenkins-agent-maven-35-centos7:v3.11',
-                                      resourceLimitMemory: '512Mi',
+                                      resourceLimitMemory: '128Mi',
                                       args: '${computer.jnlpmac} ${computer.name}',
                                       envVars: [
                                         //Heap for mvn and surefire process is 1/4 of resourceLimitMemory by default
                                         envVar(key: 'JNLP_MAX_HEAP_UPPER_BOUND_MB', value: '64')
                                       ]),
+                    containerTemplate(name: 'maven', image: 'maven:3.6.3-jdk-8-slim', ttyEnabled: true, command: 'cat'),
                     containerTemplate(name: 'zookeeper',
                                       image: 'debezium/zookeeper:0.10',
                                       resourceLimitMemory: '128Mi'),
@@ -109,9 +110,9 @@ objects:
                                       image: 'mailhog/mailhog:v1.0.0',
                                       resourceLimitMemory: '32Mi',
                                       ttyEnabled: true),
-                    containerTemplate(name: 'debug',
-                                      image: 'busybox',
-                                      resourceLimitMemory: '128Mi',
+                    containerTemplate(name: 'tools',
+                                      image: 'giantswarm/tiny-tools',
+                                      resourceLimitMemory: '32Mi',
                                       command: "cat",
                                       ttyEnabled: true)
                   ],
@@ -119,7 +120,7 @@ objects:
                     persistentVolumeClaim(mountPath: '/home/jenkins/.m2/repository', claimName: 'maven-pvc', readOnly: false)
                   ]) {
                   node(label) {
-                    String mavenSettingsXmlPathOption = "-s /home/jenkins/settings.xml"
+                    String mavenSettingsXmlPathOption = "-s $HOME/settings.xml"
                     stage("prepare env") {
                       container('jnlp') {
                         String settingsXml = """
@@ -214,24 +215,46 @@ objects:
 
             sendTo=damien.clementdhuart@gmail.com
             """
-                      sh "echo '${applicationProperties}' > $HOME/workspace/ci/ci-todo-email-notifier-app-build-pipeline/${appName}/src/test/resources/application.properties"
+                      writeFile(file: "${appName}/src/test/resources/application.properties", text: "${applicationProperties}")
+                    }
+                    stage("wait for containers to be ready") {
+                      // The readiness probe is not available in containerTemplate. I do not know why ???
+                      // no need to test zookeper and kafka as they will be up when connect is ok :)
+                      container("connect") {
+                        sh """
+            while [ `curl --fail -o /dev/null -s -X GET -w "%{http_code}" http://localhost:8083` -ne 200 ]
+            do
+              echo "waiting for connect container"
+              sleep 2
+            done
+                        """
+                      }
+                      container("database") {
+                        sh """
+            while `/usr/libexec/check-container --live` ; [ \$? -ne 0 ]
+            do
+              echo "waiting for database container"
+              sleep 2
+            done
+                        """
+                      }
                     }
                     stage("build jar") {
-                      echo "mvn $mavenSettingsXmlPathOption clean test install -pl ${appName}"
-                      def status = sh(returnStatus: true, script: "mvn $mavenSettingsXmlPathOption clean test install -pl ${appName}")
-                      if (status != 0) {
-                        containerLog 'jnlp'
-                        currentBuild.result = 'FAILURE'
-                        return
+                      container("maven") {
+                        echo "mvn $mavenSettingsXmlPathOption clean test install -pl ${appName}"
+                        def status = sh(returnStatus: true, script: "mvn $mavenSettingsXmlPathOption clean test install -pl ${appName}")
+                        if (status != 0) {
+                          containerLog 'maven'
+                          throw new Exception("Fail to build jar")
+                        }
                       }
                     }
                     stage("build image") {
-                      def status = sh(returnStdout: true, script: "oc start-build ${appName}-docker --from-dir=$HOME/workspace/ci/ci-todo-email-notifier-app-build-pipeline/${appName}")
+                      def status = sh(returnStdout: true, script: "oc start-build ${appName}-docker --from-dir=$WORKSPACE/${appName}/")
                       def result = status.split("\n").find{ it.matches("^build.*${appName}.*started") }
                       if(!result) {
                         echo "ERROR: No started build found for ${appName}"
-                        currentBuild.result = 'FAILURE'
-                        return
+                        throw new Exception("Fail to build image")
                       }
                       def startedBuild = result.replaceAll("build [^0-9a-zA-Z]*", "").replaceAll("[^0-9a-zA-Z]* started", "").replaceFirst("^.*/", "")
                       echo "Build ${startedBuild} has started. Now watching it ..."
@@ -256,6 +279,13 @@ objects:
               echo "in catch block"
               echo "Caught: ${err}"
               currentBuild.result = 'FAILURE'
+              containerLog 'jnlp'
+              containerLog 'maven'
+              containerLog 'zookeeper'
+              containerLog 'kafka'
+              containerLog 'connect'
+              containerLog 'database'
+              containerLog 'mailhog'
               throw err
             }
         type: JenkinsPipeline

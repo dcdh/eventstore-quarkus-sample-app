@@ -1,9 +1,4 @@
-docker pull openshift/jenkins-slave-nodejs-centos7:v3.11 && \
-    docker pull openshift/jenkins-agent-maven-35-centos7:v3.11 && \
-    docker pull openshift/jenkins-slave-maven-centos7:v3.11 && \
-    docker pull openshift/jenkins-agent-nodejs-8-centos7:v3.11 && \
-    docker pull openshift/jenkins-slave-base-centos7:v3.11 && \
-    docker pull openshift/jenkins-2-centos7:v3.11 && \
+docker pull quay.io/openshift/origin-cli:v3.11 && \
     docker pull debezium/zookeeper:0.10 && \
     docker pull debezium/kafka:0.10 && \
     docker pull confluentinc/cp-kafka-rest:5.2.2-1 && \
@@ -11,10 +6,21 @@ docker pull openshift/jenkins-slave-nodejs-centos7:v3.11 && \
     docker pull debezium/connect:0.10 && \
     docker pull debezium/postgres:11-alpine && \
     docker pull postgres:11-alpine && \
-    docker pull quay.io/quarkus/centos-quarkus-maven:19.2.1 && \
     docker pull fabric8/java-alpine-openjdk8-jre && \
     docker pull mailhog/mailhog:v1.0.0 && \
-    docker pull centos:8
+    docker pull centos:8 && \
+    docker pull dcdh1983/postgresql-10-debezium-centos7:latest && \
+    docker pull giantswarm/tiny-tools && \
+    docker pull docker.io/openshift/jenkins-2-centos7:v3.11 && \
+    docker pull maven:3.6.3-jdk-8-slim
+
+image dcdh1983/postgresql-10-debezium-centos7 source:
+- https://github.com/dcdh/postgresql-10-debezium-alpine.git
+
+ensure image will be pushed from dcdh1983/postgresql-10-debezium-centos7:latest to openshift/postgresql:10-debezium-centos7-latest
+oc tag --source=docker dcdh1983/postgresql-10-debezium-centos7:latest openshift/postgresql:10-debezium-centos7-latest --reference-policy=local
+
+git clone https://github.com/dcdh/eventstore-quarkus-sample-app.git
 
 ## Production
 
@@ -33,7 +39,10 @@ export STRIMZI_VERSION=0.14.0
 git clone -b $STRIMZI_VERSION https://github.com/strimzi/strimzi-kafka-operator
 cd strimzi-kafka-operator
 
-oc create -f install/cluster-operator && oc create -f examples/templates/cluster-operator
+oc create -f install/cluster-operator ; oc create -f examples/templates/cluster-operator ; \
+    oc adm policy add-cluster-role-to-user strimzi-cluster-operator-namespaced --serviceaccount strimzi-cluster-operator ; \
+    oc adm policy add-cluster-role-to-user strimzi-entity-operator --serviceaccount strimzi-cluster-operator ; \
+    oc adm policy add-cluster-role-to-user strimzi-topic-operator --serviceaccount strimzi-cluster-operator
 
 oc process strimzi-persistent -p CLUSTER_NAME=broker -p ZOOKEEPER_NODE_COUNT=1 -p KAFKA_NODE_COUNT=1 -p KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1 -p KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=1 | oc apply -f -
 
@@ -67,11 +76,18 @@ oc process -f openshift/todo-email-notifier-app-template.yml -l app=todo-email-n
 
 ## e2e
 
-docker pull postgrest/postgrest:v6.0.2
-
 oc project e2e
 
+### do kafka installation
+
+### do debezium installation
+
+### do applications !
+Flute je dois creer les templates pour postgrest !!!
+TODO : changer le pipeline go production...
+
 TODO faire un pipeline pour runner les tests e2e
+dans mon pipeline je dois fluser mon Kafka via un "oc exec" !!! ainsi que flusher toutes mes bases !!!! truncate all databases !!!
 dans mon pipeline je dois reseter l'environnement e2e
 est ce que je peux me connecter à un container d'un pod pour executer une commande ? a mon avis je dois faire un oc exec !!!
 https://docs.openshift.com/container-platform/3.11/dev_guide/executing_remote_commands.html
@@ -92,5 +108,8 @@ oc process -f openshift/jenkins/todo-email-notifier-app-pipeline.yml | oc create
 
 > #oc policy add-role-to-user edit system:serviceaccount:ci:default -n production
 > allow serviceaccount to tag image in production project
+
+> #oc policy add-role-to-user edit system:serviceaccount:ci:default -n ci
+> allow serviceaccount to tag image in ci project
 
 oc process -f openshift/jenkins/todo-app-go-production-pipeline.yml | oc create -f - -n ci
