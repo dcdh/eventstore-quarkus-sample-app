@@ -77,7 +77,7 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=todoquery
+      - POSTGRES_DB=todo-query
 
   todo-email-notifier:
     image: postgres:11-alpine
