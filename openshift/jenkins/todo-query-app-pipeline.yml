@@ -104,7 +104,7 @@ objects:
                                       envVars: [
                                         envVar(key: 'POSTGRESQL_USER', value: 'postgresuser'),
                                         envVar(key: 'POSTGRESQL_PASSWORD', value: 'postgrespassword'),
-                                        envVar(key: 'POSTGRESQL_DATABASE', value: 'todoquery')
+                                        envVar(key: 'POSTGRESQL_DATABASE', value: 'todo-query')
                                       ]),
                     containerTemplate(name: 'tools',
                                       image: 'giantswarm/tiny-tools',
@@ -190,7 +190,7 @@ objects:
             # earliest obligatoire lors de la relance du service et des tests !!!
             smallrye.messaging.source.event.auto.offset.reset=earliest
 
-            quarkus.datasource.url=jdbc:postgresql://localhost:5432/todoquery
+            quarkus.datasource.url=jdbc:postgresql://localhost:5432/todo-query
             quarkus.datasource.driver=org.postgresql.Driver
             quarkus.datasource.username=postgres
             quarkus.datasource.password=postgres
