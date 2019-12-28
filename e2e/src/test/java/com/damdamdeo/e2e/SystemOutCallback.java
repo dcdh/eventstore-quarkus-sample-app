@@ -10,17 +10,15 @@ public final class SystemOutCallback implements Callback<byte[]> {
 
     @Override
     public void call(byte[] data) {
-        Optional.of(new String(data))
-                .map(d -> d.replace("\n", ""))
-                .map(d -> d.replace("\r", ""))
-                .ifPresent(d ->  {
-                    System.out.println(d);
-                    this.data = d;
-                });
+        this.data = new String(data);
     }
 
     public String getData() {
-        return data;
+        final Optional<String> optionalData = Optional.ofNullable(data)
+                .map(d -> d.replace("\n", ""))
+                .map(d -> d.replace("\r", ""));
+        optionalData.ifPresent(System.out::println);
+        return optionalData.orElse(null);
     }
 
 }
