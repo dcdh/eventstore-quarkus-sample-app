@@ -22,8 +22,8 @@ objects:
           jenkinsfile: |-
             try {
               timeout(time: 60, unit: 'MINUTES') {
-                def label = "todo-write-app-${UUID.randomUUID().toString()}"
-                def appName = "todo-write-app"
+                def label = "e2e-${UUID.randomUUID().toString()}"
+                def appName = "e2e"
                 podTemplate(
                   label: label,
                   cloud: 'openshift', //This needs to match the cloud name in jenkins-kubernetes-plugin config
@@ -36,15 +36,134 @@ objects:
                                       envVars: [
                                         //Heap for mvn and surefire process is 1/4 of resourceLimitMemory by default
                                         envVar(key: 'JNLP_MAX_HEAP_UPPER_BOUND_MB', value: '64')
-                                      ])
+                                      ]),
+                    containerTemplate(name: 'maven', image: 'maven:3.6.3-jdk-8-slim', ttyEnabled: true, command: 'cat'),
+                    containerTemplate(name: 'tools',
+                                      image: 'giantswarm/tiny-tools',
+                                      resourceLimitMemory: '32Mi',
+                                      command: "cat",
+                                      ttyEnabled: true)
                   ]) {
                   node(label) {
-                    stage("run e2e") {
-                      // TODO
+                    String mavenSettingsXmlPathOption = "-s $HOME/settings.xml"
+                    stage("prepare env") {
+                      container('jnlp') {
+                        String settingsXml = """
+            <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+                      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                      xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+                      https://maven.apache.org/xsd/settings-1.0.0.xsd">
+              <servers>
+                <server>
+                  <id>nexus3-snapshot-repository</id>
+                  <username>admin</username>
+                  <password>admin123</password>
+                </server>
+                <server>
+                  <id>nexus3-release-repository</id>
+                  <username>admin</username>
+                  <password>admin123</password>
+                </server>
+              </servers>
+              <profiles>
+                <profile>
+                  <id>nexus3</id>
+                  <repositories>
+                    <repository>
+                      <id>central</id>
+                      <url>http://$NEXUS_SERVICE_HOST:$NEXUS_SERVICE_PORT/repository/maven-all-public</url>
+                      <releases><enabled>true</enabled></releases>
+                      <snapshots><enabled>true</enabled></snapshots>
+                    </repository>
+                  </repositories>
+                  <pluginRepositories>
+                    <pluginRepository>
+                      <id>central</id>
+                      <url>http://$NEXUS_SERVICE_HOST:$NEXUS_SERVICE_PORT/repository/maven-all-public</url>
+                      <releases><enabled>true</enabled></releases>
+                      <snapshots><enabled>true</enabled></snapshots>
+                    </pluginRepository>
+                  </pluginRepositories>
+                </profile>
+              </profiles>
+
+              <activeProfiles>
+                <activeProfile>nexus3</activeProfile>
+              </activeProfiles>
+
+              <mirrors>
+                <mirror>
+                  <id>nexus</id>
+                  <mirrorOf>*</mirrorOf>
+                  <url>http://$NEXUS_SERVICE_HOST:$NEXUS_SERVICE_PORT/repository/maven-all-public/</url>
+                </mirror>
+              </mirrors>
+            </settings>
+            """
+                        sh "echo '${settingsXml}' > $HOME/settings.xml"
+                      }
                     }
-                    stage("Promote todo write app to production") {
+                    stage("Promote todo write app from ci to production") {
                       openshift.withCluster() {
-                        openshift.tag("ci/todo-write-app:latest", "production/todo-write-app:latest")
+                        openshift.tag("ci/todo-write-app:latest", "e2e/todo-write-app:latest")
+                        openshift.withProject("e2e") {
+                          def latestDeploymentVersion = openshift.selector("dc", "todo-write-app").object().status.latestVersion
+                          def rc = openshift.selector("rc", "todo-write-app-${latestDeploymentVersion}")
+                          timeout (time: 10, unit: 'MINUTES') {
+                            rc.untilEach(1) {
+                              def rcMap = it.object()
+                              return (rcMap.status.replicas.equals(rcMap.status.readyReplicas))
+                            }
+                          }
+                        }
+                      }
+                    }
+                    stage("Promote todo query app from ci to production") {
+                      openshift.withCluster() {
+                        openshift.tag("ci/todo-query-app:latest", "e2e/todo-query-app:latest")
+                        openshift.withProject("e2e") {
+                          def latestDeploymentVersion = openshift.selector("dc", "todo-query-app").object().status.latestVersion
+                          def rc = openshift.selector("rc", "todo-query-app-${latestDeploymentVersion}")
+                          timeout (time: 10, unit: 'MINUTES') {
+                            rc.untilEach(1) {
+                              def rcMap = it.object()
+                              return (rcMap.status.replicas.equals(rcMap.status.readyReplicas))
+                            }
+                          }
+                        }
+                      }
+                    }
+                    stage("Promote todo email notifier app from ci to production") {
+                      openshift.withCluster() {
+                        openshift.tag("ci/todo-email-notifier-app:latest", "e2e/todo-email-notifier-app:latest")
+                        openshift.withProject("e2e") {
+                          def latestDeploymentVersion = openshift.selector("dc", "todo-email-notifier-app").object().status.latestVersion
+                          def rc = openshift.selector("rc", "todo-email-notifier-app-${latestDeploymentVersion}")
+                          timeout (time: 10, unit: 'MINUTES') {
+                            rc.untilEach(1) {
+                              def rcMap = it.object()
+                              return (rcMap.status.replicas.equals(rcMap.status.readyReplicas))
+                            }
+                          }
+                        }
+                      }
+                    }
+                    stage("checkout") {
+                      git url: "https://github.com/dcdh/eventstore-quarkus-sample-app.git", branch: "master"
+                    }
+                    stage("run e2e") {
+                      container("maven") {
+                        echo "mvn $mavenSettingsXmlPathOption clean test verify -pl ${appName}"
+                        def status = sh(returnStatus: true, script: "mvn $mavenSettingsXmlPathOption clean test verify -pl ${appName}")
+                        if (status != 0) {
+                          containerLog 'maven'
+                          throw new Exception("Fail to run e2e")
+                        }
+                      }
+                    }
+                    stage("Promote todo write app from e2e to production") {
+                      openshift.withCluster() {
+                        openshift.tag("e2e/todo-write-app:latest", "production/todo-write-app:latest")
                         openshift.withProject("production") {
                           def latestDeploymentVersion = openshift.selector("dc", "todo-write-app").object().status.latestVersion
                           def rc = openshift.selector("rc", "todo-write-app-${latestDeploymentVersion}")
@@ -57,9 +176,9 @@ objects:
                         }
                       }
                     }
-                    stage("Promote todo query app to production") {
+                    stage("Promote todo query app from e2e to production") {
                       openshift.withCluster() {
-                        openshift.tag("ci/todo-query-app:latest", "production/todo-query-app:latest")
+                        openshift.tag("e2e/todo-query-app:latest", "production/todo-query-app:latest")
                         openshift.withProject("production") {
                           def latestDeploymentVersion = openshift.selector("dc", "todo-query-app").object().status.latestVersion
                           def rc = openshift.selector("rc", "todo-query-app-${latestDeploymentVersion}")
@@ -72,9 +191,9 @@ objects:
                         }
                       }
                     }
-                    stage("Promote todo email notifier app to production") {
+                    stage("Promote todo email notifier app from e2e to production") {
                       openshift.withCluster() {
-                        openshift.tag("ci/todo-email-notifier-app:latest", "production/todo-email-notifier-app:latest")
+                        openshift.tag("e2e/todo-email-notifier-app:latest", "production/todo-email-notifier-app:latest")
                         openshift.withProject("production") {
                           def latestDeploymentVersion = openshift.selector("dc", "todo-email-notifier-app").object().status.latestVersion
                           def rc = openshift.selector("rc", "todo-email-notifier-app-${latestDeploymentVersion}")
@@ -94,6 +213,8 @@ objects:
               echo "in catch block"
               echo "Caught: ${err}"
               currentBuild.result = 'FAILURE'
+              containerLog 'jnlp'
+              containerLog 'maven'
               throw err
             }
         type: JenkinsPipeline
