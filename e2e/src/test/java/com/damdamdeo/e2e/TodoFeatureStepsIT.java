@@ -70,9 +70,9 @@ public class TodoFeatureStepsIT {
              final NonBlockingInputStreamPumper pump = new NonBlockingInputStreamPumper(execWatch.getOutput(), systemOutCallback)
         ) {
             executorService.submit(pump);
-            final String topic2recreate = "sample";//TODO event
-            for (final String cmd : Arrays.asList("bash -i -c 'bin/kafka-topics.sh --delete --bootstrap-server localhost:9092 --topic " + topic2recreate + "; echo DONE'\n",
-                    "bash -i -c 'bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic " + topic2recreate + "; echo DONE'\n")) {
+            final String topicEvent = "event";
+            for (final String cmd : Arrays.asList("bash -i -c 'bin/kafka-topics.sh --delete --bootstrap-server localhost:9092 --topic " + topicEvent + "; echo DONE'\n",
+                    "bash -i -c 'bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic " + topicEvent + "; echo DONE'\n")) {
                 try {
                     execWatch.getInput().write(cmd.getBytes());
                     // Wait that commands have been executed by checking that "DONE" was outputted in 10 seconds or "does not exist" which means that an un-existent topic has been deleted
