@@ -103,7 +103,7 @@ objects:
                         sh "echo '${settingsXml}' > $HOME/settings.xml"
                       }
                     }
-                    stage("Promote todo write app from ci to production") {
+                    stage("Promote todo write app from ci to e2e") {
                       openshift.withCluster() {
                         openshift.tag("ci/todo-write-app:latest", "e2e/todo-write-app:latest")
                         openshift.withProject("e2e") {
@@ -118,7 +118,7 @@ objects:
                         }
                       }
                     }
-                    stage("Promote todo query app from ci to production") {
+                    stage("Promote todo query app from ci to e2e") {
                       openshift.withCluster() {
                         openshift.tag("ci/todo-query-app:latest", "e2e/todo-query-app:latest")
                         openshift.withProject("e2e") {
@@ -133,7 +133,7 @@ objects:
                         }
                       }
                     }
-                    stage("Promote todo email notifier app from ci to production") {
+                    stage("Promote todo email notifier app from ci to e2e") {
                       openshift.withCluster() {
                         openshift.tag("ci/todo-email-notifier-app:latest", "e2e/todo-email-notifier-app:latest")
                         openshift.withProject("e2e") {
