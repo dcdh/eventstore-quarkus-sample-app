@@ -6,21 +6,21 @@ metadata:
   name: todo-graph-visualiser-app
 objects:
   - apiVersion: v1
-      kind: Service
-      metadata:
+    kind: Service
+    metadata:
+      name: neo4j-bolt
+    spec:
+      ports:
+        - name: bolt
+          nodePort: 0
+          port: 7687
+          protocol: TCP
+          targetPort: 7687
+      selector:
         name: neo4j-bolt
-      spec:
-        ports:
-          - name: bolt
-            nodePort: 0
-            port: 7687
-            protocol: TCP
-            targetPort: 7687
-        selector:
-          name: neo4j-bolt
-        sessionAffinity: None
-      status:
-        loadBalancer: {}
+      sessionAffinity: None
+    status:
+      loadBalancer: {}
   - apiVersion: v1
     kind: Service
     metadata:
