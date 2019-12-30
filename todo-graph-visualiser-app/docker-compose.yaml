@@ -1,0 +1,56 @@
+version: '2'
+
+services:
+
+  zookeeper:
+    image: debezium/zookeeper:0.10
+    ports:
+      - 2181:2181
+      - 2888:2888
+      - 3888:3888
+
+  kafka:
+    image: debezium/kafka:0.10
+    ports:
+      - 9092:9092
+    links:
+      - zookeeper
+    environment:
+      - ZOOKEEPER_CONNECT=zookeeper:2181
+      - CREATE_TOPICS=event:1:1:compact,aggregaterootprojection:1:1:compact,flyway_schema_history:1:1:compact,test:1:1:compact
+
+  kafka-rest:
+    image: confluentinc/cp-kafka-rest:5.2.2-1
+    ports:
+      - 8082:8082
+    environment:
+      - ACCESS_CONTROL_ALLOW_ORIGIN_DEFAULT="*"
+      - KAFKA_REST_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_REST_LISTENERS=http://kafka-rest:8082
+      - KAFKA_REST_HOST_NAME=kafka-rest
+      - KAFKA_REST_CONSUMER_REQUEST_TIMEOUT_MS=30000
+      - KAFKA_REST_BOOTSTRAP_SERVERS=PLAINTEXT://kafka:9092
+    links:
+      - zookeeper
+      - kafka
+
+  kafka-topic-ui:
+    image: landoop/kafka-topics-ui:0.9.4
+    ports:
+      - 9991:8000
+    environment:
+      - KAFKA_REST_PROXY_URL=http://kafka-rest:8082
+      - SCHEMAREGISTRY_UI_URL=http://schema-registry:8081
+      - PROXY=true
+    links:
+      - kafka
+      - zookeeper
+      - kafka-rest
+
+  graph:
+    image: neo4j:3.5.14
+    ports:
+      - 7687:7687
+      - 7474:7474
+    environment:
+      - NEO4J_AUTH=neo4j/secret

@@ -1,0 +1,36 @@
+{
+  "topic": "event",
+  "key": {
+    "eventid": "27f243d6-ba3a-468f-8435-4537e86ae64b"
+  },
+  "value": {
+    "before": null,
+    "after": {
+      "eventid": "27f243d6-ba3a-468f-8435-4537e86ae64b",
+      "aggregaterootid": "todoId",
+      "aggregateroottype": "TodoAggregateRoot",
+      "creationdate": 1562890044922000,
+      "eventtype": "TodoMarkedAsCompletedEvent",
+      "metadata": "{}",
+      "eventpayload": "{\"@aggregaterootType\": \"TodoAggregateRoot\", \"@payloadType\": \"TodoMarkedAsCompletedEventPayload\", \"todoId\": \"todoId\"}",
+      "version": 1
+    },
+    "source": {
+      "version": "0.10.0.Beta2",
+      "connector": "postgresql",
+      "name": "eventstore",
+      "ts_ms": 1562883052772,
+      "snapshot": "true",
+      "db": "eventstore",
+      "schema": "public",
+      "table": "event",
+      "txId": 576,
+      "lsn": 24734728,
+      "xmin": null
+    },
+    "op": "r",
+    "ts_ms": 1562883052772
+  },
+  "partition": 0,
+  "offset": 1
+}

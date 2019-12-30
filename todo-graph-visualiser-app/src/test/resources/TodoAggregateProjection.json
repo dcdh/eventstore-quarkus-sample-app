@@ -1,0 +1,38 @@
+{
+  "topic": "aggregaterootprojection",
+  "key": {
+    "aggregaterootid": "todoId",
+    "aggregateroottype": "TodoAggregateRoot"
+  },
+  "value": {
+    "before": {
+      "aggregaterootid": "todoId",
+      "aggregateroottype": "TodoAggregateRoot",
+      "aggregateroot": null,
+      "version": null
+    },
+    "after": {
+      "aggregaterootid": "todoId",
+      "aggregateroottype": "TodoAggregateRoot",
+      "aggregateroot": "{\"version\": 1, \"todoStatus\": \"COMPLETED\", \"description\": \"lorem ipsum\", \"aggregateRootId\": \"todoId\", \"@aggregaterootType\": \"TodoAggregateRoot\"}",
+      "version": 1
+    },
+    "source": {
+      "version": "0.10.0.Final",
+      "connector": "postgresql",
+      "name": "eventstore",
+      "ts_ms": 1577510546887,
+      "snapshot": "false",
+      "db": "eventstore",
+      "schema": "public",
+      "table": "aggregaterootprojection",
+      "txId": 627,
+      "lsn": 24037872,
+      "xmin": null
+    },
+    "op": "u",
+    "ts_ms": 1577510546898
+  },
+  "partition": 0,
+  "offset": 0
+}
