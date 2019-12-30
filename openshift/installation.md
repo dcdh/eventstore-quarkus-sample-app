@@ -12,7 +12,8 @@ docker pull quay.io/openshift/origin-cli:v3.11 && \
     docker pull dcdh1983/postgresql-10-debezium-centos7:latest && \
     docker pull giantswarm/tiny-tools && \
     docker pull docker.io/openshift/jenkins-2-centos7:v3.11 && \
-    docker pull maven:3.6.3-jdk-8-slim
+    docker pull maven:3.6.3-jdk-8-slim && \
+    docker pull neo4j:3.5.14
 
 image dcdh1983/postgresql-10-debezium-centos7 source:
 - https://github.com/dcdh/postgresql-10-debezium-alpine.git
@@ -105,6 +106,8 @@ oc process -f openshift/jenkins/todo-write-app-pipeline.yml | oc create -f - -n 
 oc process -f openshift/jenkins/todo-query-app-pipeline.yml | oc create -f - -n ci
 
 oc process -f openshift/jenkins/todo-email-notifier-app-pipeline.yml | oc create -f - -n ci
+
+oc process -f openshift/jenkins/todo-graph-visualiser-app-pipeline.yml | oc create -f - -n ci
 
 > #oc policy add-role-to-user edit system:serviceaccount:ci:default -n production
 > allow serviceaccount to tag image in production project
