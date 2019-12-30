@@ -75,6 +75,10 @@ oc new-app postgresql-persistent -p DATABASE_SERVICE_NAME=todo-email-notifier -p
 oc process -f openshift/mailhog-template.yml -l app=todo-email-notifier-app | oc create -f -
 oc process -f openshift/todo-email-notifier-app-template.yml -l app=todo-email-notifier-app | oc create -f -
 
+### todo-graph-visualiser-app 
+
+oc process -f openshift/todo-graph-visualiser-app-template.yml -l app=todo-graph-visualiser-app | oc create -f -
+
 ## e2e
 
 oc project e2e
