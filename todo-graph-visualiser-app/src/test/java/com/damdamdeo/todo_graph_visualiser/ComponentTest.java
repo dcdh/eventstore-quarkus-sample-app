@@ -25,7 +25,7 @@ public class ComponentTest extends CommonTest {
         kafkaDebeziumProducer.produce("TodoAggregateProjection.json");
 
         // When && Then
-        await().atMost(30, TimeUnit.SECONDS).until(() -> {
+        await().atMost(60, TimeUnit.SECONDS).until(() -> {
             // Attention I got a temp node when event is handled without a node present for aggregate.
             // I had to check that the version is present :) to ensure aggregate has well been created
             final Integer countNodes = given()
