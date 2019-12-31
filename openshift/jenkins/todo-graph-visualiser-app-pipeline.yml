@@ -87,9 +87,10 @@ objects:
                                       ]),
                     containerTemplate(name: 'graph',
                                       image: 'neo4j:3.5.14',
-                                      resourceLimitMemory: '128Mi',
+                                      resourceLimitMemory: '256Mi',
                                       envVars: [
-                                        envVar(key: 'NEO4J_AUTH', value: 'neo4j/secret')
+                                        envVar(key: 'NEO4J_AUTH', value: 'neo4j/secret'),
+                                        envVar(key: 'NEO4J_dbms_connector_bolt_address', value: '0.0.0.0:7687')
                                       ]),
                     containerTemplate(name: 'tools',
                                       image: 'giantswarm/tiny-tools',
