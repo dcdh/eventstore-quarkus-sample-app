@@ -242,12 +242,14 @@ objects:
               echo "in catch block"
               echo "Caught: ${err}"
               currentBuild.result = 'FAILURE'
-              containerLog 'jnlp'
-              containerLog 'maven'
-              containerLog 'zookeeper'
-              containerLog 'kafka'
-              containerLog 'graph'
-              containerLog 'mailhog'
+              node(label) {
+                containerLog 'jnlp'
+                containerLog 'maven'
+                containerLog 'zookeeper'
+                containerLog 'kafka'
+                containerLog 'graph'
+                containerLog 'mailhog'
+              }
               throw err
             }
         type: JenkinsPipeline
