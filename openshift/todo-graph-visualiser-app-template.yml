@@ -6,6 +6,16 @@ metadata:
   name: todo-graph-visualiser-app
 objects:
   - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      name: neo4j-pv-claim
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 10Gi
+  - apiVersion: v1
     kind: Service
     metadata:
       name: neo4j
@@ -57,6 +67,10 @@ objects:
           labels:
             name: neo4j
         spec:
+          volumes:
+            - name: neo4j-storage
+              persistentVolumeClaim:
+                claimName: neo4j-pv-claim
           containers:
             - capabilities: {}
               env:
@@ -91,6 +105,9 @@ objects:
                 capabilities: {}
                 privileged: false
               terminationMessagePath: "/dev/termination-log"
+              volumeMounts:
+                - mountPath: "/var/lib/neo4j/data"
+                  name: neo4j-storage
           dnsPolicy: ClusterFirst
           restartPolicy: Always
   - apiVersion: v1
