@@ -8,7 +8,7 @@ objects:
   - apiVersion: v1
     kind: Service
     metadata:
-      name: neo4j-bolt
+      name: neo4j
     spec:
       ports:
         - name: bolt
@@ -16,24 +16,13 @@ objects:
           port: 7687
           protocol: TCP
           targetPort: 7687
-      selector:
-        name: neo4j-bolt
-      sessionAffinity: None
-    status:
-      loadBalancer: {}
-  - apiVersion: v1
-    kind: Service
-    metadata:
-      name: neo4j-browser
-    spec:
-      ports:
         - name: browser
           nodePort: 0
           port: 7474
           protocol: TCP
           targetPort: 7474
       selector:
-        name: neo4j-browser
+        name: neo4j
       sessionAffinity: None
     status:
       loadBalancer: {}
@@ -43,10 +32,10 @@ objects:
       name: neo4j-browser
     spec:
       port:
-        targetPort: neo4j-browser
+        targetPort: browser
       to:
         kind: Service
-        name: neo4j-browser
+        name: neo4j
         weight: 100
       wildcardPolicy: None
   - apiVersion: v1
@@ -70,6 +59,11 @@ objects:
         spec:
           containers:
             - capabilities: {}
+              env:
+                - name: NEO4J_AUTH
+                  value: neo4j/secret
+                - name: NEO4J_dbms_connector_bolt_address
+                  value: 0.0.0.0:7687
               image: neo4j:3.5.14
               imagePullPolicy: IfNotPresent
               livenessProbe:
@@ -133,7 +127,7 @@ objects:
                     -Djava.util.logging.manager=org.jboss.logmanager.LogManager
                     -Dsmallrye.messaging.source.event.bootstrap.servers=broker-kafka-bootstrap.$(OPENSHIFT_NAMESPACE).svc:9092
                     -Dsmallrye.messaging.source.aggregaterootprojection.bootstrap.servers=broker-kafka-bootstrap.$(OPENSHIFT_NAMESPACE).svc:9092
-                    -Dquarkus.neo4j.uri=bolt://neo4j-bolt.$(OPENSHIFT_NAMESPACE).svc:7687
+                    -Dquarkus.neo4j.uri=bolt://neo4j.$(OPENSHIFT_NAMESPACE).svc:7687
                     -Dquarkus.neo4j.authentication.username=neo4j
                     -Dquarkus.neo4j.authentication.password=secret
                     -Xmx256m
