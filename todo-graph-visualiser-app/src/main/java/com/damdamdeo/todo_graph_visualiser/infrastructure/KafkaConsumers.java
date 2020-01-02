@@ -15,7 +15,7 @@ import java.util.concurrent.Executors;
 public class KafkaConsumers {
 
     @Inject
-    Neo4JRepository neo4JRepository;
+    Neo4JGraphRepository neo4JGraphRepository;
 
     // use only one executor to ensure that only one message will be handled between multiple topics
     // the neo4j repository will handle the disorder of message handling between event and aggregaterootprojection topics
@@ -30,7 +30,7 @@ public class KafkaConsumers {
             final String eventType = after.getString("eventtype");
             switch (eventType) {
                 case "TodoCreatedEvent":
-                    neo4JRepository.persistTodoCreatedEvent(
+                    neo4JGraphRepository.persistTodoCreatedEvent(
                             after.getString("eventid"),
                             after.getString("aggregaterootid"),
                             after.getLong("creationdate"),
@@ -39,7 +39,7 @@ public class KafkaConsumers {
                             after.getLong("version"));
                     break;
                 case "TodoMarkedAsCompletedEvent":
-                    neo4JRepository.persistTodoMarkedAsCompletedEvent(
+                    neo4JGraphRepository.persistTodoMarkedAsCompletedEvent(
                             after.getString("eventid"),
                             after.getString("aggregaterootid"),
                             after.getLong("creationdate"),
@@ -59,7 +59,7 @@ public class KafkaConsumers {
     public CompletionStage<Void> onAggregateRootProjection(final ReceivedKafkaMessage<JsonObject, JsonObject> message) {
         return CompletableFuture.supplyAsync(() -> {
             final JsonObject after = message.getPayload().getJsonObject(AFTER);
-            neo4JRepository.persistTodoAggregate(
+            neo4JGraphRepository.persistTodoAggregate(
                     after.getString("aggregaterootid"),
                     new JsonObject(after.getString("aggregateroot")),
                     after.getLong("version"));

@@ -1,31 +1,23 @@
 package com.damdamdeo.todo_graph_visualiser;
 
-import com.damdamdeo.todo_graph_visualiser.infrastructure.Neo4JRepository;
+import com.damdamdeo.todo_graph_visualiser.domain.Todo;
 import io.quarkus.test.junit.QuarkusTest;
-import io.vertx.core.json.JsonObject;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
+import java.util.*;
 
 import static io.restassured.RestAssured.given;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @QuarkusTest
-public class Neo4JRepositoryTest extends CommonTest {
-
-    @Inject
-    Neo4JRepository neo4JRepository;
+public class Neo4JGraphRepositoryTest extends CommonTest {
 
     @Test
     public void should_create_expected_relationship_on_TodoCreatedEvent() {
         // Given
         // When
-        neo4JRepository.persistTodoCreatedEvent("873ecba4-3f2e-4663-b9f1-b912e17bfc9b",
-                "todoId",
-                1562890044742000L,
-                new JsonObject(),
-                new JsonObject("{\"@aggregaterootType\": \"TodoAggregateRoot\", \"@payloadType\": \"TodoCreatedEventPayload\", \"todoId\": \"todoId\", \"description\": \"lorem ipsum\"}"),
-                0L);
+        persistTodoCreatedEvent();
 
         // Then
         given()
@@ -56,21 +48,10 @@ public class Neo4JRepositoryTest extends CommonTest {
     @Test
     public void should_create_expected_relationship_on_TodoMarkedAsCompletedEvent() {
         // Given
-        neo4JRepository.persistTodoCreatedEvent("873ecba4-3f2e-4663-b9f1-b912e17bfc9b",
-                "todoId",
-                1562890044742000L,
-                new JsonObject(),
-                new JsonObject("{\"@aggregaterootType\": \"TodoAggregateRoot\", \"@payloadType\": \"TodoCreatedEventPayload\", \"todoId\": \"todoId\", \"description\": \"lorem ipsum\"}"),
-                0L);
+        persistTodoCreatedEvent();
 
         // When
-        neo4JRepository.persistTodoMarkedAsCompletedEvent(
-                "27f243d6-ba3a-468f-8435-4537e86ae64b",
-                "todoId",
-                1562890044922000L,
-                new JsonObject(),
-                new JsonObject("{\"@aggregaterootType\": \"TodoAggregateRoot\", \"@payloadType\": \"TodoMarkedAsCompletedEventPayload\", \"todoId\": \"todoId\"}"),
-                1L);
+        persistTodoMarkedAsCompletedEvent();
 
         // Then
         given()
@@ -101,12 +82,7 @@ public class Neo4JRepositoryTest extends CommonTest {
     public void should_create_node_when_persist_TodoCreatedEvent_on_un_existent_node() {
         // Given
         // When
-        neo4JRepository.persistTodoCreatedEvent("873ecba4-3f2e-4663-b9f1-b912e17bfc9b",
-                "todoId",
-                1562890044742000L,
-                new JsonObject(),
-                new JsonObject("{\"@aggregaterootType\": \"TodoAggregateRoot\", \"@payloadType\": \"TodoCreatedEventPayload\", \"todoId\": \"todoId\", \"description\": \"lorem ipsum\"}"),
-                0L);
+        persistTodoCreatedEvent();
 
         // Then
         given()
@@ -133,9 +109,7 @@ public class Neo4JRepositoryTest extends CommonTest {
     public void should_persist_aggregateRoot() {
         // Given
         // When
-        neo4JRepository.persistTodoAggregate("todoId",
-                new JsonObject("{\"version\": 1, \"todoStatus\": \"COMPLETED\", \"description\": \"lorem ipsum\", \"aggregateRootId\": \"todoId\", \"@aggregaterootType\": \"TodoAggregateRoot\"}"),
-                1L);
+        persistTodoAggregate();
 
         // Then
         given()
@@ -164,15 +138,8 @@ public class Neo4JRepositoryTest extends CommonTest {
     @Test
     public void should_persist_event_and_aggregate() {
         // Given
-        neo4JRepository.persistTodoCreatedEvent("873ecba4-3f2e-4663-b9f1-b912e17bfc9b",
-                "todoId",
-                1562890044742000L,
-                new JsonObject(),
-                new JsonObject("{\"@aggregaterootType\": \"TodoAggregateRoot\", \"@payloadType\": \"TodoCreatedEventPayload\", \"todoId\": \"todoId\", \"description\": \"lorem ipsum\"}"),
-                0L);
-        neo4JRepository.persistTodoAggregate("todoId",
-                new JsonObject("{\"version\": 1, \"todoStatus\": \"COMPLETED\", \"description\": \"lorem ipsum\", \"aggregateRootId\": \"todoId\", \"@aggregaterootType\": \"TodoAggregateRoot\"}"),
-                1L);
+        persistTodoCreatedEvent();
+        persistTodoAggregate();
 
         // When && Then
         given()
@@ -204,4 +171,43 @@ public class Neo4JRepositoryTest extends CommonTest {
                 .statusCode(200);
     }
 
+    @Test
+    public void should_getAll() {
+        // Given
+        persistTodoCreatedEvent();
+        persistTodoMarkedAsCompletedEvent();
+        persistTodoAggregate();
+
+        // When
+        final List<Todo> todos = neo4JGraphRepository.getAll();
+
+        // Then
+        final List<Map<String, Object>> expectedEventsForTodo = new ArrayList<>();
+        final Map<String, Object> todoCreatedEvent = new HashMap<>();
+        todoCreatedEvent.put("eventId", "873ecba4-3f2e-4663-b9f1-b912e17bfc9b");
+        todoCreatedEvent.put("description", "lorem ipsum");
+        todoCreatedEvent.put("eventType", "TodoCreatedEvent");
+        todoCreatedEvent.put("todoId", "todoId");
+        todoCreatedEvent.put("creationDate", 1562890044742000L);
+        todoCreatedEvent.put("version", 0);
+
+        final Map<String, Object> todoMarkedAsCompletedEvent = new HashMap<>();
+        todoMarkedAsCompletedEvent.put("eventId", "27f243d6-ba3a-468f-8435-4537e86ae64b");
+        todoMarkedAsCompletedEvent.put("description", null);
+        todoMarkedAsCompletedEvent.put("eventType", "TodoMarkedAsCompletedEvent");
+        todoMarkedAsCompletedEvent.put("todoId", "todoId");
+        todoMarkedAsCompletedEvent.put("creationDate", 1562890044922000L);
+        todoMarkedAsCompletedEvent.put("version", 1);
+
+        expectedEventsForTodo.add(todoCreatedEvent);
+        expectedEventsForTodo.add(todoMarkedAsCompletedEvent);
+        final Todo expectedTodo = new Todo(
+                "todoId",
+                "lorem ipsum",
+                "COMPLETED",
+                1,
+                expectedEventsForTodo
+        );
+        assertThat(todos).containsExactly(expectedTodo);
+    }
 }

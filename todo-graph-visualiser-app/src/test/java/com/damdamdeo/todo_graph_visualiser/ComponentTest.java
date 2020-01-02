@@ -1,8 +1,12 @@
 package com.damdamdeo.todo_graph_visualiser;
 
+import com.jayway.restassured.module.jsv.JsonSchemaValidator;
 import io.quarkus.test.junit.QuarkusTest;
+import org.apache.commons.io.IOUtils;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.skyscreamer.jsonassert.JSONCompareMode;
 
 import javax.inject.Inject;
 
@@ -95,6 +99,19 @@ public class ComponentTest extends CommonTest {
                 .body("results[0].data[1].row[1].eventId", CoreMatchers.equalTo("873ecba4-3f2e-4663-b9f1-b912e17bfc9b"))
 
                 .statusCode(200);
+
+        final String response = given()
+                .accept("application/json; charset=UTF-8")
+                .when()
+                .get("http://localhost:8081/graph")// https://quarkus.io/guides/getting-started-testing explains about port on 8081
+                .then()
+                .log()
+                .all()
+                .body(JsonSchemaValidator.matchesJsonSchemaInClasspath("expected/graphSchema.json"))
+                .statusCode(200)
+                .extract().jsonPath().prettyPrint();
+        JSONAssert.assertEquals(IOUtils.toString(this.getClass().getResourceAsStream("/expected/graphContent.json"),"UTF-8"),
+                response, JSONCompareMode.NON_EXTENSIBLE);
     }
 
 }

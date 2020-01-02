@@ -1,19 +1,25 @@
 package com.damdamdeo.todo_graph_visualiser.infrastructure;
 
+import com.damdamdeo.todo_graph_visualiser.domain.GraphRepository;
+import com.damdamdeo.todo_graph_visualiser.domain.Todo;
 import io.vertx.core.json.JsonObject;
-import org.neo4j.driver.Driver;
-import org.neo4j.driver.Session;
-import org.neo4j.driver.Values;
+import org.neo4j.driver.*;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
-public class Neo4JRepository {
+public class Neo4JGraphRepository implements GraphRepository {
 
     @Inject
     Driver driver;
 
+    @Override
     public void persistTodoCreatedEvent(final String eventId,
                                         final String aggregateId,
                                         final Long creationDate,
@@ -35,6 +41,7 @@ public class Neo4JRepository {
                         "description", eventPayload.getString("description"))));
     }
 
+    @Override
     public void persistTodoMarkedAsCompletedEvent(final String eventId,
                                                   final String aggregateId,
                                                   final Long creationDate,
@@ -54,6 +61,7 @@ public class Neo4JRepository {
                         "todoId", eventPayload.getString("todoId"))));
     }
 
+    @Override
     public void persistTodoAggregate(final String aggregateId,
                                      final JsonObject aggregateRoot,
                                      final Long version) {
@@ -65,6 +73,35 @@ public class Neo4JRepository {
                         "version", version,
                         "description", aggregateRoot.getString("description"),
                         "todoStatus", aggregateRoot.getString("todoStatus"))));
+    }
+
+    @Override
+    public List<Todo> getAll() {
+        final Session session = driver.session();
+        return session.readTransaction(tx ->
+            tx.run("MATCH (todo)-[events]-(todo) WITH todo, events ORDER BY events.version ASC  RETURN todo {.*}, collect(events) AS events")
+                    .stream()
+                    .map(record -> {
+                            final Value todo = record.get("todo");
+                            final Value events = record.get("events");
+                            return new Todo(
+                                    todo.get("aggregateId").asString(),
+                                    todo.get("description").asString(null),
+                                    todo.get("todoStatus").asString(),
+                                    todo.get("version").asInt(),
+                                    events.asList(value -> {
+                                        final Map<String, Object> event = new HashMap<>();
+                                        event.put("eventType", value.get("eventType").asString());
+                                        event.put("eventId", value.get("eventId").asString());
+                                        event.put("version", value.get("version").asInt());
+                                        event.put("creationDate", value.get("creationDate").asLong());
+                                        event.put("todoId", value.get("todoId").asString());
+                                        event.put("description", value.get("description").asString(null));
+                                        return event;
+                                    })
+                            );
+                    }).collect(Collectors.toList())
+        );
     }
 
 }
