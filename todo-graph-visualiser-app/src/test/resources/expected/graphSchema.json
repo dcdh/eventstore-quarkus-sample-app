@@ -1,92 +1,115 @@
 {
   "definitions": {},
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "type": "array",
+  "type": "object",
   "title": "The Root Schema",
-  "items": {
-    "type": "object",
-    "title": "The Items Schema",
-    "required": [
-      "description",
-      "events",
-      "todoId",
-      "todoStatus",
-      "version"
-    ],
-    "properties": {
-      "description": {
-        "type": "string",
-        "title": "The Description Schema",
-        "default": "",
-        "pattern": "^(.*)$"
-      },
-      "events": {
-        "type": "array",
-        "title": "The Events Schema",
-        "items": {
-          "type": "object",
-          "title": "The Items Schema",
-          "required": [
-            "eventId",
-            "eventType",
-            "creationDate",
-            "todoId",
-            "version"
-          ],
-          "properties": {
-            "eventId": {
-              "type": "string",
-              "title": "The Eventid Schema",
-              "default": "",
-              "pattern": "^(.*)$"
-            },
-            "description": {
-              "type": "string",
-              "title": "The Description Schema",
-              "default": "",
-              "pattern": "^(.*)$"
-            },
-            "eventType": {
-              "type": "string",
-              "title": "The Eventtype Schema",
-              "default": "",
-              "pattern": "^(.*)$"
-            },
-            "creationDate": {
-              "type": "integer",
-              "title": "The Creationdate Schema",
-              "default": 0
-            },
-            "todoId": {
-              "type": "string",
-              "title": "The Todoid Schema",
-              "default": "",
-              "pattern": "^(.*)$"
-            },
-            "version": {
-              "type": "integer",
-              "title": "The Version Schema",
-              "default": 0
-            }
+  "required": [
+    "todos",
+    "events"
+  ],
+  "properties": {
+    "todos": {
+      "type": "array",
+      "title": "The Todos Schema",
+      "items": {
+        "type": "object",
+        "title": "The Items Schema",
+        "required": [
+          "todoId",
+          "description",
+          "todoStatus",
+          "version"
+        ],
+        "properties": {
+          "todoId": {
+            "type": "string",
+            "title": "The Todoid Schema",
+            "default": "",
+            "pattern": "^(.*)$"
+          },
+          "description": {
+            "type": "string",
+            "title": "The Description Schema",
+            "default": "",
+            "pattern": "^(.*)$"
+          },
+          "todoStatus": {
+            "type": "string",
+            "title": "The Todostatus Schema",
+            "default": "",
+            "pattern": "^(.*)$"
+          },
+          "version": {
+            "type": "integer",
+            "title": "The Version Schema",
+            "default": 0
           }
         }
-      },
-      "todoId": {
-        "type": "string",
-        "title": "The Todoid Schema",
-        "default": "",
-        "pattern": "^(.*)$"
-      },
-      "todoStatus": {
-        "type": "string",
-        "title": "The Todostatus Schema",
-        "default": "",
-        "pattern": "^(.*)$"
-      },
-      "version": {
-        "type": "integer",
-        "title": "The Version Schema",
-        "default": 0
+      }
+    },
+    "events": {
+      "type": "array",
+      "title": "The Events Schema",
+      "items": {
+        "type": "object",
+        "title": "The Items Schema",
+        "required": [
+          "source",
+          "target",
+          "eventId",
+          "eventType",
+          "creationDate",
+          "todoId",
+          "version"
+        ],
+        "properties": {
+          "source": {
+            "type": "string",
+            "title": "The Source Schema",
+            "default": "",
+            "pattern": "^(.*)$"
+          },
+          "target": {
+            "type": "string",
+            "title": "The Target Schema",
+            "default": "",
+            "pattern": "^(.*)$"
+          },
+          "eventId": {
+            "type": "string",
+            "title": "The Eventid Schema",
+            "default": "",
+            "pattern": "^(.*)$"
+          },
+          "description": {
+            "type": "string",
+            "title": "The Description Schema",
+            "default": "",
+            "pattern": "^(.*)$"
+          },
+          "eventType": {
+            "type": "string",
+            "title": "The Eventtype Schema",
+            "default": "",
+            "pattern": "^(.*)$"
+          },
+          "creationDate": {
+            "type": "integer",
+            "title": "The Creationdate Schema",
+            "default": 0
+          },
+          "todoId": {
+            "type": "string",
+            "title": "The Todoid Schema",
+            "default": "",
+            "pattern": "^(.*)$"
+          },
+          "version": {
+            "type": "integer",
+            "title": "The Version Schema",
+            "default": 0
+          }
+        }
       }
     }
   }

@@ -1,7 +1,5 @@
 package com.damdamdeo.todo_graph_visualiser.domain;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 public final class Todo {
@@ -10,14 +8,15 @@ public final class Todo {
     private final String description;
     private final String todoStatus;
     private final Integer version;
-    private final List<Map<String, Object>> events;
 
-    public Todo(final String todoId, final String description, final String todoStatus, final Integer version, final List<Map<String, Object>> events) {
+    public Todo(final String todoId,
+                final String description,
+                final String todoStatus,
+                final Integer version) {
         this.todoId = todoId;
         this.description = description;
         this.todoStatus = todoStatus;
         this.version = version;
-        this.events = events;
     }
 
     @Override
@@ -28,13 +27,12 @@ public final class Todo {
         return Objects.equals(todoId, todo.todoId) &&
                 Objects.equals(description, todo.description) &&
                 Objects.equals(todoStatus, todo.todoStatus) &&
-                Objects.equals(version, todo.version) &&
-                Objects.equals(events, todo.events);
+                Objects.equals(version, todo.version);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(todoId, description, todoStatus, version, events);
+        return Objects.hash(todoId, description, todoStatus, version);
     }
 
     public String getTodoId() {
@@ -53,7 +51,4 @@ public final class Todo {
         return version;
     }
 
-    public List<Map<String, Object>> getEvents() {
-        return events;
-    }
 }

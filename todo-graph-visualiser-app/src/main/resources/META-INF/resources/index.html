@@ -31,7 +31,7 @@ var simulation = d3.forceSimulation()
 var event = svg.selectAll(".event");
 var aggregate = svg.selectAll(".aggregate");
 
-d3.json("graph.json", function(error, graph) {
+d3.json("graph", function(error, graph) {
   if (error) throw error;
 
   simulation.nodes(graph.todos);

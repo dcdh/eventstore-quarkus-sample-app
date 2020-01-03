@@ -1,5 +1,6 @@
 package com.damdamdeo.todo_graph_visualiser;
 
+import com.damdamdeo.todo_graph_visualiser.domain.Graph;
 import com.damdamdeo.todo_graph_visualiser.domain.Todo;
 import io.quarkus.test.junit.QuarkusTest;
 import org.hamcrest.CoreMatchers;
@@ -179,11 +180,13 @@ public class Neo4JGraphRepositoryTest extends CommonTest {
         persistTodoAggregate();
 
         // When
-        final List<Todo> todos = neo4JGraphRepository.getAll();
+        final Graph graph = neo4JGraphRepository.getGraph();
 
         // Then
         final List<Map<String, Object>> expectedEventsForTodo = new ArrayList<>();
         final Map<String, Object> todoCreatedEvent = new HashMap<>();
+        todoCreatedEvent.put("source", "todoId");
+        todoCreatedEvent.put("target", "todoId");
         todoCreatedEvent.put("eventId", "873ecba4-3f2e-4663-b9f1-b912e17bfc9b");
         todoCreatedEvent.put("description", "lorem ipsum");
         todoCreatedEvent.put("eventType", "TodoCreatedEvent");
@@ -192,6 +195,8 @@ public class Neo4JGraphRepositoryTest extends CommonTest {
         todoCreatedEvent.put("version", 0);
 
         final Map<String, Object> todoMarkedAsCompletedEvent = new HashMap<>();
+        todoMarkedAsCompletedEvent.put("source", "todoId");
+        todoMarkedAsCompletedEvent.put("target", "todoId");
         todoMarkedAsCompletedEvent.put("eventId", "27f243d6-ba3a-468f-8435-4537e86ae64b");
         todoMarkedAsCompletedEvent.put("description", null);
         todoMarkedAsCompletedEvent.put("eventType", "TodoMarkedAsCompletedEvent");
@@ -201,13 +206,11 @@ public class Neo4JGraphRepositoryTest extends CommonTest {
 
         expectedEventsForTodo.add(todoCreatedEvent);
         expectedEventsForTodo.add(todoMarkedAsCompletedEvent);
-        final Todo expectedTodo = new Todo(
-                "todoId",
-                "lorem ipsum",
-                "COMPLETED",
-                1,
-                expectedEventsForTodo
-        );
-        assertThat(todos).containsExactly(expectedTodo);
+        final Graph expectedGraph = new Graph(
+                Collections.singletonList(
+                        new Todo("todoId","lorem ipsum","COMPLETED",1)
+                ),
+                expectedEventsForTodo);
+        assertThat(graph).isEqualTo(expectedGraph);
     }
 }
