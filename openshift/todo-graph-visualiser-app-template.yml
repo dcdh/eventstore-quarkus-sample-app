@@ -18,34 +18,29 @@ objects:
   - apiVersion: v1
     kind: Service
     metadata:
-      name: neo4j
+      name: todo-graph-visualiser-app
     spec:
       ports:
-        - name: bolt
+        - name: web
           nodePort: 0
-          port: 7687
+          port: 8080
           protocol: TCP
-          targetPort: 7687
-        - name: browser
-          nodePort: 0
-          port: 7474
-          protocol: TCP
-          targetPort: 7474
+          targetPort: 8080
       selector:
-        name: neo4j
+        name: todo-graph-visualiser-app
       sessionAffinity: None
     status:
       loadBalancer: {}
   - apiVersion: route.openshift.io/v1
     kind: Route
     metadata:
-      name: neo4j-browser
+      name: todo-graph-visualiser-app
     spec:
       port:
-        targetPort: browser
+        targetPort: web
       to:
         kind: Service
-        name: neo4j
+        name: todo-graph-visualiser-app
         weight: 100
       wildcardPolicy: None
   - apiVersion: v1
