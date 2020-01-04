@@ -88,6 +88,19 @@ objects:
               persistentVolumeClaim:
                 claimName: neo4j-pv-claim
           containers:
+            - args:
+                - '-c'
+                - tail -f /dev/null
+              command:
+                - sh
+              image: giantswarm/tiny-tools
+              imagePullPolicy: Always
+              name: tools
+              resources:
+                limits:
+                  memory: 32Mi
+              terminationMessagePath: /dev/termination-log
+              terminationMessagePolicy: File
             - capabilities: {}
               env:
                 - name: NEO4J_AUTH
