@@ -76,7 +76,7 @@ objects:
               imagePullPolicy: IfNotPresent
               livenessProbe:
                 httpGet:
-                  path: /health
+                  path: /health/live
                   port: 8080
                 initialDelaySeconds: 5
                 timeoutSeconds: 10
@@ -86,7 +86,7 @@ objects:
                   protocol: TCP
               readinessProbe:
                 httpGet:
-                  path: /health
+                  path: /health/ready
                   port: 8080
                 initialDelaySeconds: 2
                 timeoutSeconds: 1
