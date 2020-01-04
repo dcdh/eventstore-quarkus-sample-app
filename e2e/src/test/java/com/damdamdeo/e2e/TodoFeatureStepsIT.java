@@ -212,7 +212,7 @@ public class TodoFeatureStepsIT {
              final NonBlockingInputStreamPumper pump = new NonBlockingInputStreamPumper(execWatch.getOutput(), systemOutCallback)
         ) {
             executorService.submit(pump);
-            execWatch.getInput().write("wget --http-user=neo4j --http-passwd=secret -O- --post-data='{\"statements\":[{\"statement\":\"MATCH (n) DETACH DELETE n\"}]}' --header='Content-Type:application/json' 'http://localhost:7474/db/data/transaction/commit'; echo DONE;\n".getBytes());
+            execWatch.getInput().write("bash -c \"wget --http-user=neo4j --http-passwd=secret -O- --post-data='{\\\"statements\\\":[{\\\"statement\\\":\\\"MATCH (n) DETACH DELETE n\\\"}]}' --header='Content-Type:application/json' http://localhost:7474/db/data/transaction/commit; echo DONE;\"\n".getBytes());
             Awaitility.await().atMost(30, TimeUnit.SECONDS).until(() -> systemOutCallback.getData() != null && systemOutCallback.getData().endsWith("DONE"));
         } finally {
             executorService.shutdownNow();
