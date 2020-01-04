@@ -329,7 +329,7 @@ public class TodoFeatureStepsIT {
                         .statusCode(200)
                         .extract()
                         .body()
-                        .jsonPath().getList("$.todos").size() > 0);
+                        .jsonPath().getList("todos").size() > 0);
         await().atMost(10, TimeUnit.SECONDS).until(() ->
                 RestAssured.given().get(graph + "graph")
                         .prettyPeek()
@@ -338,7 +338,7 @@ public class TodoFeatureStepsIT {
                         .extract()
                         .body()
                         .jsonPath()
-                        .getString("$.todos[0].todoStatus")
+                        .getString("todos[0].todoStatus")
                         .equals("COMPLETED")
         );
     }
