@@ -256,13 +256,13 @@ public class TodoFeatureStepsIT {
                         .statusCode(200)
                         .extract()
                         .body()
-                        .jsonPath().getList("$.todos").size() > 0);
+                        .jsonPath().getList("todos").size() > 0);
         RestAssured.given().get(graph + "graph")
                 .prettyPeek()
                 .then()
                 .statusCode(200)
-                .body("$.todos[0].todoId", is("todoId"))
-                .body("$.todos[0].todoStatus", is("IN_PROGRESS"));
+                .body("todos[0].todoId", is("todoId"))
+                .body("todos[0].todoStatus", is("IN_PROGRESS"));
     }
 
     @Then("^A created todo mail notification is sent$")
