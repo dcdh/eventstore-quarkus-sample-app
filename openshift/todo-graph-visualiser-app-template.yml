@@ -18,6 +18,27 @@ objects:
   - apiVersion: v1
     kind: Service
     metadata:
+      name: neo4j
+    spec:
+      ports:
+        - name: bolt
+          nodePort: 0
+          port: 7687
+          protocol: TCP
+          targetPort: 7687
+        - name: browser
+          nodePort: 0
+          port: 7474
+          protocol: TCP
+          targetPort: 7474
+      selector:
+        name: neo4j
+      sessionAffinity: None
+    status:
+      loadBalancer: {}
+  - apiVersion: v1
+    kind: Service
+    metadata:
       name: todo-graph-visualiser-app
     spec:
       ports:
