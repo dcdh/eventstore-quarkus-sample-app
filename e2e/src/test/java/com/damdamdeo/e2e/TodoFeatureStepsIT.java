@@ -46,7 +46,7 @@ public class TodoFeatureStepsIT {
     @RouteURL(value = "todo-query-app")
     private URL query;
 
-    @RouteURL(value = "")
+    @RouteURL(value = "todo-graph-visualiser-app")
     private URL graph;
 
     @Before
