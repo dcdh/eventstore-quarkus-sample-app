@@ -210,15 +210,15 @@ public class TodoFeatureStepsIT {
                                 .then()
                                 .extract()
                                 .statusCode() == 200);
-        RestAssured.given().get(query + "todos/todoId")
+        final String todoId = RestAssured.given().get(query + "todos/todoId")
                 .prettyPeek()
                 .then()
                 .statusCode(200)
                 .extract()
                 .body()
                 .jsonPath()
-                .getString("todoId")
-                .equals("todoId");
+                .getString("todoId");
+        assertThat(todoId).isEqualTo("todoId");
     }
 
     @Then("^A created todo mail notification is sent$")
