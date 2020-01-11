@@ -61,22 +61,24 @@ cd .. && rm -rf plugins
 
 ### todo-write-app
 
-oc new-app postgresql-persistent -p DATABASE_SERVICE_NAME=eventstore -p POSTGRESQL_USER=postgresuser -p POSTGRESQL_PASSWORD=postgrespassword -p POSTGRESQL_DATABASE=eventstore -p POSTGRESQL_VERSION=10-debezium-centos7-latest -l app=todo-write-app
+oc process -f postgresql-persistent-template.yml -p DATABASE_SERVICE_NAME=eventstore -p POSTGRESQL_USER=postgresuser -p POSTGRESQL_PASSWORD=postgrespassword -p POSTGRESQL_DATABASE=eventstore -l app=todo-write-app | oc create -f -
 oc process -f openshift/todo-write-app-template.yml -l app=todo-write-app | oc create -f -
 
 ### todo-query-app
 
-oc new-app postgresql-persistent -p DATABASE_SERVICE_NAME=todo-query -p POSTGRESQL_USER=postgresuser -p POSTGRESQL_PASSWORD=postgrespassword -p POSTGRESQL_DATABASE=todo-query -p POSTGRESQL_VERSION=10 -l app=todo-query-app
+oc process -f postgresql-persistent-template.yml -p DATABASE_SERVICE_NAME=todo-query -p POSTGRESQL_USER=postgresuser -p POSTGRESQL_PASSWORD=postgrespassword -p POSTGRESQL_DATABASE=todo-query -l app=todo-query-app | oc create -f -
 oc process -f openshift/todo-query-app-template.yml -l app=todo-query-app | oc create -f -
 
 ### todo-email-notifier-app
 
-oc new-app postgresql-persistent -p DATABASE_SERVICE_NAME=todo-email-notifier -p POSTGRESQL_USER=postgresuser -p POSTGRESQL_PASSWORD=postgrespassword -p POSTGRESQL_DATABASE=todo-email-notifier -p POSTGRESQL_VERSION=10 -l app=todo-email-notifier-app
+oc process -f postgresql-persistent-template.yml -p DATABASE_SERVICE_NAME=todo-email-notifier -p POSTGRESQL_USER=postgresuser -p POSTGRESQL_PASSWORD=postgrespassword -p POSTGRESQL_DATABASE=todo-email-notifier -l app=todo-email-notifier-app | oc create -f -
+
 oc process -f openshift/mailhog-template.yml -l app=todo-email-notifier-app | oc create -f -
 oc process -f openshift/todo-email-notifier-app-template.yml -l app=todo-email-notifier-app | oc create -f -
 
-### todo-graph-visualiser-app 
+### todo-graph-visualiser-app
 
+oc process -f neo4j-persistent-template.yml -l app=graph | oc create -f -
 oc process -f openshift/todo-graph-visualiser-app-template.yml -l app=todo-graph-visualiser-app | oc create -f -
 
 ## e2e

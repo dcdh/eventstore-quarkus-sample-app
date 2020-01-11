@@ -6,37 +6,6 @@ metadata:
   name: todo-graph-visualiser-app
 objects:
   - apiVersion: v1
-    kind: PersistentVolumeClaim
-    metadata:
-      name: neo4j-pv-claim
-    spec:
-      accessModes:
-        - ReadWriteOnce
-      resources:
-        requests:
-          storage: 10Gi
-  - apiVersion: v1
-    kind: Service
-    metadata:
-      name: neo4j
-    spec:
-      ports:
-        - name: bolt
-          nodePort: 0
-          port: 7687
-          protocol: TCP
-          targetPort: 7687
-        - name: browser
-          nodePort: 0
-          port: 7474
-          protocol: TCP
-          targetPort: 7474
-      selector:
-        name: neo4j
-      sessionAffinity: None
-    status:
-      loadBalancer: {}
-  - apiVersion: v1
     kind: Service
     metadata:
       name: todo-graph-visualiser-app
@@ -64,81 +33,6 @@ objects:
         name: todo-graph-visualiser-app
         weight: 100
       wildcardPolicy: None
-  - apiVersion: v1
-    kind: DeploymentConfig
-    metadata:
-      annotations:
-        template.alpha.openshift.io/wait-for-ready: 'true'
-      name: neo4j
-      labels:
-        app: neo4j
-    spec:
-      replicas: 1
-      selector:
-        name: neo4j
-      strategy:
-        type: Recreate
-      template:
-        metadata:
-          labels:
-            name: neo4j
-        spec:
-          volumes:
-            - name: neo4j-storage
-              persistentVolumeClaim:
-                claimName: neo4j-pv-claim
-          containers:
-            - args:
-                - '-c'
-                - tail -f /dev/null
-              command:
-                - sh
-              image: giantswarm/tiny-tools
-              imagePullPolicy: Always
-              name: tools
-              resources:
-                limits:
-                  memory: 32Mi
-              terminationMessagePath: /dev/termination-log
-              terminationMessagePolicy: File
-            - capabilities: {}
-              env:
-                - name: NEO4J_AUTH
-                  value: neo4j/secret
-                - name: NEO4J_dbms_connector_bolt_address
-                  value: 0.0.0.0:7687
-              image: neo4j:3.5.14
-              imagePullPolicy: IfNotPresent
-              livenessProbe:
-                httpGet:
-                  path: /
-                  port: 7474
-                initialDelaySeconds: 10
-                timeoutSeconds: 10
-              name: neo4j
-              ports:
-                - containerPort: 7474
-                  protocol: TCP
-                - containerPort: 7687
-                  protocol: TCP
-              readinessProbe:
-                httpGet:
-                  path: /
-                  port: 7474
-                initialDelaySeconds: 5
-                timeoutSeconds: 1
-              resources:
-                limits:
-                  memory: 256Mi
-              securityContext:
-                capabilities: {}
-                privileged: false
-              terminationMessagePath: "/dev/termination-log"
-              volumeMounts:
-                - mountPath: "/var/lib/neo4j/data"
-                  name: neo4j-storage
-          dnsPolicy: ClusterFirst
-          restartPolicy: Always
   - apiVersion: v1
     kind: DeploymentConfig
     metadata:
