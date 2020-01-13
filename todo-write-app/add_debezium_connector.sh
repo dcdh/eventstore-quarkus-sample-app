@@ -29,7 +29,7 @@ connector_setup=${connector_setup//OPENSHIFT_NAMESPACE/$OPENSHIFT_NAMESPACE}
 connector_setup=${connector_setup//EVENTSTORE_DATABASE_USER/$EVENTSTORE_DATABASE_USER}
 connector_setup=${connector_setup//EVENTSTORE_DATABASE_PASSWORD/$EVENTSTORE_DATABASE_PASSWORD}
 add_debezium_connector(){
-  return `curl --fail -o /dev/null -s -0 -v -X GET \
+  return `curl --fail -o /dev/null -s -0 -v -X POST \
     -w "%{http_code}" http://debezium-connect-api.$OPENSHIFT_NAMESPACE.svc:8083/connectors/ \
     -H 'Accept:application/json' \
     -H 'Content-Type:application/json' \
