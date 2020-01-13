@@ -37,10 +37,14 @@ add_debezium_connector(){
 }
 set -x
 add_debezium_connector
-while [ $? -ne 200 ]
+add_connector_status_code=$?
+# 201 created: case when application is first started and todo-connector should not be present
+# 409 already present: case when application is restarted and todo-connector has been previously created
+while [ "$add_connector_status_code" -ne 201 ] && [ "$add_connector_status_code" -ne 409 ]
 do
-  echo "unable to setup connector... try again..."
+  echo "unable to add todo-connector... try again..."
   sleep 1
   add_debezium_connector
+  add_connector_status_code=$?
 done
 exit 0
