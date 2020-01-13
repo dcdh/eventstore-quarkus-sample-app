@@ -5,6 +5,16 @@ labels:
 metadata:
   name: todo-write-app
 objects:
+  # role binding (view pour le service account default: permettre d'effectuer les requetes rest concernant le deployment config)
+  - apiVersion: v1
+    kind: RoleBinding
+    metadata:
+      name: view
+    roleRef:
+      name: view
+    subjects:
+      - kind: ServiceAccount
+        name: default
   - apiVersion: v1
     kind: Service
     metadata:
@@ -52,6 +62,10 @@ objects:
           labels:
             name: todo-write-app
         spec:
+          initContainers:
+            - name: wait-for-debezium-connector-pod
+              image: giantswarm/tiny-tools
+              command: ["sh", "-c", "while `curl -s --cacert /var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt --header \"Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)\" https://openshift.default.svc.cluster.local/oapi/v1/namespaces/$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace)/deploymentconfigs/debezium-connect | jq \".status.availableReplicas == 0\"` ; do echo \"waiting for debezium-connector pod\"; sleep 2; done; exit 0;"]
           containers:
             - capabilities: {}
               image: " "
