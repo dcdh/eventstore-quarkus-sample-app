@@ -52,20 +52,14 @@ objects:
           labels:
             name: todo-write-app
         spec:
-          initContainers:
-            - name: init-debezium-connector
-              image: centos:8
-              env:
-                - name: OPENSHIFT_NAMESPACE
-                  valueFrom:
-                    fieldRef:
-                      apiVersion: v1
-                      fieldPath: metadata.namespace
-              command: ["sh", "-c", "curl -i -X POST -H 'Accept:application/json' -H 'Content-Type:application/json' http://debezium-connect-api.$OPENSHIFT_NAMESPACE.svc:8083/connectors/ -d '{\"name\": \"todo-connector\", \"config\": {\"connector.class\": \"io.debezium.connector.postgresql.PostgresConnector\", \"tasks.max\": \"1\", \"plugin.name\": \"wal2json\", \"database.hostname\": \"eventstore.$OPENSHIFT_NAMESPACE.svc\", \"database.port\": \"5432\", \"database.user\": \"postgresuser\", \"database.password\": \"postgrespassword\", \"database.dbname\" : \"eventstore\", \"database.server.name\": \"eventstore\", \"schema.whitelist\": \"public\", \"transforms\": \"route\", \"transforms.route.type\": \"org.apache.kafka.connect.transforms.RegexRouter\", \"transforms.route.regex\": \"([^.]+)\\.([^.]+)\\.([^.]+)\", \"transforms.route.replacement\": \"$3\", \"key.converter\": \"org.apache.kafka.connect.json.JsonConverter\", \"key.converter.schemas.enable\": \"false\", \"value.converter\": \"org.apache.kafka.connect.json.JsonConverter\", \"value.converter.schemas.enable\": \"false\", \"include.schema.changes\": \"false\"}}'"]
           containers:
             - capabilities: {}
               image: " "
               env:
+                - name: EVENTSTORE_DATABASE_USER
+                  value: postgresuser
+                - name: EVENTSTORE_DATABASE_PASSWORD
+                  value: postgrespassword
                 - name: OPENSHIFT_NAMESPACE
                   valueFrom:
                     fieldRef:
@@ -77,8 +71,8 @@ objects:
                     -Djava.util.logging.manager=org.jboss.logmanager.LogManager
                     -Dquarkus.datasource.url=jdbc:postgresql://eventstore.$(OPENSHIFT_NAMESPACE).svc:5432/eventstore
                     -Dquarkus.http.port=8080
-                    -Dquarkus.datasource.username=postgresuser
-                    -Dquarkus.datasource.password=postgrespassword
+                    -Dquarkus.datasource.username=$(EVENTSTORE_DATABASE_USER)
+                    -Dquarkus.datasource.password=$(EVENTSTORE_DATABASE_PASSWORD)
                     -Xmx256m
               imagePullPolicy: IfNotPresent
               livenessProbe:

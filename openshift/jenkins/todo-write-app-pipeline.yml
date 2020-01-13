@@ -35,7 +35,9 @@ objects:
           ENV AB_ENABLED=jmx_exporter
           COPY target/lib/* /deployments/lib/
           COPY target/*-runner.jar /deployments/app.jar
-          ENTRYPOINT [ "/deployments/run-java.sh" ]
+          COPY add_debezium_connector.sh /deployments/add_debezium_connector.sh
+          COPY remove_debezium_connector.sh /deployments/remove_debezium_connector.sh
+          ENTRYPOINT [ "add_debezium_connector.sh && /deployments/run-java.sh" ]
         type: Docker
       strategy:
         type: Docker
