@@ -21,7 +21,8 @@ read -r -d '' connector_setup<<CONNECTOR_SETUP
     "key.converter.schemas.enable": "false",
     "value.converter": "org.apache.kafka.connect.json.JsonConverter",
     "value.converter.schemas.enable": "false",
-    "include.schema.changes": "false"
+    "include.schema.changes": "false",
+    "tombstones.on.delete": "false"
   }
 }
 CONNECTOR_SETUP
