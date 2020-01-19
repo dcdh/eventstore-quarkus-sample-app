@@ -7,6 +7,7 @@ import com.damdamdeo.todo.infrastructure.TodoEntity;
 
 import javax.enterprise.context.Dependent;
 import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 import java.util.Objects;
 
 @Dependent
