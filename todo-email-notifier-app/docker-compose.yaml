@@ -3,14 +3,14 @@ version: '2'
 services:
 
   zookeeper:
-    image: debezium/zookeeper:0.10
+    image: debezium/zookeeper:1.0.0.Final
     ports:
       - 2181:2181
       - 2888:2888
       - 3888:3888
 
   kafka:
-    image: debezium/kafka:0.10
+    image: debezium/kafka:1.0.0.Final
     ports:
       - 9092:9092
     links:

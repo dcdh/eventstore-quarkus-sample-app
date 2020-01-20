@@ -74,10 +74,10 @@ objects:
                                       ]),
                     containerTemplate(name: 'maven', image: 'maven:3.6.3-jdk-8-slim', ttyEnabled: true, command: 'cat'),
                     containerTemplate(name: 'zookeeper',
-                                      image: 'debezium/zookeeper:0.10',
+                                      image: 'debezium/zookeeper:1.0.0.Final',
                                       resourceLimitMemory: '128Mi'),
                     containerTemplate(name: 'kafka',
-                                      image: 'debezium/kafka:0.10',
+                                      image: 'debezium/kafka:1.0.0.Final',
                                       resourceLimitMemory: '512Mi',
                                       envVars: [
                                         envVar(key: 'ZOOKEEPER_CONNECT', value: 'localhost:2181'),
