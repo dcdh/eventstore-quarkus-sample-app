@@ -23,16 +23,10 @@ objects:
         app: todo-write-app
     spec:
       ports:
-        - name: web
-          nodePort: 0
-          port: 8080
-          protocol: TCP
-          targetPort: 8080
+        - port: 8080
+          name: web
       selector:
-        name: todo-write-app
-      sessionAffinity: None
-    status:
-      loadBalancer: {}
+        app: todo-write-app
   - apiVersion: route.openshift.io/v1
     kind: Route
     metadata:
