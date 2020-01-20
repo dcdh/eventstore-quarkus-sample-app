@@ -31,12 +31,11 @@ oc project production
 
 https://debezium.io/documentation/reference/0.10/operations/openshift.html
 
-docker pull strimzi/operator:0.14.0 && \
-    docker pull strimzi/kafka:0.14.0-kafka-2.3.0 && \
-    docker pull strimzi/operator:0.14.0 && \
-    docker pull strimzi/kafka-bridge:0.14.0
+docker pull strimzi/operator:0.16.0 && \
+    docker pull strimzi/kafka:0.16.0-kafka-2.4.0 && \
+    docker pull strimzi/operator:0.16.0
 
-export STRIMZI_VERSION=0.14.0
+export STRIMZI_VERSION=0.16.0
 git clone -b $STRIMZI_VERSION https://github.com/strimzi/strimzi-kafka-operator
 cd strimzi-kafka-operator
 
