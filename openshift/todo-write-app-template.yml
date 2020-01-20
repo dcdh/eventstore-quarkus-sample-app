@@ -19,6 +19,8 @@ objects:
     kind: Service
     metadata:
       name: todo-write-app
+      labels:
+        app: todo-write-app
     spec:
       ports:
         - name: web
@@ -44,31 +46,37 @@ objects:
         weight: 100
       wildcardPolicy: None
   - apiVersion: v1
-    kind: DeploymentConfig
+    kind: ImageStream
     metadata:
-      annotations:
-        template.alpha.openshift.io/wait-for-ready: 'true'
-      name: todo-write-app
       labels:
         app: todo-write-app
+      name: todo-write-app
     spec:
+      lookupPolicy:
+        local: true
+  - apiVersion: apps/v1
+    kind: StatefulSet
+    metadata:
+      name: todo-write-app
+    spec:
+      serviceName: todo-write-app
       replicas: 1
       selector:
-        name: todo-write-app
-      strategy:
-        type: Recreate
+        matchLabels:
+          app: todo-write-app
       template:
         metadata:
+          annotations:
+            alpha.image.policy.openshift.io/resolve-names: '*'
           labels:
-            name: todo-write-app
+            app: todo-write-app
         spec:
           initContainers:
             - name: wait-for-debezium-connector-pod
               image: giantswarm/tiny-tools
               command: ["sh", "-c", "while `curl -s --cacert /var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt --header \"Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)\" https://openshift.default.svc.cluster.local/oapi/v1/namespaces/$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace)/deploymentconfigs/debezium-connect | jq \".status.availableReplicas == 0\"` ; do echo \"waiting for debezium-connector pod\"; sleep 2; done; exit 0;"]
           containers:
-            - capabilities: {}
-              image: " "
+            - name: todo-write-app
               env:
                 - name: EVENTSTORE_DATABASE_USER
                   value: postgresuser
@@ -88,17 +96,17 @@ objects:
                     -Dquarkus.datasource.username=$(EVENTSTORE_DATABASE_USER)
                     -Dquarkus.datasource.password=$(EVENTSTORE_DATABASE_PASSWORD)
                     -Xmx256m
-              imagePullPolicy: IfNotPresent
+              image: todo-write-app:latest
+              imagePullPolicy: Always
+              ports:
+                - containerPort: 8080
+                  name: web
               livenessProbe:
                 httpGet:
                   path: /health/live
                   port: 8080
                 initialDelaySeconds: 5
                 timeoutSeconds: 10
-              name: todo-write-app
-              ports:
-                - containerPort: 8080
-                  protocol: TCP
               readinessProbe:
                 httpGet:
                   path: /health/ready
@@ -108,20 +116,3 @@ objects:
               resources:
                 limits:
                   memory: 256Mi
-              securityContext:
-                capabilities: {}
-                privileged: false
-              terminationMessagePath: "/dev/termination-log"
-          dnsPolicy: ClusterFirst
-          restartPolicy: Always
-      triggers:
-        - imageChangeParams:
-            automatic: true
-            containerNames:
-              - todo-write-app
-            from:
-              kind: ImageStreamTag
-              name: todo-write-app:latest
-            lastTriggeredImage: ''
-          type: ImageChange
-        - type: ConfigChange
