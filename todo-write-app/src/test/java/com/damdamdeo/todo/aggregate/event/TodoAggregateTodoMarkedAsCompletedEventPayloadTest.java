@@ -50,7 +50,7 @@ public class TodoAggregateTodoMarkedAsCompletedEventPayloadTest {
 
         @Override
         public String secret() {
-            return null;
+            return "AAlwSnNqyIRebwRqBfHufaCTXoRFRllg";
         }
 
     }

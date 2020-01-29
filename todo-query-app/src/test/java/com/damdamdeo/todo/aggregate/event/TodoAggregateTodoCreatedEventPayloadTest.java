@@ -52,22 +52,9 @@ public class TodoAggregateTodoCreatedEventPayloadTest {
 
         @Override
         public String secret() {
-            return null;
+            return "AAlwSnNqyIRebwRqBfHufaCTXoRFRllg";
         }
 
-    }
-
-    @Test
-    public void should_serialized() {
-        // Given
-        final EventPayloadSerializer eventPayloadSerializer = new JacksonEventPayloadSerializer(new DefaultJacksonEventPayloadSubtypes());
-
-        // When
-        final String serialized = eventPayloadSerializer.serialize(new DefaultEncryptedEventSecret(),
-                new TodoAggregateTodoCreatedEventPayload("todoId", "lorem ipsum"));
-
-        // Then
-        assertEquals("{\"@type\":\"TodoAggregateTodoCreatedEventPayload\",\"todoId\":\"todoId\",\"description\":\"lorem ipsum\"}", serialized);
     }
 
     @Test
@@ -77,7 +64,7 @@ public class TodoAggregateTodoCreatedEventPayloadTest {
 
         // When
         final EventPayload deserialized = eventPayloadSerializer.deserialize(new DefaultEncryptedEventSecret(),
-                "{\"@type\":\"TodoAggregateTodoCreatedEventPayload\",\"todoId\":\"todoId\",\"description\":\"lorem ipsum\"}");
+                "{\"@type\":\"TodoAggregateTodoCreatedEventPayload\",\"todoId\":\"todoId\",\"description\":\"USHMw4wvK8o3Grcp8kDTFA==\"}");
 
         // Then
         assertEquals(new TodoAggregateTodoCreatedEventPayload("todoId", "lorem ipsum"), deserialized);

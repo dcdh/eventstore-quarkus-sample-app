@@ -1,9 +1,11 @@
 package com.damdamdeo.email_notifier.domain.event;
 
 import com.damdamdeo.eventdataspreader.debeziumeventconsumer.api.EventPayload;
+import com.damdamdeo.eventdataspreader.eventsourcing.infrastructure.JacksonEncryptionDeserializer;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.Objects;
 
@@ -12,6 +14,7 @@ public final class TodoAggregateTodoCreatedEventPayload implements EventPayload 
 
     private final String todoId;
 
+    @JsonDeserialize(using = JacksonEncryptionDeserializer.class)
     private final String description;
 
     @JsonCreator

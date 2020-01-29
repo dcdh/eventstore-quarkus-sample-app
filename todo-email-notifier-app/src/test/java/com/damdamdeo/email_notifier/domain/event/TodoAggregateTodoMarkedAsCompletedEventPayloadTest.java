@@ -50,22 +50,9 @@ public class TodoAggregateTodoMarkedAsCompletedEventPayloadTest {
 
         @Override
         public String secret() {
-            return null;
+            return "AAlwSnNqyIRebwRqBfHufaCTXoRFRllg";
         }
 
-    }
-
-    @Test
-    public void should_serialized() {
-        // Given
-        final EventPayloadSerializer eventPayloadSerializer = new JacksonEventPayloadSerializer(new DefaultJacksonEventPayloadSubtypes());
-
-        // When
-        final String serialized = eventPayloadSerializer.serialize(new DefaultEncryptedEventSecret(),
-                new TodoAggregateTodoMarkedAsCompletedEventPayload("todoId"));
-
-        // Then
-        assertEquals("{\"@type\":\"TodoAggregateTodoMarkedAsCompletedEventPayload\",\"todoId\":\"todoId\"}", serialized);
     }
 
     @Test

@@ -1,10 +1,14 @@
 package com.damdamdeo.todo.aggregate.event;
 
+import com.damdamdeo.eventdataspreader.eventsourcing.infrastructure.JacksonEncryptionDeserializer;
+import com.damdamdeo.eventdataspreader.eventsourcing.infrastructure.JacksonEncryptionSerializer;
 import com.damdamdeo.eventdataspreader.writeside.eventsourcing.api.AggregateRootEventPayload;
 import com.damdamdeo.todo.aggregate.TodoAggregateRoot;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.Objects;
 
@@ -13,6 +17,8 @@ public final class TodoAggregateTodoCreatedEventPayload extends AggregateRootEve
 
     private final String todoId;
 
+    @JsonSerialize(using = JacksonEncryptionSerializer.class)
+    @JsonDeserialize(using = JacksonEncryptionDeserializer.class)
     private final String description;
 
     @JsonCreator
