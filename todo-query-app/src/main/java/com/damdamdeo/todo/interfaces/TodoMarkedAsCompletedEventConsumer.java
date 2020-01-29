@@ -3,11 +3,11 @@ package com.damdamdeo.todo.interfaces;
 import com.damdamdeo.eventdataspreader.debeziumeventconsumer.api.Event;
 import com.damdamdeo.eventdataspreader.debeziumeventconsumer.api.EventConsumer;
 import com.damdamdeo.eventdataspreader.debeziumeventconsumer.api.EventQualifier;
+import com.damdamdeo.todo.aggregate.event.TodoAggregateTodoMarkedAsCompletedEventPayload;
 import com.damdamdeo.todo.infrastructure.TodoEntity;
 
 import javax.enterprise.context.Dependent;
 import javax.persistence.EntityManager;
-import javax.transaction.Transactional;
 import java.util.Objects;
 
 @Dependent
@@ -22,9 +22,10 @@ public class TodoMarkedAsCompletedEventConsumer implements EventConsumer {
 
     @Override
     public void consume(final Event event) {
+        final TodoAggregateTodoMarkedAsCompletedEventPayload todoAggregateTodoMarkedAsCompletedEventPayload = (TodoAggregateTodoMarkedAsCompletedEventPayload) event.eventPayload();
         final TodoEntity todoToMarkAsCompleted = entityManager.find(TodoEntity.class,
-                event.aggregateRootId());
-        todoToMarkAsCompleted.markAsCompleted(event.eventId().toString(),
+                todoAggregateTodoMarkedAsCompletedEventPayload.todoId());
+        todoToMarkAsCompleted.markAsCompleted(event.eventId(),
                 event.version());
         entityManager.merge(todoToMarkAsCompleted);
     }

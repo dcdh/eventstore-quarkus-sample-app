@@ -1,6 +1,6 @@
 package com.damdamdeo.todo;
 
-import com.damdamdeo.todo.domain.TodoStatus;
+import com.damdamdeo.todo.aggregate.TodoStatus;
 import com.damdamdeo.todo.infrastructure.TodoEntity;
 import com.jayway.restassured.module.jsv.JsonSchemaValidator;
 import io.quarkus.test.junit.QuarkusTest;
@@ -28,18 +28,18 @@ public class EventStoreEventConsumerTest {
     KafkaDebeziumProducer kafkaDebeziumProducer;
 
     @Inject
-    EntityManager em;
+    EntityManager entityManager;
 
     @BeforeEach
     @Transactional
     public void setup() {
-        em.createQuery("DELETE FROM TodoEntity").executeUpdate();
-        em.createQuery("DELETE FROM EventConsumerConsumedEntity").executeUpdate();
-        em.createQuery("DELETE FROM EventConsumedEntity").executeUpdate();
+        entityManager.createQuery("DELETE FROM TodoEntity").executeUpdate();
+        entityManager.createQuery("DELETE FROM EventConsumerConsumedEntity").executeUpdate();
+        entityManager.createQuery("DELETE FROM EventConsumedEntity").executeUpdate();
 
-        em.createNativeQuery("DELETE FROM todoentity_aud").executeUpdate();
-        em.createNativeQuery("DELETE FROM revinfo").executeUpdate();
-        em.createNativeQuery("ALTER SEQUENCE public.hibernate_sequence RESTART WITH 1");
+        entityManager.createNativeQuery("DELETE FROM todoentity_aud").executeUpdate();
+        entityManager.createNativeQuery("DELETE FROM revinfo").executeUpdate();
+        entityManager.createNativeQuery("ALTER SEQUENCE public.hibernate_sequence RESTART WITH 1");
     }
 
     @Test
@@ -87,7 +87,7 @@ public class EventStoreEventConsumerTest {
                 .body("version", equalTo(1));
 
         // Then Auditing
-        final List<TodoEntity> todos = AuditReaderFactory.get(em)
+        final List<TodoEntity> todos = AuditReaderFactory.get(entityManager)
                 .createQuery()
                 .forRevisionsOfEntity(TodoEntity.class, true, true)
                 .add(AuditEntity.id().eq("todoId"))

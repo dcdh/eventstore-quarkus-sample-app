@@ -66,7 +66,7 @@ objects:
                     -Dquarkus.http.host=0.0.0.0
                     -Djava.util.logging.manager=org.jboss.logmanager.LogManager
                     -Dsmallrye.messaging.source.event.bootstrap.servers=broker-kafka-bootstrap.$(OPENSHIFT_NAMESPACE).svc:9092
-                    -Dsmallrye.messaging.source.aggregaterootprojection.bootstrap.servers=broker-kafka-bootstrap.$(OPENSHIFT_NAMESPACE).svc:9092
+                    -Dsmallrye.messaging.source.aggregateroot.bootstrap.servers=broker-kafka-bootstrap.$(OPENSHIFT_NAMESPACE).svc:9092
                     -Dquarkus.neo4j.uri=bolt://neo4j.$(OPENSHIFT_NAMESPACE).svc:7687
                     -Dquarkus.neo4j.authentication.username=neo4j
                     -Dquarkus.neo4j.authentication.password=secret

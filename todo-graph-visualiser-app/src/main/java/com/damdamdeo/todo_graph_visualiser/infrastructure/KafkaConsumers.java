@@ -18,7 +18,7 @@ public class KafkaConsumers {
     Neo4JGraphRepository neo4JGraphRepository;
 
     // use only one executor to ensure that only one message will be handled between multiple topics
-    // the neo4j repository will handle the disorder of message handling between event and aggregaterootprojection topics
+    // the neo4j repository will handle the disorder of message handling between event and aggregateroot topics
     private final Executor executor = Executors.newSingleThreadExecutor();
 
     private static final String AFTER = "after";
@@ -55,8 +55,8 @@ public class KafkaConsumers {
         }, executor);
     }
 
-    @Incoming("aggregaterootprojection")
-    public CompletionStage<Void> onAggregateRootProjection(final ReceivedKafkaMessage<JsonObject, JsonObject> message) {
+    @Incoming("aggregateroot")
+    public CompletionStage<Void> onAggregateRoot(final ReceivedKafkaMessage<JsonObject, JsonObject> message) {
         return CompletableFuture.supplyAsync(() -> {
             final JsonObject after = message.getPayload().getJsonObject(AFTER);
             neo4JGraphRepository.persistTodoAggregate(

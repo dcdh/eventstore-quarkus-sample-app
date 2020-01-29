@@ -1,5 +1,5 @@
 {
-  "topic": "aggregaterootprojection",
+  "topic": "aggregateroot",
   "key": {
     "aggregaterootid": "todoId",
     "aggregateroottype": "TodoAggregateRoot"
@@ -25,7 +25,7 @@
       "snapshot": "false",
       "db": "eventstore",
       "schema": "public",
-      "table": "aggregaterootprojection",
+      "table": "aggregateroot",
       "txId": 627,
       "lsn": 24037872,
       "xmin": null

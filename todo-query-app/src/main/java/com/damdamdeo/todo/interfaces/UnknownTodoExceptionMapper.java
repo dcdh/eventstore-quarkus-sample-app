@@ -1,6 +1,6 @@
 package com.damdamdeo.todo.interfaces;
 
-import com.damdamdeo.todo.domain.UnknownTodoException;
+import com.damdamdeo.todo.aggregate.UnknownTodoException;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;

@@ -1,4 +1,4 @@
-package com.damdamdeo.todo.domain;
+package com.damdamdeo.todo.aggregate;
 
 public class UnknownTodoException extends RuntimeException {
 

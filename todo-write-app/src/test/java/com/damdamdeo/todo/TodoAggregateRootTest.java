@@ -5,8 +5,8 @@ import com.damdamdeo.eventdataspreader.writeside.eventsourcing.api.EventReposito
 import com.damdamdeo.todo.aggregate.TodoAggregateRoot;
 import com.damdamdeo.todo.aggregate.TodoAggregateRootRepository;
 import com.damdamdeo.todo.api.TodoStatus;
-import com.damdamdeo.todo.aggregate.event.TodoCreatedEventPayload;
-import com.damdamdeo.todo.aggregate.event.TodoMarkedAsCompletedEventPayload;
+import com.damdamdeo.todo.aggregate.event.TodoAggregateTodoCreatedEventPayload;
+import com.damdamdeo.todo.aggregate.event.TodoAggregateTodoMarkedAsCompletedEventPayload;
 import com.damdamdeo.todo.command.CreateNewTodoCommand;
 import com.damdamdeo.todo.command.MarkTodoAsCompletedCommand;
 import io.quarkus.test.junit.QuarkusTest;
@@ -51,7 +51,7 @@ public class TodoAggregateRootTest extends AbstractTodoTest {
         assertEquals(0L, events.get(0).version());
         assertNotNull(events.get(0).creationDate());
 //        assertEquals(Collections.singletonMap("user", "Damien"), events.get(0).metaData());
-        assertEquals(new TodoCreatedEventPayload("todoId", "lorem ipsum"), events.get(0).eventPayload());
+        assertEquals(new TodoAggregateTodoCreatedEventPayload("todoId", "lorem ipsum"), events.get(0).eventPayload());
     }
 
     @Test
@@ -70,7 +70,7 @@ public class TodoAggregateRootTest extends AbstractTodoTest {
 
         final List<Event> events = eventRepository.load("todoId", "TodoAggregateRoot");
         assertEquals(2, events.size());
-        assertEquals(new TodoMarkedAsCompletedEventPayload("todoId"), events.get(1).eventPayload());
+        assertEquals(new TodoAggregateTodoMarkedAsCompletedEventPayload("todoId"), events.get(1).eventPayload());
     }
 
 }

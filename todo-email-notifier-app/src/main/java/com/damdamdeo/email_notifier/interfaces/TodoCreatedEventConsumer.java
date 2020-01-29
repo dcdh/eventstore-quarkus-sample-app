@@ -4,6 +4,7 @@ import com.damdamdeo.email_notifier.domain.EmailNotifier;
 import com.damdamdeo.email_notifier.domain.TemplateGenerator;
 import com.damdamdeo.email_notifier.domain.TodoCreated;
 import com.damdamdeo.email_notifier.domain.TodoStatus;
+import com.damdamdeo.email_notifier.domain.event.TodoAggregateTodoCreatedEventPayload;
 import com.damdamdeo.email_notifier.infrastructure.TodoEntity;
 import com.damdamdeo.eventdataspreader.debeziumeventconsumer.api.Event;
 import com.damdamdeo.eventdataspreader.debeziumeventconsumer.api.EventConsumer;
@@ -11,7 +12,6 @@ import com.damdamdeo.eventdataspreader.debeziumeventconsumer.api.EventQualifier;
 
 import javax.enterprise.context.Dependent;
 import javax.persistence.EntityManager;
-import java.io.IOException;
 import java.util.Objects;
 
 @Dependent
@@ -32,12 +32,13 @@ public class TodoCreatedEventConsumer implements EventConsumer {
 
     @Override
     public void consume(final Event event) {
+        final TodoAggregateTodoCreatedEventPayload todoAggregateTodoCreatedEventPayload = (TodoAggregateTodoCreatedEventPayload) event.eventPayload();
         try {
             final TodoEntity todoToCreate = new TodoEntity(
-                    event.payload().getString("todoId"),
-                    event.payload().getString("description"),
+                    todoAggregateTodoCreatedEventPayload.todoId(),
+                    todoAggregateTodoCreatedEventPayload.description(),
                     TodoStatus.IN_PROGRESS,
-                    event.eventId().toString(),
+                    event.eventId(),
                     event.version());
             entityManager.persist(todoToCreate);
             final String content = templateGenerator.generate(new TodoCreated() {

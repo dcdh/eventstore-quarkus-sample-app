@@ -1,7 +1,7 @@
 package com.damdamdeo.todo.infrastructure;
 
 import com.damdamdeo.eventdataspreader.writeside.eventsourcing.api.AbstractAggregateRootRepository;
-import com.damdamdeo.eventdataspreader.writeside.eventsourcing.api.AggregateRootProjectionRepository;
+import com.damdamdeo.eventdataspreader.writeside.eventsourcing.api.AggregateRootSerializer;
 import com.damdamdeo.eventdataspreader.writeside.eventsourcing.api.EventRepository;
 import com.damdamdeo.todo.aggregate.TodoAggregateRoot;
 import com.damdamdeo.todo.aggregate.TodoAggregateRootRepository;
@@ -14,16 +14,28 @@ import java.math.BigInteger;
 @Dependent
 public class DefaultTodoAggregateRootRepository extends AbstractAggregateRootRepository<TodoAggregateRoot> implements TodoAggregateRootRepository {
 
-    final EntityManager em;
+    final EntityManager entityManager;
     final EventRepository eventRepository;
-    final AggregateRootProjectionRepository aggregateRootProjectionRepository;
+    final AggregateRootSerializer aggregateRootSerializer;
 
-    public DefaultTodoAggregateRootRepository(final EntityManager em,
+    public DefaultTodoAggregateRootRepository(final EntityManager entityManager,
                                               final EventRepository eventRepository,
-                                              final AggregateRootProjectionRepository aggregateRootProjectionRepository) {
-        this.em = em;
+                                              final AggregateRootSerializer aggregateRootSerializer) {
+        this.entityManager = entityManager;
         this.eventRepository = eventRepository;
-        this.aggregateRootProjectionRepository = aggregateRootProjectionRepository;
+        this.aggregateRootSerializer = aggregateRootSerializer;
+    }
+
+    @Override
+    @Transactional
+    public boolean isTodoExistent(final String todoIdToCheck) {
+        // je pourrais vérifier en utilisant la colonne aggregaterootId, cependant mon but est de réaliser l'implementation
+        // via le contenu json de l'aggregat...
+
+        final BigInteger countAggregateRootId = (BigInteger) entityManager.createNativeQuery("SELECT count(*) as count FROM aggregateroot WHERE aggregateroottype = 'TodoAggregateRoot' AND aggregateroot->>'aggregateRootId' = :aggregateRootId")
+                .setParameter("aggregateRootId", todoIdToCheck)
+                .getSingleResult();
+        return countAggregateRootId.compareTo(BigInteger.ZERO) > 0;
     }
 
     @Override
@@ -37,20 +49,13 @@ public class DefaultTodoAggregateRootRepository extends AbstractAggregateRootRep
     }
 
     @Override
-    protected AggregateRootProjectionRepository aggregateRootProjectionRepository() {
-        return aggregateRootProjectionRepository;
+    protected EntityManager entityManager() {
+        return entityManager;
     }
 
     @Override
-    @Transactional
-    public boolean isTodoExistent(final String todoIdToCheck) {
-        // je pourrais vérifier en utilisant la colonne aggregaterootId, cependant mon but est de réaliser l'implementation
-        // via le contenu json de l'aggregat...
-
-        final BigInteger countAggregateRootId = (BigInteger) em.createNativeQuery("SELECT count(*) as count FROM aggregaterootprojection WHERE aggregateroottype = 'TodoAggregateRoot' AND aggregateroot->>'aggregateRootId' = :aggregateRootId")
-                .setParameter("aggregateRootId", todoIdToCheck)
-                .getSingleResult();
-        return countAggregateRootId.compareTo(BigInteger.ZERO) > 0;
+    protected AggregateRootSerializer aggregateRootSerializer() {
+        return aggregateRootSerializer;
     }
 
 }

@@ -86,7 +86,7 @@ objects:
                                         envVar(key: 'ZOOKEEPER_CONNECT', value: 'localhost:2181'),
                                         envVar(key: 'HOST_NAME', value: 'localhost'),
                                         envVar(key: 'ADVERTISED_HOST_NAME', value: 'localhost'),
-                                        envVar(key: 'CREATE_TOPICS', value: 'event-query:1:1:compact,event:1:1:compact,aggregaterootprojection:1:1:compact,flyway_schema_history:1:1:compact,test:1:1:compact')
+                                        envVar(key: 'CREATE_TOPICS', value: 'event-query:1:1:compact,event:1:1:compact,aggregateroot:1:1:compact,flyway_schema_history:1:1:compact,test:1:1:compact')
                                       ]),
                     containerTemplate(name: 'connect',
                                       image: 'debezium/connect:1.0.0.Final',
@@ -186,7 +186,6 @@ objects:
             quarkus.datasource.password=postgres
 
             quarkus.hibernate-orm.database.generation=none
-            quarkus.hibernate-orm.dialect=com.damdamdeo.eventdataspreader.writeside.eventsourcing.infrastructure.hibernate.JSONBPostgreSQLDialect
 
             quarkus.flyway.migrate-at-start=true
 

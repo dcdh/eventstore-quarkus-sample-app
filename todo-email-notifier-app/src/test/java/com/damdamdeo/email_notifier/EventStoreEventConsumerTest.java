@@ -30,7 +30,7 @@ public class EventStoreEventConsumerTest {
     KafkaDebeziumProducer kafkaDebeziumProducer;
 
     @Inject
-    EntityManager em;
+    EntityManager entityManager;
 
     @Inject
     EmailNotifier emailNotifier;
@@ -47,13 +47,13 @@ public class EventStoreEventConsumerTest {
     @BeforeEach
     @Transactional
     public void setup() {
-        em.createQuery("DELETE FROM TodoEntity").executeUpdate();
-        em.createQuery("DELETE FROM EventConsumerConsumedEntity").executeUpdate();
-        em.createQuery("DELETE FROM EventConsumedEntity").executeUpdate();
+        entityManager.createQuery("DELETE FROM TodoEntity").executeUpdate();
+        entityManager.createQuery("DELETE FROM EventConsumerConsumedEntity").executeUpdate();
+        entityManager.createQuery("DELETE FROM EventConsumedEntity").executeUpdate();
 
-        em.createNativeQuery("DELETE FROM todoentity_aud").executeUpdate();
-        em.createNativeQuery("DELETE FROM revinfo").executeUpdate();
-        em.createNativeQuery("ALTER SEQUENCE public.hibernate_sequence RESTART WITH 1");
+        entityManager.createNativeQuery("DELETE FROM todoentity_aud").executeUpdate();
+        entityManager.createNativeQuery("DELETE FROM revinfo").executeUpdate();
+        entityManager.createNativeQuery("ALTER SEQUENCE public.hibernate_sequence RESTART WITH 1");
     }
 
     @Test
@@ -120,7 +120,7 @@ public class EventStoreEventConsumerTest {
                 .body("[0].MIME.Parts[0].MIME.Parts[0].Body", containsString("lorem ipsum"));
 
         // Then Auditing
-        final List<TodoEntity> todos = AuditReaderFactory.get(em)
+        final List<TodoEntity> todos = AuditReaderFactory.get(entityManager)
                 .createQuery()
                 .forRevisionsOfEntity(TodoEntity.class, true, true)
                 .add(AuditEntity.id().eq("todoId"))

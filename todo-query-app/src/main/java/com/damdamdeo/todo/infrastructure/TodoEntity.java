@@ -1,7 +1,7 @@
 package com.damdamdeo.todo.infrastructure;
 
-import com.damdamdeo.todo.domain.Todo;
-import com.damdamdeo.todo.domain.TodoStatus;
+import com.damdamdeo.todo.aggregate.Todo;
+import com.damdamdeo.todo.aggregate.TodoStatus;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;

@@ -14,8 +14,10 @@ public abstract class AbstractTodoTest {
     @BeforeEach
     @Transactional
     public void setup() {
-        entityManager.createQuery("DELETE FROM EventEntity").executeUpdate();
-        entityManager.createQuery("DELETE FROM AggregateRootProjectionEntity").executeUpdate();
+        entityManager.createQuery("DELETE FROM EncryptedEventEntity").executeUpdate();
+        entityManager.createQuery("DELETE FROM AggregateRootEntity").executeUpdate();
+        entityManager.createQuery("DELETE FROM EventConsumerConsumedEntity").executeUpdate();
+        entityManager.createQuery("DELETE FROM EventConsumedEntity").executeUpdate();
     }
 
 }

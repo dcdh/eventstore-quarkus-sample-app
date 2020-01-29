@@ -43,7 +43,7 @@ curl -i -X POST -H "Accept:application/json" -H  "Content-Type:application/json"
 
 curl -X DELETE http://localhost:8083/connectors/todo-connector
 
-curl -X DELETE http://localhost:8082/topics/eventstore.public.aggregaterootprojection
+curl -X DELETE http://localhost:8082/topics/eventstore.public.aggregateroot
 flute 405 !!! impossible de supprimer un topic depuis l'api rest ...
 
 > donc je peux tester avec debezium uniquement en faisant du test e2e

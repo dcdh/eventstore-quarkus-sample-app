@@ -3,6 +3,7 @@ package com.damdamdeo.email_notifier.interfaces;
 import com.damdamdeo.email_notifier.domain.EmailNotifier;
 import com.damdamdeo.email_notifier.domain.TemplateGenerator;
 import com.damdamdeo.email_notifier.domain.TodoMarkedAsCompleted;
+import com.damdamdeo.email_notifier.domain.event.TodoAggregateTodoMarkedAsCompletedEventPayload;
 import com.damdamdeo.email_notifier.infrastructure.TodoEntity;
 import com.damdamdeo.eventdataspreader.debeziumeventconsumer.api.Event;
 import com.damdamdeo.eventdataspreader.debeziumeventconsumer.api.EventConsumer;
@@ -10,7 +11,6 @@ import com.damdamdeo.eventdataspreader.debeziumeventconsumer.api.EventQualifier;
 
 import javax.enterprise.context.Dependent;
 import javax.persistence.EntityManager;
-import java.io.IOException;
 import java.util.Objects;
 
 @Dependent
@@ -31,10 +31,11 @@ public class TodoMarkedAsCompletedEventConsumer implements EventConsumer {
 
     @Override
     public void consume(final Event event) {
+        final TodoAggregateTodoMarkedAsCompletedEventPayload todoAggregateTodoMarkedAsCompletedEventPayload = (TodoAggregateTodoMarkedAsCompletedEventPayload) event.eventPayload();
         try {
             final TodoEntity todoToMarkAsCompleted = entityManager.find(TodoEntity.class,
-                    event.aggregateRootId());
-            todoToMarkAsCompleted.markAsCompleted(event.eventId().toString(),
+                    todoAggregateTodoMarkedAsCompletedEventPayload.todoId());
+            todoToMarkAsCompleted.markAsCompleted(event.eventId(),
                     event.version());
             entityManager.merge(todoToMarkAsCompleted);
             final String content = templateGenerator.generate(new TodoMarkedAsCompleted() {

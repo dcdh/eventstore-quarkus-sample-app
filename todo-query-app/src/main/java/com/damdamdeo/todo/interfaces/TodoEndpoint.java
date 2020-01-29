@@ -1,7 +1,7 @@
 package com.damdamdeo.todo.interfaces;
 
-import com.damdamdeo.todo.domain.TodoRepository;
-import com.damdamdeo.todo.domain.UnknownTodoException;
+import com.damdamdeo.todo.aggregate.TodoRepository;
+import com.damdamdeo.todo.aggregate.UnknownTodoException;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

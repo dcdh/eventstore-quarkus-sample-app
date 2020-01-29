@@ -76,11 +76,11 @@ public class TodoFeatureStepsIT {
         ) {
             executorService.submit(pump);
             final String topicEvent = "event";
-            final String topicAggregaterootprojection = "aggregaterootprojection";
+            final String topicAggregateroot = "aggregateroot";
             for (final String cmd : Arrays.asList("bash -i -c 'bin/kafka-topics.sh --delete --bootstrap-server localhost:9092 --topic " + topicEvent + "; echo DONE'\n",
                     "bash -i -c 'bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic " + topicEvent + "; echo DONE'\n",
-                    "bash -i -c 'bin/kafka-topics.sh --delete --bootstrap-server localhost:9092 --topic " + topicAggregaterootprojection + "; echo DONE'\n",
-                    "bash -i -c 'bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic " + topicAggregaterootprojection + "; echo DONE'\n")) {
+                    "bash -i -c 'bin/kafka-topics.sh --delete --bootstrap-server localhost:9092 --topic " + topicAggregateroot + "; echo DONE'\n",
+                    "bash -i -c 'bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic " + topicAggregateroot + "; echo DONE'\n")) {
                 try {
                     execWatch.getInput().write(cmd.getBytes());
                     // Wait that commands have been executed by checking that "DONE" was outputted in 10 seconds or "does not exist" which means that an un-existent topic has been deleted
@@ -161,7 +161,7 @@ public class TodoFeatureStepsIT {
 
     @Before
     public void flush_eventstore() throws Exception {
-        // psql -U postgresuser -d eventstore -c "TRUNCATE eventconsumerconsumed, eventconsumed, event, aggregaterootprojection;"
+        // psql -U postgresuser -d eventstore -c "TRUNCATE eventconsumerconsumed, eventconsumed, event, aggregateroot;"
         final String podName = client.pods().inNamespace(NAMESPACE).withLabel("name", "eventstore").list().getItems().stream().findFirst().map(Pod::getMetadata).map(ObjectMeta::getName).get();
         final SystemOutCallback systemOutCallback = new SystemOutCallback();
         final ExecutorService executorService = Executors.newSingleThreadExecutor();
@@ -178,7 +178,7 @@ public class TodoFeatureStepsIT {
              final NonBlockingInputStreamPumper pump = new NonBlockingInputStreamPumper(execWatch.getOutput(), systemOutCallback)
         ) {
             executorService.submit(pump);
-            execWatch.getInput().write("bash -c 'psql -U postgresuser -d eventstore -c \"TRUNCATE eventconsumerconsumed, eventconsumed, event, aggregaterootprojection\"'\n".getBytes());
+            execWatch.getInput().write("bash -c 'psql -U postgresuser -d eventstore -c \"TRUNCATE eventconsumerconsumed, eventconsumed, event, aggregateroot\"'\n".getBytes());
             Awaitility.await().atMost(10, TimeUnit.SECONDS).until(() -> systemOutCallback.getData() != null && systemOutCallback.getData().endsWith("TRUNCATE TABLE"));
         } finally {
             executorService.shutdownNow();
