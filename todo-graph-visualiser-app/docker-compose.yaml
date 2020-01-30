@@ -17,7 +17,9 @@ services:
       - zookeeper
     environment:
       - ZOOKEEPER_CONNECT=zookeeper:2181
-      - CREATE_TOPICS=event:1:1:compact,aggregateroot:1:1:compact,flyway_schema_history:1:1:compact,test:1:1:compact
+      - CREATE_TOPICS=event:1:1:delete,aggregateroot:1:1:delete,flyway_schema_history:1:1:delete,test:1:1:delete
+      - KAFKA_LOG_RETENTION_MS=5000
+      - KAFKA_LOG_RETENTION_CHECK_INTERVAL_MS=5000
 
   kafka-rest:
     image: confluentinc/cp-kafka-rest:5.2.2-1
