@@ -1,8 +1,8 @@
 package com.damdamdeo.todo.aggregate;
 
-public interface TodoRepository {
+import com.damdamdeo.todo.domain.api.Todo;
 
-    Todo merge(Todo todo);
+public interface TodoRepository {
 
     Todo get(String todoId);
 

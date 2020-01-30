@@ -1,6 +1,6 @@
 package com.damdamdeo.todo.infrastructure;
 
-import com.damdamdeo.todo.aggregate.Todo;
+import com.damdamdeo.todo.domain.api.Todo;
 import com.damdamdeo.todo.aggregate.TodoRepository;
 
 import javax.enterprise.context.Dependent;
@@ -14,12 +14,6 @@ public class JpaTodoRepository implements TodoRepository {
 
     public JpaTodoRepository(final EntityManager entityManager) {
         this.entityManager = entityManager;
-    }
-
-    @Override
-    @Transactional
-    public Todo merge(final Todo todo) {
-        return entityManager.merge(new TodoEntity(todo));
     }
 
     @Override

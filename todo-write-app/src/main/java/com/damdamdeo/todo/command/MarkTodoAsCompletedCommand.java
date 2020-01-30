@@ -21,8 +21,4 @@ public class MarkTodoAsCompletedCommand implements Command {
         return todoId;
     }
 
-    @Override
-    public boolean exactlyOnceCommandExecution() {
-        return false;
-    }
 }

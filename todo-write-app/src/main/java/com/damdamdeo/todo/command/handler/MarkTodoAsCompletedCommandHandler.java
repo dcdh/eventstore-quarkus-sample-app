@@ -23,6 +23,7 @@ public class MarkTodoAsCompletedCommandHandler implements CommandHandler {
     @Override
     public AggregateRoot handle(final Command command) {
         final TodoAggregateRoot todoAggregateRoot = todoAggregateRootRepository.load(command.aggregateId());
+        todoAggregateRoot.canMarkTodoAsCompletedSpecification().checkSatisfiedBy(todoAggregateRoot);
         final MarkTodoAsCompletedCommand markTodoAsCompletedCommand = (MarkTodoAsCompletedCommand) command;
         todoAggregateRoot.handle(markTodoAsCompletedCommand);
         return todoAggregateRootRepository.save(todoAggregateRoot);

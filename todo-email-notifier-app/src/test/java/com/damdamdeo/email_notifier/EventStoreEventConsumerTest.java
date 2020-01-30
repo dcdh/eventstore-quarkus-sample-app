@@ -75,6 +75,7 @@ public class EventStoreEventConsumerTest {
     @Test
     public void should_consume_todo_created_event_and_todo_marked_as_completed_event() throws Exception {
         // When
+        kafkaDebeziumProducer.produce("TodoSecret.json");
         kafkaDebeziumProducer.produce("TodoCreatedEvent.json");
         await().atMost(10, TimeUnit.SECONDS).until(() ->
                 given()

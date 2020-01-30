@@ -1,8 +1,8 @@
 package com.damdamdeo.email_notifier.domain.event;
 
 import com.damdamdeo.eventdataspreader.debeziumeventconsumer.api.EventPayload;
-import com.damdamdeo.eventdataspreader.debeziumeventconsumer.api.EventPayloadSerializer;
-import com.damdamdeo.eventdataspreader.debeziumeventconsumer.infrastructure.JacksonEventPayloadSerializer;
+import com.damdamdeo.eventdataspreader.debeziumeventconsumer.api.EventPayloadDeserializer;
+import com.damdamdeo.eventdataspreader.debeziumeventconsumer.infrastructure.JacksonEventPayloadDeserializer;
 import com.damdamdeo.eventdataspreader.debeziumeventconsumer.infrastructure.spi.JacksonEventPayloadSubtypes;
 import com.damdamdeo.eventdataspreader.debeziumeventconsumer.infrastructure.spi.JacksonSubtype;
 import com.damdamdeo.eventdataspreader.eventsourcing.api.EncryptedEventSecret;
@@ -58,10 +58,10 @@ public class TodoAggregateTodoCreatedEventPayloadTest {
     @Test
     public void should_deserialize() {
         // Given
-        final EventPayloadSerializer eventPayloadSerializer = new JacksonEventPayloadSerializer(new DefaultJacksonEventPayloadSubtypes());
+        final EventPayloadDeserializer eventPayloadDeserializer = new JacksonEventPayloadDeserializer(new DefaultJacksonEventPayloadSubtypes());
 
         // When
-        final EventPayload deserialized = eventPayloadSerializer.deserialize(new DefaultEncryptedEventSecret(),
+        final EventPayload deserialized = eventPayloadDeserializer.deserialize(new DefaultEncryptedEventSecret(),
                 "{\"@type\":\"TodoAggregateTodoCreatedEventPayload\",\"todoId\":\"todoId\",\"description\":\"USHMw4wvK8o3Grcp8kDTFA==\"}");
 
         // Then

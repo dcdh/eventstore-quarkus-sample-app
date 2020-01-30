@@ -1,7 +1,7 @@
 package com.damdamdeo.todo.infrastructure;
 
-import com.damdamdeo.todo.aggregate.Todo;
-import com.damdamdeo.todo.aggregate.TodoStatus;
+import com.damdamdeo.todo.domain.api.Todo;
+import com.damdamdeo.todo.domain.api.TodoStatus;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
@@ -37,14 +37,6 @@ public class TodoEntity implements Todo {
         this.version = version;
     }
 
-    public TodoEntity(final Todo todo) {
-        this(todo.todoId(),
-                todo.description(),
-                todo.todoStatus(),
-                todo.currentEventId(),
-                todo.version());
-    }
-
     public void markAsCompleted(final String currentEventId, final Long version) {
         this.todoStatus = TodoStatus.COMPLETED;
         this.currentEventId = currentEventId;
@@ -66,7 +58,6 @@ public class TodoEntity implements Todo {
         return todoStatus;
     }
 
-    @Override
     public String currentEventId() {
         return currentEventId;
     }

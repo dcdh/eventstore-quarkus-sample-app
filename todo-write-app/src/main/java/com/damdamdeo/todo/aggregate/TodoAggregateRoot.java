@@ -2,12 +2,12 @@ package com.damdamdeo.todo.aggregate;
 
 import com.damdamdeo.eventdataspreader.writeside.eventsourcing.api.AggregateRoot;
 import com.damdamdeo.todo.aggregate.event.DefaultEventMetadata;
-import com.damdamdeo.todo.api.Todo;
-import com.damdamdeo.todo.api.TodoStatus;
+import com.damdamdeo.todo.domain.api.Todo;
 import com.damdamdeo.todo.aggregate.event.TodoAggregateTodoCreatedEventPayload;
 import com.damdamdeo.todo.aggregate.event.TodoAggregateTodoMarkedAsCompletedEventPayload;
 import com.damdamdeo.todo.command.CreateNewTodoCommand;
 import com.damdamdeo.todo.command.MarkTodoAsCompletedCommand;
+import com.damdamdeo.todo.domain.api.TodoStatus;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

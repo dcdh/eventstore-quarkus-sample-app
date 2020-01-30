@@ -15,7 +15,7 @@
       "secret": null,
       "eventtype": "TodoCreatedEvent",
       "eventmetadata": "{\"@type\": \"DefaultEventMetadata\"}",
-      "eventpayload": "{\"@type\":\"TodoAggregateTodoCreatedEventPayload\",\"todoId\":\"todoId\",\"description\":\"lorem ipsum\"}"
+      "eventpayload": "{\"@type\":\"TodoAggregateTodoCreatedEventPayload\",\"todoId\":\"todoId\",\"description\":\"USHMw4wvK8o3Grcp8kDTFA==\"}"
     },
     "source": {
       "version": "0.10.0.Beta2",

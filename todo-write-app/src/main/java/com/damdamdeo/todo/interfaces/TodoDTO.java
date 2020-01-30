@@ -1,7 +1,7 @@
 package com.damdamdeo.todo.interfaces;
 
-import com.damdamdeo.todo.api.Todo;
-import com.damdamdeo.todo.api.TodoStatus;
+import com.damdamdeo.todo.domain.api.Todo;
+import com.damdamdeo.todo.domain.api.TodoStatus;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
 @RegisterForReflection
@@ -13,6 +13,8 @@ public class TodoDTO {
 
     public TodoStatus todoStatus;
 
+    public Boolean canMarkTodoAsCompleted;
+
     public Long version;
 
     public TodoDTO() {}
@@ -21,6 +23,9 @@ public class TodoDTO {
         this.todoId = todo.todoId();
         this.description = todo.description();
         this.todoStatus = todo.todoStatus();
+        this.canMarkTodoAsCompleted = todo
+                .canMarkTodoAsCompletedSpecification()
+                .isSatisfiedBy(todo);
         this.version = todo.version();
     }
 
@@ -46,6 +51,14 @@ public class TodoDTO {
 
     public void setTodoStatus(TodoStatus todoStatus) {
         this.todoStatus = todoStatus;
+    }
+
+    public Boolean getCanMarkTodoAsCompleted() {
+        return canMarkTodoAsCompleted;
+    }
+
+    public void setCanMarkTodoAsCompleted(Boolean canMarkTodoAsCompleted) {
+        this.canMarkTodoAsCompleted = canMarkTodoAsCompleted;
     }
 
     public Long getVersion() {

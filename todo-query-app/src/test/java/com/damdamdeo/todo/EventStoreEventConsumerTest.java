@@ -1,9 +1,10 @@
 package com.damdamdeo.todo;
 
-import com.damdamdeo.todo.aggregate.TodoStatus;
+import com.damdamdeo.todo.domain.api.TodoStatus;
 import com.damdamdeo.todo.infrastructure.TodoEntity;
 import com.jayway.restassured.module.jsv.JsonSchemaValidator;
 import io.quarkus.test.junit.QuarkusTest;
+import org.hamcrest.Matchers;
 import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.query.AuditEntity;
 import org.junit.jupiter.api.*;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.*;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
+import javax.ws.rs.core.MediaType;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -45,6 +47,7 @@ public class EventStoreEventConsumerTest {
     @Test
     public void should_consume_todo_created_event_and_todo_marked_as_completed_event() throws Exception {
         // When
+        kafkaDebeziumProducer.produce("TodoSecret.json");
         kafkaDebeziumProducer.produce("TodoCreatedEvent.json");
         await().atMost(100, TimeUnit.SECONDS).until(() ->
                 given()
@@ -63,6 +66,7 @@ public class EventStoreEventConsumerTest {
                 .body("todoId", equalTo("todoId"))
                 .body("description", equalTo("lorem ipsum"))
                 .body("todoStatus", equalTo("IN_PROGRESS"))
+                .body("canMarkTodoAsCompleted", equalTo(true))
                 .body("version", equalTo(0));
 
         // When
@@ -84,6 +88,7 @@ public class EventStoreEventConsumerTest {
                 .body("todoId", equalTo("todoId"))
                 .body("description", equalTo("lorem ipsum"))
                 .body("todoStatus", equalTo("COMPLETED"))
+                .body("canMarkTodoAsCompleted", equalTo(false))
                 .body("version", equalTo(1));
 
         // Then Auditing
@@ -98,4 +103,14 @@ public class EventStoreEventConsumerTest {
                 new TodoEntity("todoId", "lorem ipsum", TodoStatus.COMPLETED, "27f243d6-ba3a-468f-8435-4537e86ae64b", 1l));
     }
 
+    @Test
+    public void should_api_fail_when_retrieving_unknown_todo() {
+        given()
+                .when()
+                .get("/todos/todoId")
+                .then()
+                .statusCode(404)
+                .contentType(MediaType.TEXT_PLAIN)
+                .body(Matchers.equalTo("Le todoId 'todoId' est inconnu."));
+    }
 }

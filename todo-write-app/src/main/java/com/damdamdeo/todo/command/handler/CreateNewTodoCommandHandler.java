@@ -6,7 +6,8 @@ import com.damdamdeo.eventdataspreader.writeside.command.api.CommandQualifier;
 import com.damdamdeo.eventdataspreader.writeside.eventsourcing.api.AggregateRoot;
 import com.damdamdeo.todo.aggregate.TodoAggregateRoot;
 import com.damdamdeo.todo.aggregate.TodoAggregateRootRepository;
-import com.damdamdeo.todo.api.TodoIdAlreadyExistentException;
+import com.damdamdeo.todo.domain.api.Todo;
+import com.damdamdeo.todo.domain.api.TodoAlreadyExistentException;
 import com.damdamdeo.todo.command.CreateNewTodoCommand;
 
 import javax.enterprise.context.Dependent;
@@ -25,7 +26,8 @@ public class CreateNewTodoCommandHandler implements CommandHandler {
     public AggregateRoot handle(final Command command) {
         final CreateNewTodoCommand createNewTodoCommand = (CreateNewTodoCommand) command;
         if (todoAggregateRootRepository.isTodoExistent(createNewTodoCommand.todoId())) {
-            throw new TodoIdAlreadyExistentException(createNewTodoCommand.todoId());
+            final Todo todoExistent = todoAggregateRootRepository.load(createNewTodoCommand.aggregateId());
+            throw new TodoAlreadyExistentException(todoExistent);
         }
         final TodoAggregateRoot todoAggregateRoot = new TodoAggregateRoot();
         todoAggregateRoot.handle(createNewTodoCommand);

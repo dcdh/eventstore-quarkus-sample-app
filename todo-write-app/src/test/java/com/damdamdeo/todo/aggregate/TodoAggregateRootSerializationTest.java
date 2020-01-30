@@ -6,7 +6,6 @@ import com.damdamdeo.eventdataspreader.writeside.eventsourcing.api.AggregateRoot
 import com.damdamdeo.eventdataspreader.writeside.eventsourcing.infrastructure.JacksonAggregateRootSerializer;
 import com.damdamdeo.eventdataspreader.writeside.eventsourcing.infrastructure.spi.JacksonAggregateRootSubtypes;
 import com.damdamdeo.eventdataspreader.eventsourcing.api.EncryptedEventSecret;
-import com.damdamdeo.todo.api.TodoStatus;
 import com.damdamdeo.todo.command.CreateNewTodoCommand;
 import org.junit.jupiter.api.Test;
 
@@ -63,19 +62,6 @@ public class TodoAggregateRootSerializationTest {
 
         // Then
         assertEquals("{\"@type\":\"TodoAggregateRoot\",\"aggregateRootId\":\"todoId\",\"description\":\"lorem ipsum\",\"todoStatus\":\"IN_PROGRESS\",\"version\":0,\"aggregateRootType\":\"TodoAggregateRoot\"}", serialized);
-    }
-
-    @Test
-    public void should_deserialize() {
-        // Given
-        final AggregateRootSerializer aggregateRootSerializer = new JacksonAggregateRootSerializer(new DefaultJacksonAggregateRootSubtypes());
-
-        // When
-        final AggregateRoot deserialized = aggregateRootSerializer.deserialize(new DefaultEncryptedEventSecret(),
-                "{\"@type\":\"TodoAggregateRoot\",\"aggregateRootId\":\"todoId\",\"description\":\"lorem ipsum\",\"todoStatus\":\"IN_PROGRESS\",\"version\":0,\"aggregateRootType\":\"TodoAggregateRoot\"}");
-
-        // Then
-        assertEquals(new TodoAggregateRoot("todoId","lorem ipsum", TodoStatus.IN_PROGRESS,0L), deserialized);
     }
 
 }

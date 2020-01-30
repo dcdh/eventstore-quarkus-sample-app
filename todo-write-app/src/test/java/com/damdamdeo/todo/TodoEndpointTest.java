@@ -27,6 +27,7 @@ public class TodoEndpointTest extends AbstractTodoTest {
                 .body("description", equalTo("lorem ipsum"))
                 .body("todoStatus", equalTo("IN_PROGRESS"))
                 .body("version", equalTo(0))
+                .body("canMarkTodoAsCompleted", equalTo(true))
         ;
     }
 
@@ -51,7 +52,45 @@ public class TodoEndpointTest extends AbstractTodoTest {
                 .body("description", equalTo("lorem ipsum"))
                 .body("todoStatus", equalTo("COMPLETED"))
                 .body("version", equalTo(1))
+                .body("canMarkTodoAsCompleted", equalTo(false))
         ;
+    }
+
+    @Test
+    public void should_api_fail_when_mark_todo_already_completed_as_completed() {
+        given()
+                .param("todoId", "todoId")
+                .param("description", "lorem ipsum")
+                .when()
+                .post("/todos/createNewTodo")
+                .then()
+                .statusCode(200);
+        given()
+                .param("todoId", "todoId")
+                .when()
+                .post("/todos/markTodoAsCompleted")
+                .then()
+                .statusCode(200);
+        given()
+                .param("todoId", "todoId")
+                .when()
+                .post("/todos/markTodoAsCompleted")
+                .then()
+                .statusCode(409)
+                .contentType(MediaType.TEXT_PLAIN)
+                .body(Matchers.equalTo("Le todo 'todoId' est déjà complété."));
+    }
+
+    @Test
+    public void should_api_fail_when_mark_as_completed_unknown_todo() {
+        given()
+                .param("todoId", "todoId")
+                .when()
+                .post("/todos/markTodoAsCompleted")
+                .then()
+                .statusCode(404)
+                .contentType(MediaType.TEXT_PLAIN)
+                .body(Matchers.equalTo("Le todoId 'todoId' est inconnu."));
     }
 
     @Test

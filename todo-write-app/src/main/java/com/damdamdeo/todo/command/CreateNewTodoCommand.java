@@ -20,11 +20,6 @@ public class CreateNewTodoCommand implements Command {
         return todoId;
     }
 
-    @Override
-    public boolean exactlyOnceCommandExecution() {
-        return true;
-    }
-
     public String todoId() {
         return todoId;
     }
