@@ -1,4 +1,4 @@
-package com.damdamdeo.todo.api;
+package com.damdamdeo.todo.domain.api;
 
 public enum TodoStatus {
 

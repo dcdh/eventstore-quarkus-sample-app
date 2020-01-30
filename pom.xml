@@ -11,6 +11,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <quarkus.version>1.1.1.Final</quarkus.version>
     </properties>
 
     <modules>
@@ -19,7 +20,19 @@
         <module>todo-query-app</module>
         <module>todo-email-notifier-app</module>
         <module>todo-graph-visualiser-app</module>
+        <module>todo-domain-api</module>
     </modules>
 
-    <build></build>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.quarkus</groupId>
+                <artifactId>quarkus-universe-bom</artifactId>
+                <version>${quarkus.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
 </project>
