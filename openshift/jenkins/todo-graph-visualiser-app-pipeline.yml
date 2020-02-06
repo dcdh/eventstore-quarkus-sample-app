@@ -75,7 +75,10 @@ objects:
                     containerTemplate(name: 'maven', image: 'maven:3.6.3-jdk-8-slim', ttyEnabled: true, command: 'cat'),
                     containerTemplate(name: 'zookeeper',
                                       image: 'debezium/zookeeper:1.0.0.Final',
-                                      resourceLimitMemory: '128Mi'),
+                                      resourceLimitMemory: '128Mi',
+                                      envVars: [
+                                        envVar(key: 'LOG_LEVEL', value: 'WARN')
+                                      ]),
                     containerTemplate(name: 'kafka',
                                       image: 'debezium/kafka:1.0.0.Final',
                                       resourceLimitMemory: '512Mi',
@@ -83,7 +86,8 @@ objects:
                                         envVar(key: 'ZOOKEEPER_CONNECT', value: 'localhost:2181'),
                                         envVar(key: 'HOST_NAME', value: 'localhost'),
                                         envVar(key: 'ADVERTISED_HOST_NAME', value: 'localhost'),
-                                        envVar(key: 'CREATE_TOPICS', value: 'event-query:1:1:delete,event:1:1:delete,aggregateroot:1:1:delete,flyway_schema_history:1:1:delete,test:1:1:delete')
+                                        envVar(key: 'CREATE_TOPICS', value: 'event-query:1:1:delete,event:1:1:delete,aggregateroot:1:1:delete,flyway_schema_history:1:1:delete,test:1:1:delete'),
+                                        envVar(key: 'LOG_LEVEL', value: 'WARN')
                                       ]),
                     containerTemplate(name: 'graph',
                                       image: 'neo4j:3.5.14',

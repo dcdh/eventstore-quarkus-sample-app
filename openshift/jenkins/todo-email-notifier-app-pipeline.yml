@@ -77,7 +77,10 @@ objects:
                     containerTemplate(name: 'maven', image: 'maven:3.6.3-jdk-8-slim', ttyEnabled: true, command: 'cat'),
                     containerTemplate(name: 'zookeeper',
                                       image: 'debezium/zookeeper:1.0.0.Final',
-                                      resourceLimitMemory: '128Mi'),
+                                      resourceLimitMemory: '128Mi',
+                                      envVars: [
+                                        envVar(key: 'LOG_LEVEL', value: 'WARN')
+                                      ]),
                     containerTemplate(name: 'kafka',
                                       image: 'debezium/kafka:1.0.0.Final',
                                       resourceLimitMemory: '512Mi',
@@ -85,7 +88,8 @@ objects:
                                         envVar(key: 'ZOOKEEPER_CONNECT', value: 'localhost:2181'),
                                         envVar(key: 'HOST_NAME', value: 'localhost'),
                                         envVar(key: 'ADVERTISED_HOST_NAME', value: 'localhost'),
-                                        envVar(key: 'CREATE_TOPICS', value: 'event-query:1:1:delete,event:1:1:delete,aggregateroot:1:1:delete,flyway_schema_history:1:1:delete,test:1:1:delete')
+                                        envVar(key: 'CREATE_TOPICS', value: 'event-query:1:1:delete,event:1:1:delete,aggregateroot:1:1:delete,flyway_schema_history:1:1:delete,test:1:1:delete'),
+                                        envVar(key: 'LOG_LEVEL', value: 'WARN')
                                       ]),
                     containerTemplate(name: 'connect',
                                       image: 'debezium/connect:1.0.0.Final',
@@ -96,7 +100,8 @@ objects:
                                         envVar(key: 'GROUP_ID', value: '1'),
                                         envVar(key: 'CONFIG_STORAGE_TOPIC', value: 'my_connect_configs'),
                                         envVar(key: 'OFFSET_STORAGE_TOPIC', value: 'my_connect_offsets'),
-                                        envVar(key: 'STATUS_STORAGE_TOPIC', value: 'my_connect_statuses')
+                                        envVar(key: 'STATUS_STORAGE_TOPIC', value: 'my_connect_statuses'),
+                                        envVar(key: 'LOG_LEVEL', value: 'WARN')
                                       ]),
                     containerTemplate(name: 'database',
                                       image: 'dcdh1983/postgresql-10-debezium-centos7:latest',
