@@ -31,7 +31,6 @@ public class KafkaConsumers {
             switch (eventType) {
                 case "TodoCreatedEvent":
                     neo4JGraphRepository.persistTodoCreatedEvent(
-                            after.getString("eventid"),
                             after.getString("aggregaterootid"),
                             after.getLong("creationdate"),
                             new JsonObject(after.getString("metadata")),
@@ -40,7 +39,6 @@ public class KafkaConsumers {
                     break;
                 case "TodoMarkedAsCompletedEvent":
                     neo4JGraphRepository.persistTodoMarkedAsCompletedEvent(
-                            after.getString("eventid"),
                             after.getString("aggregaterootid"),
                             after.getLong("creationdate"),
                             new JsonObject(after.getString("metadata")),

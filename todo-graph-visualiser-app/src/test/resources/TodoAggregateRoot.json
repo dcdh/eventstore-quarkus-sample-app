@@ -5,16 +5,11 @@
     "aggregateroottype": "TodoAggregateRoot"
   },
   "value": {
-    "before": {
-      "aggregaterootid": "todoId",
-      "aggregateroottype": "TodoAggregateRoot",
-      "aggregateroot": null,
-      "version": null
-    },
+    "before": null,
     "after": {
       "aggregaterootid": "todoId",
       "aggregateroottype": "TodoAggregateRoot",
-      "aggregateroot": "{\"version\": 1, \"todoStatus\": \"COMPLETED\", \"description\": \"lorem ipsum\", \"aggregateRootId\": \"todoId\", \"@aggregaterootType\": \"TodoAggregateRoot\"}",
+      "aggregateroot": "{\"version\": 1, \"todoStatus\": \"COMPLETED\", \"description\": \"lorem ipsum\", \"aggregateRootId\": \"todoId\", \"@type\": \"TodoAggregateRoot\", \"aggregateRootType\": \"TodoAggregateRoot\"}",
       "version": 1
     },
     "source": {

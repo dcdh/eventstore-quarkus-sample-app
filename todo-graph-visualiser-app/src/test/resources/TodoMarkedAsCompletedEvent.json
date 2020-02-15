@@ -1,19 +1,20 @@
 {
   "topic": "event",
   "key": {
-    "eventid": "27f243d6-ba3a-468f-8435-4537e86ae64b"
+    "aggregaterootid": "todoId",
+    "aggregateroottype": "TodoAggregateRoot",
+    "version": 1
   },
   "value": {
     "before": null,
     "after": {
-      "eventid": "27f243d6-ba3a-468f-8435-4537e86ae64b",
       "aggregaterootid": "todoId",
       "aggregateroottype": "TodoAggregateRoot",
+      "version": 1,
       "creationdate": 1562890044922000,
       "eventtype": "TodoMarkedAsCompletedEvent",
       "metadata": "{}",
-      "eventpayload": "{\"@aggregaterootType\": \"TodoAggregateRoot\", \"@payloadType\": \"TodoMarkedAsCompletedEventPayload\", \"todoId\": \"todoId\"}",
-      "version": 1
+      "eventpayload": "{\"@type\": \"TodoAggregateTodoMarkedAsCompletedEventPayload\", \"todoId\": \"todoId\"}"
     },
     "source": {
       "version": "0.10.0.Beta2",

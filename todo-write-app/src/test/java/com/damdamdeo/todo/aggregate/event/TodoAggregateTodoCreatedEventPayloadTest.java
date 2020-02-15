@@ -9,8 +9,8 @@ import com.damdamdeo.eventdataspreader.writeside.eventsourcing.infrastructure.sp
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
 
-import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -44,11 +44,6 @@ public class TodoAggregateTodoCreatedEventPayloadTest {
         }
 
         @Override
-        public Date creationDate() {
-            return null;
-        }
-
-        @Override
         public String secret() {
             return "AAlwSnNqyIRebwRqBfHufaCTXoRFRllg";
         }
@@ -61,11 +56,11 @@ public class TodoAggregateTodoCreatedEventPayloadTest {
         final AggregateRootEventPayloadDeSerializer aggregateRootEventPayloadDeSerializer = new JacksonAggregateRootEventPayloadDeSerializer(new DefaultJacksonAggregateRootEventPayloadSubtypes());
 
         // When
-        final String serialized = aggregateRootEventPayloadDeSerializer.serialize(new DefaultEncryptedEventSecret(),
+        final String serialized = aggregateRootEventPayloadDeSerializer.serialize(Optional.of(new DefaultEncryptedEventSecret()),
                 new TodoAggregateTodoCreatedEventPayload("todoId", "lorem ipsum"));
 
         // Then
-        assertEquals("{\"@type\":\"TodoAggregateTodoCreatedEventPayload\",\"todoId\":\"todoId\",\"description\":\"USHMw4wvK8o3Grcp8kDTFA==\"}", serialized);
+        assertEquals("{\"@type\":\"TodoAggregateTodoCreatedEventPayload\",\"todoId\":\"todoId\",\"description\":\"uWtQHOtmgpaw22nCiexwpg==\"}", serialized);
     }
 
     @Test
@@ -74,8 +69,8 @@ public class TodoAggregateTodoCreatedEventPayloadTest {
         final AggregateRootEventPayloadDeSerializer aggregateRootEventPayloadDeSerializer = new JacksonAggregateRootEventPayloadDeSerializer(new DefaultJacksonAggregateRootEventPayloadSubtypes());
 
         // When
-        final AggregateRootEventPayload deserialized = aggregateRootEventPayloadDeSerializer.deserialize(new DefaultEncryptedEventSecret(),
-                "{\"@type\":\"TodoAggregateTodoCreatedEventPayload\",\"todoId\":\"todoId\",\"description\":\"USHMw4wvK8o3Grcp8kDTFA==\"}");
+        final AggregateRootEventPayload deserialized = aggregateRootEventPayloadDeSerializer.deserialize(Optional.of(new DefaultEncryptedEventSecret()),
+                "{\"@type\":\"TodoAggregateTodoCreatedEventPayload\",\"todoId\":\"todoId\",\"description\":\"uWtQHOtmgpaw22nCiexwpg==\"}");
 
         // Then
         assertEquals(new TodoAggregateTodoCreatedEventPayload("todoId", "lorem ipsum"), deserialized);

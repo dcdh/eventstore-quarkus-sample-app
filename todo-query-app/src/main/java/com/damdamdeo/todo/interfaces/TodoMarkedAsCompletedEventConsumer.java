@@ -25,8 +25,7 @@ public class TodoMarkedAsCompletedEventConsumer implements EventConsumer {
         final TodoAggregateTodoMarkedAsCompletedEventPayload todoAggregateTodoMarkedAsCompletedEventPayload = (TodoAggregateTodoMarkedAsCompletedEventPayload) event.eventPayload();
         final TodoEntity todoToMarkAsCompleted = entityManager.find(TodoEntity.class,
                 todoAggregateTodoMarkedAsCompletedEventPayload.todoId());
-        todoToMarkAsCompleted.markAsCompleted(event.eventId(),
-                event.version());
+        todoToMarkAsCompleted.markAsCompleted(event.eventId());
         entityManager.merge(todoToMarkAsCompleted);
     }
 

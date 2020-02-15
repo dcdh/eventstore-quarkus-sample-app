@@ -38,8 +38,7 @@ public class TodoCreatedEventConsumer implements EventConsumer {
                     todoAggregateTodoCreatedEventPayload.todoId(),
                     todoAggregateTodoCreatedEventPayload.description(),
                     TodoStatus.IN_PROGRESS,
-                    event.eventId(),
-                    event.version());
+                    event.eventId());
             entityManager.persist(todoToCreate);
             final String content = templateGenerator.generate(new TodoCreated() {
                 @Override

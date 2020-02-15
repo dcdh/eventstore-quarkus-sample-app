@@ -9,8 +9,8 @@ import com.damdamdeo.eventdataspreader.writeside.eventsourcing.infrastructure.sp
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
 
-import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -44,11 +44,6 @@ public class TodoAggregateTodoMarkedAsCompletedEventPayloadTest {
         }
 
         @Override
-        public Date creationDate() {
-            return null;
-        }
-
-        @Override
         public String secret() {
             return "AAlwSnNqyIRebwRqBfHufaCTXoRFRllg";
         }
@@ -61,7 +56,7 @@ public class TodoAggregateTodoMarkedAsCompletedEventPayloadTest {
         final AggregateRootEventPayloadDeSerializer aggregateRootEventPayloadDeSerializer = new JacksonAggregateRootEventPayloadDeSerializer(new DefaultJacksonAggregateRootEventPayloadSubtypes());
 
         // When
-        final String serialized = aggregateRootEventPayloadDeSerializer.serialize(new DefaultEncryptedEventSecret(),
+        final String serialized = aggregateRootEventPayloadDeSerializer.serialize(Optional.of(new DefaultEncryptedEventSecret()),
                 new TodoAggregateTodoMarkedAsCompletedEventPayload("todoId"));
 
         // Then
@@ -74,7 +69,7 @@ public class TodoAggregateTodoMarkedAsCompletedEventPayloadTest {
         final AggregateRootEventPayloadDeSerializer aggregateRootEventPayloadDeSerializer = new JacksonAggregateRootEventPayloadDeSerializer(new DefaultJacksonAggregateRootEventPayloadSubtypes());
 
         // When
-        final AggregateRootEventPayload deserialized = aggregateRootEventPayloadDeSerializer.deserialize(new DefaultEncryptedEventSecret(),
+        final AggregateRootEventPayload deserialized = aggregateRootEventPayloadDeSerializer.deserialize(Optional.of(new DefaultEncryptedEventSecret()),
                 "{\"@type\":\"TodoAggregateTodoMarkedAsCompletedEventPayload\",\"todoId\":\"todoId\"}");
 
         // Then

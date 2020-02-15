@@ -20,8 +20,7 @@ public class Neo4JGraphRepository implements GraphRepository {
     Driver driver;
 
     @Override
-    public void persistTodoCreatedEvent(final String eventId,
-                                        final String aggregateId,
+    public void persistTodoCreatedEvent(final String aggregateId,
                                         final Long creationDate,
                                         final JsonObject metadata,
                                         final JsonObject eventPayload,
@@ -29,11 +28,10 @@ public class Neo4JGraphRepository implements GraphRepository {
         final Session session = driver.session();
         final String aggregateRootType = "TodoAggregateRoot";
         final String eventType = "TodoCreatedEvent";
-        final String query = String.format("MERGE (n:%s { aggregateId: $aggregateId}) CREATE (n)-[r:%s { eventId: $eventId, eventType: $eventType, creationDate: $creationDate, version: $version, todoId: $todoId, description: $description }]->(n)",
+        final String query = String.format("MERGE (n:%s { aggregateId: $aggregateId}) CREATE (n)-[r:%s { eventType: $eventType, creationDate: $creationDate, version: $version, todoId: $todoId, description: $description }]->(n)",
                 aggregateRootType, eventType);
         session.writeTransaction(tx -> tx.run(query,
                 Values.parameters("aggregateId", aggregateId,
-                        "eventId", eventId,
                         "eventType", eventType,
                         "creationDate", creationDate,
                         "version", version,
@@ -42,19 +40,17 @@ public class Neo4JGraphRepository implements GraphRepository {
     }
 
     @Override
-    public void persistTodoMarkedAsCompletedEvent(final String eventId,
-                                                  final String aggregateId,
+    public void persistTodoMarkedAsCompletedEvent(final String aggregateId,
                                                   final Long creationDate,
                                                   final JsonObject metadata,
                                                   final JsonObject eventPayload,
                                                   final Long version) {
         final Session session = driver.session();
         final String eventType = "TodoMarkedAsCompletedEvent";
-        final String query = String.format("MATCH (n:TodoAggregateRoot { aggregateId: $aggregateId}) CREATE (n)-[r:%s { eventId: $eventId, eventType: $eventType, creationDate: $creationDate, version: $version, todoId: $todoId }]->(n)",
+        final String query = String.format("MATCH (n:TodoAggregateRoot { aggregateId: $aggregateId}) CREATE (n)-[r:%s { eventType: $eventType, creationDate: $creationDate, version: $version, todoId: $todoId }]->(n)",
                 eventType);
         session.writeTransaction(tx -> tx.run(query,
                 Values.parameters("aggregateId", aggregateId,
-                        "eventId", eventId,
                         "eventType", eventType,
                         "creationDate", creationDate,
                         "version", version,
@@ -97,7 +93,6 @@ public class Neo4JGraphRepository implements GraphRepository {
                             event.put("source", sourceTodoRecord.get("aggregateId").asString());
                             event.put("target", targetTodoTodoRecord.get("aggregateId").asString());
                             event.put("eventType", eventRecord.get("eventType").asString());
-                            event.put("eventId", eventRecord.get("eventId").asString());
                             event.put("version", eventRecord.get("version").asInt());
                             event.put("creationDate", eventRecord.get("creationDate").asLong());
                             event.put("todoId", eventRecord.get("todoId").asString());

@@ -39,27 +39,25 @@ public class CommonTest {
     }
 
     protected void persistTodoCreatedEvent() {
-        neo4JGraphRepository.persistTodoCreatedEvent("873ecba4-3f2e-4663-b9f1-b912e17bfc9b",
-                "todoId",
+        neo4JGraphRepository.persistTodoCreatedEvent("todoId",
                 1562890044742000L,
                 new JsonObject(),
-                new JsonObject("{\"@aggregaterootType\": \"TodoAggregateRoot\", \"@payloadType\": \"TodoCreatedEventPayload\", \"todoId\": \"todoId\", \"description\": \"lorem ipsum\"}"),
+                new JsonObject("{\"@type\":\"TodoAggregateTodoCreatedEventPayload\",\"todoId\":\"todoId\",\"description\":\"lorem ipsum\"}"),
                 0L);
     }
 
     protected void persistTodoMarkedAsCompletedEvent() {
         neo4JGraphRepository.persistTodoMarkedAsCompletedEvent(
-                "27f243d6-ba3a-468f-8435-4537e86ae64b",
                 "todoId",
                 1562890044922000L,
                 new JsonObject(),
-                new JsonObject("{\"@aggregaterootType\": \"TodoAggregateRoot\", \"@payloadType\": \"TodoMarkedAsCompletedEventPayload\", \"todoId\": \"todoId\"}"),
+                new JsonObject("{\"@type\": \"TodoAggregateTodoMarkedAsCompletedEventPayload\", \"todoId\": \"todoId\"}"),
                 1L);
     }
 
     protected void persistTodoAggregate() {
         neo4JGraphRepository.persistTodoAggregate("todoId",
-                new JsonObject("{\"version\": 1, \"todoStatus\": \"COMPLETED\", \"description\": \"lorem ipsum\", \"aggregateRootId\": \"todoId\", \"@aggregaterootType\": \"TodoAggregateRoot\"}"),
+                new JsonObject("{\"version\": 1, \"todoStatus\": \"COMPLETED\", \"description\": \"lorem ipsum\", \"aggregateRootId\": \"todoId\", \"@type\": \"TodoAggregateRoot\", \"aggregateRootType\": \"TodoAggregateRoot\"}"),
                 1L);
     }
 

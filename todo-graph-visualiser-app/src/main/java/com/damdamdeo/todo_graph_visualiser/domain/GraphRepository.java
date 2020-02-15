@@ -4,10 +4,10 @@ import io.vertx.core.json.JsonObject;
 
 public interface GraphRepository {
 
-    void persistTodoCreatedEvent(String eventId, String aggregateId, Long creationDate, JsonObject metadata, JsonObject eventPayload,
+    void persistTodoCreatedEvent(String aggregateId, Long creationDate, JsonObject metadata, JsonObject eventPayload,
                                  Long version);
 
-    void persistTodoMarkedAsCompletedEvent(String eventId, String aggregateId, Long creationDate, JsonObject metadata, JsonObject eventPayload,
+    void persistTodoMarkedAsCompletedEvent(String aggregateId, Long creationDate, JsonObject metadata, JsonObject eventPayload,
                                            Long version);
 
     void persistTodoAggregate(String aggregateId, JsonObject aggregateRoot, Long version);

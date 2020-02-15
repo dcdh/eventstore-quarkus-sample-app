@@ -1,18 +1,17 @@
 {
   "topic": "event",
   "key": {
-    "id": "**************************todoId|****TodoAggregateTodoMarkedAsCompletedEventPayload|0000000001"
+    "aggregaterootid": "todoId",
+    "aggregateroottype": "TodoAggregateRoot",
+    "version": 1
   },
   "value": {
     "before": null,
     "after": {
-      "id": "**************************todoId|****TodoAggregateTodoMarkedAsCompletedEventPayload|0000000001",
       "aggregaterootid": "todoId",
       "aggregateroottype": "TodoAggregateRoot",
       "version": 1,
       "creationdate": 1562890044922000,
-      "encryptedeventtype": "ENCRYPTED_EVENT",
-      "secret": null,
       "eventtype": "TodoMarkedAsCompletedEvent",
       "eventmetadata": "{\"@type\": \"DefaultEventMetadata\"}",
       "eventpayload": "{\"@type\":\"TodoAggregateTodoMarkedAsCompletedEventPayload\",\"todoId\":\"todoId\"}"

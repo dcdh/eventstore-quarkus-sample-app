@@ -3,6 +3,7 @@ package com.damdamdeo.email_notifier;
 import com.damdamdeo.email_notifier.domain.EmailNotifier;
 import com.damdamdeo.email_notifier.domain.TodoStatus;
 import com.damdamdeo.email_notifier.infrastructure.TodoEntity;
+import com.damdamdeo.eventdataspreader.eventsourcing.api.SecretStore;
 import io.quarkus.test.junit.QuarkusTest;
 import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.query.AuditEntity;
@@ -35,6 +36,9 @@ public class EventStoreEventConsumerTest {
     @Inject
     EmailNotifier emailNotifier;
 
+    @Inject
+    SecretStore secretStore;
+
     @BeforeEach
     public void cleanMessages() {
         given()
@@ -54,6 +58,8 @@ public class EventStoreEventConsumerTest {
         entityManager.createNativeQuery("DELETE FROM todoentity_aud").executeUpdate();
         entityManager.createNativeQuery("DELETE FROM revinfo").executeUpdate();
         entityManager.createNativeQuery("ALTER SEQUENCE public.hibernate_sequence RESTART WITH 1");
+
+        secretStore.store("TodoAggregateRoot", "todoId", "");
     }
 
     @Test
@@ -75,7 +81,7 @@ public class EventStoreEventConsumerTest {
     @Test
     public void should_consume_todo_created_event_and_todo_marked_as_completed_event() throws Exception {
         // When
-        kafkaDebeziumProducer.produce("TodoSecret.json");
+        secretStore.store("TodoAggregateRoot", "todoId", "AAlwSnNqyIRebwRqBfHufaCTXoRFRllg");
         kafkaDebeziumProducer.produce("TodoCreatedEvent.json");
         await().atMost(10, TimeUnit.SECONDS).until(() ->
                 given()
@@ -128,8 +134,8 @@ public class EventStoreEventConsumerTest {
                 .getResultList();
 
         assertEquals(2, todos.size());
-        assertThat(todos).containsExactly(new TodoEntity("todoId", "lorem ipsum", TodoStatus.IN_PROGRESS, "873ecba4-3f2e-4663-b9f1-b912e17bfc9b", 0l),
-                new TodoEntity("todoId", "lorem ipsum", TodoStatus.COMPLETED, "27f243d6-ba3a-468f-8435-4537e86ae64b", 1l));
+        assertThat(todos).containsExactly(new TodoEntity("todoId", "lorem ipsum", TodoStatus.IN_PROGRESS, 0l),
+                new TodoEntity("todoId", "lorem ipsum", TodoStatus.COMPLETED, 1l));
 
     }
 

@@ -9,8 +9,8 @@ import com.damdamdeo.eventdataspreader.eventsourcing.api.EncryptedEventSecret;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
 
-import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -44,11 +44,6 @@ public class TodoAggregateTodoCreatedEventPayloadTest {
         }
 
         @Override
-        public Date creationDate() {
-            return null;
-        }
-
-        @Override
         public String secret() {
             return "AAlwSnNqyIRebwRqBfHufaCTXoRFRllg";
         }
@@ -61,8 +56,8 @@ public class TodoAggregateTodoCreatedEventPayloadTest {
         final EventPayloadDeserializer eventPayloadDeserializer = new JacksonEventPayloadDeserializer(new DefaultJacksonEventPayloadSubtypes());
 
         // When
-        final EventPayload deserialized = eventPayloadDeserializer.deserialize(new DefaultEncryptedEventSecret(),
-                "{\"@type\":\"TodoAggregateTodoCreatedEventPayload\",\"todoId\":\"todoId\",\"description\":\"USHMw4wvK8o3Grcp8kDTFA==\"}");
+        final EventPayload deserialized = eventPayloadDeserializer.deserialize(Optional.of(new DefaultEncryptedEventSecret()),
+                "{\"@type\":\"TodoAggregateTodoCreatedEventPayload\",\"todoId\":\"todoId\",\"description\":\"uWtQHOtmgpaw22nCiexwpg==\"}");
 
         // Then
         assertEquals(new TodoAggregateTodoCreatedEventPayload("todoId", "lorem ipsum"), deserialized);

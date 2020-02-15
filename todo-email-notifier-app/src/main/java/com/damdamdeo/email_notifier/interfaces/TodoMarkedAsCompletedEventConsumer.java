@@ -35,8 +35,7 @@ public class TodoMarkedAsCompletedEventConsumer implements EventConsumer {
         try {
             final TodoEntity todoToMarkAsCompleted = entityManager.find(TodoEntity.class,
                     todoAggregateTodoMarkedAsCompletedEventPayload.todoId());
-            todoToMarkAsCompleted.markAsCompleted(event.eventId(),
-                    event.version());
+            todoToMarkAsCompleted.markAsCompleted(event.eventId());
             entityManager.merge(todoToMarkAsCompleted);
             final String content = templateGenerator.generate(new TodoMarkedAsCompleted() {
                 @Override

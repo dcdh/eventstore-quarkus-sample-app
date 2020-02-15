@@ -26,7 +26,7 @@ public class Neo4JGraphRepositoryTest extends CommonTest {
                 .basic(username, password)
                 .body("{\n" +
                         "  \"statements\" : [ {\n" +
-                        "    \"statement\" : \"MATCH (n)-[r { eventId: '873ecba4-3f2e-4663-b9f1-b912e17bfc9b' } ]-(m) RETURN r\"\n" +
+                        "    \"statement\" : \"MATCH (n)-[r]-(m) RETURN r\"\n" +
                         "  } ]\n" +
                         "}")
                 .accept("application/json; charset=UTF-8 ")
@@ -37,7 +37,6 @@ public class Neo4JGraphRepositoryTest extends CommonTest {
                 .log()
                 .all()
                 .body("results.size()", CoreMatchers.equalTo(1))
-                .body("results[0].data[0].row[0].eventId", CoreMatchers.equalTo("873ecba4-3f2e-4663-b9f1-b912e17bfc9b"))
                 .body("results[0].data[0].row[0].description", CoreMatchers.equalTo("lorem ipsum"))
                 .body("results[0].data[0].row[0].eventType", CoreMatchers.equalTo("TodoCreatedEvent"))
                 .body("results[0].data[0].row[0].todoId", CoreMatchers.equalTo("todoId"))
@@ -60,7 +59,7 @@ public class Neo4JGraphRepositoryTest extends CommonTest {
                 .basic(username, password)
                 .body("{\n" +
                         "  \"statements\" : [ {\n" +
-                        "    \"statement\" : \"MATCH (n)-[r { eventId: '27f243d6-ba3a-468f-8435-4537e86ae64b' } ]-(m) RETURN r\"\n" +
+                        "    \"statement\" : \"MATCH (n)-[r]-(m) RETURN r\"\n" +
                         "  } ]\n" +
                         "}")
                 .accept("application/json; charset=UTF-8 ")
@@ -71,7 +70,6 @@ public class Neo4JGraphRepositoryTest extends CommonTest {
                 .log()
                 .all()
                 .body("results.size()", CoreMatchers.equalTo(1))
-                .body("results[0].data[0].row[0].eventId", CoreMatchers.equalTo("27f243d6-ba3a-468f-8435-4537e86ae64b"))
                 .body("results[0].data[0].row[0].eventType", CoreMatchers.equalTo("TodoMarkedAsCompletedEvent"))
                 .body("results[0].data[0].row[0].todoId", CoreMatchers.equalTo("todoId"))
                 .body("results[0].data[0].row[0].creationDate", CoreMatchers.equalTo(1562890044922000L))
@@ -163,7 +161,6 @@ public class Neo4JGraphRepositoryTest extends CommonTest {
                 .body("results[0].data[0].row[0].todoStatus", CoreMatchers.equalTo("COMPLETED"))
                 .body("results[0].data[0].row[0].description", CoreMatchers.equalTo("lorem ipsum"))
                 .body("results[0].data[0].row[0].version", CoreMatchers.equalTo(1))
-                .body("results[0].data[0].row[1].eventId", CoreMatchers.equalTo("873ecba4-3f2e-4663-b9f1-b912e17bfc9b"))
                 .body("results[0].data[0].row[1].description", CoreMatchers.equalTo("lorem ipsum"))
                 .body("results[0].data[0].row[1].eventType", CoreMatchers.equalTo("TodoCreatedEvent"))
                 .body("results[0].data[0].row[1].todoId", CoreMatchers.equalTo("todoId"))
@@ -187,7 +184,6 @@ public class Neo4JGraphRepositoryTest extends CommonTest {
         final Map<String, Object> todoCreatedEvent = new HashMap<>();
         todoCreatedEvent.put("source", "todoId");
         todoCreatedEvent.put("target", "todoId");
-        todoCreatedEvent.put("eventId", "873ecba4-3f2e-4663-b9f1-b912e17bfc9b");
         todoCreatedEvent.put("description", "lorem ipsum");
         todoCreatedEvent.put("eventType", "TodoCreatedEvent");
         todoCreatedEvent.put("todoId", "todoId");
@@ -197,7 +193,6 @@ public class Neo4JGraphRepositoryTest extends CommonTest {
         final Map<String, Object> todoMarkedAsCompletedEvent = new HashMap<>();
         todoMarkedAsCompletedEvent.put("source", "todoId");
         todoMarkedAsCompletedEvent.put("target", "todoId");
-        todoMarkedAsCompletedEvent.put("eventId", "27f243d6-ba3a-468f-8435-4537e86ae64b");
         todoMarkedAsCompletedEvent.put("description", null);
         todoMarkedAsCompletedEvent.put("eventType", "TodoMarkedAsCompletedEvent");
         todoMarkedAsCompletedEvent.put("todoId", "todoId");

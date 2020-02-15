@@ -56,7 +56,6 @@
         "required": [
           "source",
           "target",
-          "eventId",
           "eventType",
           "creationDate",
           "todoId",
@@ -72,12 +71,6 @@
           "target": {
             "type": "string",
             "title": "The Target Schema",
-            "default": "",
-            "pattern": "^(.*)$"
-          },
-          "eventId": {
-            "type": "string",
-            "title": "The Eventid Schema",
             "default": "",
             "pattern": "^(.*)$"
           },

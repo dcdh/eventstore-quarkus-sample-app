@@ -26,7 +26,7 @@ public class ComponentTest extends CommonTest {
         // Given
         kafkaDebeziumProducer.produce("TodoCreatedEvent.json");
         kafkaDebeziumProducer.produce("TodoMarkedAsCompletedEvent.json");
-        kafkaDebeziumProducer.produce("TodoAggregateProjection.json");
+        kafkaDebeziumProducer.produce("TodoAggregateRoot.json");
 
         // When && Then
         await().atMost(120, TimeUnit.SECONDS).until(() -> {
@@ -92,11 +92,9 @@ public class ComponentTest extends CommonTest {
 
                 .body("results[0].data[0].row[0].aggregateId", CoreMatchers.equalTo("todoId"))
                 .body("results[0].data[0].row[0].version", CoreMatchers.equalTo(1))
-                .body("results[0].data[0].row[1].eventId", CoreMatchers.equalTo("27f243d6-ba3a-468f-8435-4537e86ae64b"))
 
                 .body("results[0].data[1].row[0].aggregateId", CoreMatchers.equalTo("todoId"))
                 .body("results[0].data[1].row[0].version", CoreMatchers.equalTo(1))
-                .body("results[0].data[1].row[1].eventId", CoreMatchers.equalTo("873ecba4-3f2e-4663-b9f1-b912e17bfc9b"))
 
                 .statusCode(200);
 
