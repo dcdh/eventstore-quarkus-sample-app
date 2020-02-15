@@ -11,7 +11,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <quarkus.version>1.1.1.Final</quarkus.version>
+        <quarkus.version>1.2.0.Final</quarkus.version>
     </properties>
 
     <modules>
@@ -21,6 +21,7 @@
         <module>todo-email-notifier-app</module>
         <module>todo-graph-visualiser-app</module>
         <module>todo-domain-api</module>
+        <module>todo-public-frontend</module>
     </modules>
 
     <dependencyManagement>
