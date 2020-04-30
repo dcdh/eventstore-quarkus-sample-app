@@ -3,6 +3,13 @@ kind: Template
 labels:
   template: mailhog-template
 metadata:
+  annotations:
+    description: |-
+      MailHog local SMTP server
+    openshift.io/display-name: MailHog
+    openshift.io/long-description: This template provides a local SMTP server.
+    openshift.io/provider-display-name: Damdamdeo
+    tags: smtp,server
   name: mailhog
 objects:
   - apiVersion: v1
