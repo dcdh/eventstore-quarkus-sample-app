@@ -90,7 +90,7 @@ objects:
                     secretKeyRef:
                       key: database-name
                       name: "${DATABASE_SERVICE_NAME}"
-              image: dcdh1983/postgresql-10-debezium-centos7:latest
+              image: "${DATABASE_IMAGE}"
               imagePullPolicy: IfNotPresent
               ports:
                 - containerPort: 5432
@@ -130,6 +130,11 @@ parameters:
     name: MEMORY_LIMIT
     required: true
     value: 512Mi
+  - description: Database Image.
+    displayName: Database Image
+    name: DATABASE_IMAGE
+    required: true
+    value: dcdh1983/postgresql-10-debezium-centos7:latest
   - description: The name of the OpenShift Service exposed for the database.
     displayName: Database Service Name
     name: DATABASE_SERVICE_NAME
