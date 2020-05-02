@@ -15,12 +15,12 @@ public class QuteTemplateGenerator implements TemplateGenerator {
 
     final Template todoCreatedTemplate;
 
-    final Template todoMarketAsCompletedTemplate;
+    final Template todoMarkedAsCompletedTemplate;
 
     public QuteTemplateGenerator(@ResourcePath("todoCreated.html") final Template todoCreatedTemplate,
-                                 @ResourcePath("todoMarketAsCompleted.html") final Template todoMarketAsCompletedTemplate) {
+                                 @ResourcePath("todoMarkedAsCompleted.html") final Template todoMarkedAsCompletedTemplate) {
         this.todoCreatedTemplate = Objects.requireNonNull(todoCreatedTemplate);
-        this.todoMarketAsCompletedTemplate = Objects.requireNonNull(todoMarketAsCompletedTemplate);
+        this.todoMarkedAsCompletedTemplate = Objects.requireNonNull(todoMarkedAsCompletedTemplate);
     }
 
     @Override
@@ -32,7 +32,7 @@ public class QuteTemplateGenerator implements TemplateGenerator {
 
     @Override
     public String generate(final TodoMarkedAsCompleted todoMarkedAsCompleted) throws IOException {
-        return todoMarketAsCompletedTemplate.data("todoId", todoMarkedAsCompleted.todoId())
+        return todoMarkedAsCompletedTemplate.data("todoId", todoMarkedAsCompleted.todoId())
                 .data("description", todoMarkedAsCompleted.description())
                 .render();
     }

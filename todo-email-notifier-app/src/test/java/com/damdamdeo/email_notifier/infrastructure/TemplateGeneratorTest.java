@@ -59,7 +59,7 @@ public class TemplateGeneratorTest {
         });
 
         // Then
-        assertEquals(IOUtils.toString(getClass().getClassLoader().getResourceAsStream("todoMarketAsCompletedExpected.html"), StandardCharsets.UTF_8.name()),
+        assertEquals(IOUtils.toString(getClass().getClassLoader().getResourceAsStream("todoMarkedAsCompletedExpected.html"), StandardCharsets.UTF_8.name()),
                 contenu);
     }
 
