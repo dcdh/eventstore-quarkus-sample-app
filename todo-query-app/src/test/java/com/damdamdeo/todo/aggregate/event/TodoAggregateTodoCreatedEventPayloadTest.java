@@ -7,7 +7,6 @@ import com.damdamdeo.eventdataspreader.debeziumeventconsumer.infrastructure.spi.
 import com.damdamdeo.eventdataspreader.debeziumeventconsumer.infrastructure.spi.JacksonSubtype;
 import com.damdamdeo.eventdataspreader.eventsourcing.api.EncryptedEventSecret;
 import nl.jqno.equalsverifier.EqualsVerifier;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -16,7 +15,6 @@ import java.util.Optional;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@Disabled// add to disable test however I am unable to build the application using mvn
 public class TodoAggregateTodoCreatedEventPayloadTest {
 
     @Test
