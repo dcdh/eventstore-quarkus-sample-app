@@ -77,7 +77,6 @@ public class EventStoreEventConsumerTest {
         entityManager.createNativeQuery("DELETE FROM revinfo").executeUpdate();
         entityManager.createNativeQuery("ALTER SEQUENCE public.hibernate_sequence RESTART WITH 1");
 
-        secretStore.store("TodoAggregateRoot", "todoId", "");
     }
 
     @Test
