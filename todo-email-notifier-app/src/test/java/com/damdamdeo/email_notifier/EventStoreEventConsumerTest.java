@@ -4,6 +4,8 @@ import com.damdamdeo.email_notifier.domain.EmailNotifier;
 import com.damdamdeo.email_notifier.domain.TodoStatus;
 import com.damdamdeo.email_notifier.infrastructure.TodoEntity;
 import com.damdamdeo.eventdataspreader.eventsourcing.api.SecretStore;
+import io.agroal.api.AgroalDataSource;
+import io.quarkus.agroal.DataSource;
 import io.quarkus.test.junit.QuarkusTest;
 import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.query.AuditEntity;
@@ -14,6 +16,9 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.TimeUnit;
@@ -39,6 +44,10 @@ public class EventStoreEventConsumerTest {
     @Inject
     SecretStore secretStore;
 
+    @Inject
+    @DataSource("secret-store")
+    AgroalDataSource secretStoreDataSource;
+
     @BeforeEach
     public void cleanMessages() {
         given()
@@ -51,6 +60,15 @@ public class EventStoreEventConsumerTest {
     @BeforeEach
     @Transactional
     public void setup() {
+        try (final Connection con = secretStoreDataSource.getConnection();
+             final Statement stmt = con.createStatement()) {
+            stmt.executeUpdate("TRUNCATE TABLE SecretStore");
+        } catch (SQLException e) {
+            // Do not throw an exception as the table is not present because the @PostConstruct in AgroalDataSourceSecretStore
+            // has not be called yet... bug ?!?
+            // throw new RuntimeException(e);
+        }
+
         entityManager.createQuery("DELETE FROM TodoEntity").executeUpdate();
         entityManager.createQuery("DELETE FROM EventConsumerConsumedEntity").executeUpdate();
         entityManager.createQuery("DELETE FROM EventConsumedEntity").executeUpdate();

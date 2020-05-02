@@ -66,7 +66,7 @@ objects:
                     -Dquarkus.http.host=0.0.0.0
                     -Djava.util.logging.manager=org.jboss.logmanager.LogManager
                     -Dquarkus.datasource.url=jdbc:postgresql://todo-email-notifier.$(OPENSHIFT_NAMESPACE).svc:5432/todo-email-notifier
-                    -Dsmallrye.messaging.source.event.bootstrap.servers=broker-kafka-bootstrap.$(OPENSHIFT_NAMESPACE).svc:9092
+                    -Dmp.messaging.incoming.event-in.bootstrap.servers=broker-kafka-bootstrap.$(OPENSHIFT_NAMESPACE).svc:9092
                     -Dquarkus.mailer.host=mailhog.$(OPENSHIFT_NAMESPACE).svc
                     -Dquarkus.mailer.port=1025
                     -Dquarkus.http.port=8080

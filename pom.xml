@@ -11,7 +11,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <quarkus.version>1.2.0.Final</quarkus.version>
+        <quarkus.version>1.4.1.Final</quarkus.version>
     </properties>
 
     <modules>

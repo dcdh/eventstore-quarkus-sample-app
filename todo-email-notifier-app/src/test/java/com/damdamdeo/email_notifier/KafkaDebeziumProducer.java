@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 @ApplicationScoped
 public class KafkaDebeziumProducer {
 
-    @ConfigProperty(name = "smallrye.messaging.source.event.bootstrap.servers")
+    @ConfigProperty(name = "mp.messaging.incoming.event-in.bootstrap.servers")
     String servers;
 
     private KafkaProducer<JsonObject, JsonObject> producer;
