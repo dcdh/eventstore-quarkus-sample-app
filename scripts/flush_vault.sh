@@ -23,7 +23,3 @@ curl --header "X-Vault-Token: myroot" \
   --request PUT \
   --data '{"policy": "path \"secret/*\" {capabilities = [\"read\", \"create\", \"update\"]}"}' \
   http://127.0.0.1:8200/v1/sys/policy/vault-quickstart-policy;
-curl --header "X-Vault-Token: myroot" \
-  --request POST \
-  --data '{"private-key":"123456"}' \
-  http://127.0.0.1:8200/v1/secret/encryption;
