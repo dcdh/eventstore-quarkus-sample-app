@@ -75,11 +75,6 @@ oc process -f postgresql-persistent-template.yml -p DATABASE_SERVICE_NAME=todo-e
 oc process -f openshift/mailhog-template.yml -l app=todo-email-notifier-app | oc create -f -
 oc process -f openshift/todo-email-notifier-app-template.yml -l app=todo-email-notifier-app | oc create -f -
 
-### todo-graph-visualiser-app
-
-oc process -f neo4j-persistent-template.yml -l app=graph | oc create -f -
-oc process -f openshift/todo-graph-visualiser-app-template.yml -l app=todo-graph-visualiser-app | oc create -f -
-
 ## e2e
 
 oc project e2e
@@ -111,8 +106,6 @@ oc process -f openshift/jenkins/todo-write-app-pipeline.yml | oc create -f - -n 
 oc process -f openshift/jenkins/todo-query-app-pipeline.yml | oc create -f - -n ci
 
 oc process -f openshift/jenkins/todo-email-notifier-app-pipeline.yml | oc create -f - -n ci
-
-oc process -f openshift/jenkins/todo-graph-visualiser-app-pipeline.yml | oc create -f - -n ci
 
 > #oc policy add-role-to-user edit system:serviceaccount:ci:default -n production
 > allow serviceaccount to tag image in production project

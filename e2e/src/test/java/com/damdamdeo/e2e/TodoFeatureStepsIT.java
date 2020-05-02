@@ -46,9 +46,6 @@ public class TodoFeatureStepsIT {
     @RouteURL(value = "todo-query-app")
     private URL query;
 
-    @RouteURL(value = "todo-graph-visualiser-app")
-    private URL graph;
-
     @Before
     public void flush_kafka() throws Exception {
         /**
@@ -194,31 +191,6 @@ public class TodoFeatureStepsIT {
                 .statusCode(200);
     }
 
-    @Before
-    public void flush_graph() throws Exception {
-        final String podName = client.pods().inNamespace(NAMESPACE).withLabel("name", "neo4j").list().getItems().stream().findFirst().map(Pod::getMetadata).map(ObjectMeta::getName).get();
-        final SystemOutCallback systemOutCallback = new SystemOutCallback();
-        final ExecutorService executorService = Executors.newSingleThreadExecutor();
-        try (final ExecWatch execWatch = client.pods()
-                .inNamespace(NAMESPACE)
-                .withName(podName)
-                .inContainer("neo4j")
-                .redirectingInput()
-                .redirectingOutput()
-                .redirectingError()
-                .redirectingErrorChannel()
-                .usingListener(new PodListener(podName))
-                .exec();
-             final NonBlockingInputStreamPumper pump = new NonBlockingInputStreamPumper(execWatch.getOutput(), systemOutCallback)
-        ) {
-            executorService.submit(pump);
-            execWatch.getInput().write("bash -c \"wget --http-user=neo4j --http-passwd=secret -O- --post-data='{\\\"statements\\\":[{\\\"statement\\\":\\\"MATCH (n) DETACH DELETE n\\\"}]}' --header='Content-Type:application/json' http://localhost:7474/db/data/transaction/commit; echo DONE;\"\n".getBytes());
-            Awaitility.await().atMost(30, TimeUnit.SECONDS).until(() -> systemOutCallback.getData() != null && systemOutCallback.getData().endsWith("DONE"));
-        } finally {
-            executorService.shutdownNow();
-        }
-    }
-
     @When("^I create a todo$")
     public void i_create_a_todo() {
         RestAssured
@@ -249,20 +221,6 @@ public class TodoFeatureStepsIT {
                 .jsonPath()
                 .getString("todoId");
         assertThat(todoId).isEqualTo("todoId");
-        await().atMost(10, TimeUnit.SECONDS).until(() ->
-                RestAssured.given().get(graph + "graph")
-                        .prettyPeek()
-                        .then()
-                        .statusCode(200)
-                        .extract()
-                        .body()
-                        .jsonPath().getList("todos").size() > 0);
-        RestAssured.given().get(graph + "graph")
-                .prettyPeek()
-                .then()
-                .statusCode(200)
-                .body("todos[0].todoId", is("todoId"))
-                .body("todos[0].todoStatus", is("IN_PROGRESS"));
     }
 
     @Then("^A created todo mail notification is sent$")
@@ -320,25 +278,6 @@ public class TodoFeatureStepsIT {
                         .body()
                         .jsonPath()
                         .getString("todoStatus")
-                        .equals("COMPLETED")
-        );
-        await().atMost(10, TimeUnit.SECONDS).until(() ->
-                RestAssured.given().get(graph + "graph")
-                        .prettyPeek()
-                        .then()
-                        .statusCode(200)
-                        .extract()
-                        .body()
-                        .jsonPath().getList("todos").size() > 0);
-        await().atMost(10, TimeUnit.SECONDS).until(() ->
-                RestAssured.given().get(graph + "graph")
-                        .prettyPeek()
-                        .then()
-                        .statusCode(200)
-                        .extract()
-                        .body()
-                        .jsonPath()
-                        .getString("todos[0].todoStatus")
                         .equals("COMPLETED")
         );
     }

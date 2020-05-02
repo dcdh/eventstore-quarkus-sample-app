@@ -148,21 +148,6 @@ objects:
                         }
                       }
                     }
-                    stage("Promote todo graph visualiser app from ci to e2e") {
-                      openshift.withCluster() {
-                        openshift.tag("ci/todo-graph-visualiser-app:latest", "e2e/todo-graph-visualiser-app:latest")
-                        openshift.withProject("e2e") {
-                          def latestDeploymentVersion = openshift.selector("dc", "todo-graph-visualiser-app").object().status.latestVersion
-                          def rc = openshift.selector("rc", "todo-graph-visualiser-app-${latestDeploymentVersion}")
-                          timeout (time: 10, unit: 'MINUTES') {
-                            rc.untilEach(1) {
-                              def rcMap = it.object()
-                              return (rcMap.status.replicas.equals(rcMap.status.readyReplicas))
-                            }
-                          }
-                        }
-                      }
-                    }
                     stage("checkout") {
                       git url: "https://github.com/dcdh/eventstore-quarkus-sample-app.git", branch: "master"
                     }
@@ -212,21 +197,6 @@ objects:
                         openshift.withProject("production") {
                           def latestDeploymentVersion = openshift.selector("dc", "todo-email-notifier-app").object().status.latestVersion
                           def rc = openshift.selector("rc", "todo-email-notifier-app-${latestDeploymentVersion}")
-                          timeout (time: 10, unit: 'MINUTES') {
-                            rc.untilEach(1) {
-                              def rcMap = it.object()
-                              return (rcMap.status.replicas.equals(rcMap.status.readyReplicas))
-                            }
-                          }
-                        }
-                      }
-                    }
-                    stage("Promote todo graph visualiser app from e2e to production") {
-                      openshift.withCluster() {
-                        openshift.tag("e2e/todo-graph-visualiser-app:latest", "production/todo-graph-visualiser-app:latest")
-                        openshift.withProject("production") {
-                          def latestDeploymentVersion = openshift.selector("dc", "todo-graph-visualiser-app").object().status.latestVersion
-                          def rc = openshift.selector("rc", "todo-graph-visualiser-app-${latestDeploymentVersion}")
                           timeout (time: 10, unit: 'MINUTES') {
                             rc.untilEach(1) {
                               def rcMap = it.object()

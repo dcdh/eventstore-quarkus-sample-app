@@ -19,7 +19,6 @@
         <module>todo-write-app</module>
         <module>todo-query-app</module>
         <module>todo-email-notifier-app</module>
-        <module>todo-graph-visualiser-app</module>
         <module>todo-domain-api</module>
         <module>todo-public-frontend</module>
     </modules>
