@@ -8,7 +8,7 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 @Provider
-public class TodoIdAlreadyExistentExceptionMapper implements ExceptionMapper<TodoAlreadyExistentException> {
+public class TodoAlreadyExistentExceptionMapper implements ExceptionMapper<TodoAlreadyExistentException> {
 
     @Override
     public Response toResponse(final TodoAlreadyExistentException exception) {
