@@ -1,8 +1,7 @@
 package com.damdamdeo.todo.interfaces;
 
-import com.damdamdeo.eventdataspreader.debeziumeventconsumer.api.Event;
 import com.damdamdeo.eventdataspreader.debeziumeventconsumer.api.EventConsumer;
-import com.damdamdeo.eventdataspreader.debeziumeventconsumer.api.EventQualifier;
+import com.damdamdeo.eventdataspreader.event.api.Event;
 import com.damdamdeo.todo.domain.api.TodoStatus;
 import com.damdamdeo.todo.domain.api.event.TodoAggregateTodoCreatedEventPayload;
 import com.damdamdeo.todo.infrastructure.TodoEntity;
@@ -12,7 +11,6 @@ import javax.persistence.EntityManager;
 import java.util.Objects;
 
 @Dependent
-@EventQualifier(aggregateRootType = "TodoAggregateRoot", eventType = "TodoCreatedEvent")
 public class TodoCreatedEventConsumer implements EventConsumer {
 
     final EntityManager entityManager;
@@ -30,6 +28,16 @@ public class TodoCreatedEventConsumer implements EventConsumer {
                 TodoStatus.IN_PROGRESS,
                 event.eventId());
         entityManager.persist(todoToCreate);
+    }
+
+    @Override
+    public String aggregateRootType() {
+        return "TodoAggregateRoot";
+    }
+
+    @Override
+    public String eventType() {
+        return "TodoCreatedEvent";
     }
 
 }

@@ -4,9 +4,8 @@ import com.damdamdeo.email_notifier.domain.EmailNotifier;
 import com.damdamdeo.email_notifier.domain.TemplateGenerator;
 import com.damdamdeo.email_notifier.domain.TodoMarkedAsCompleted;
 import com.damdamdeo.email_notifier.infrastructure.TodoEntity;
-import com.damdamdeo.eventdataspreader.debeziumeventconsumer.api.Event;
 import com.damdamdeo.eventdataspreader.debeziumeventconsumer.api.EventConsumer;
-import com.damdamdeo.eventdataspreader.debeziumeventconsumer.api.EventQualifier;
+import com.damdamdeo.eventdataspreader.event.api.Event;
 import com.damdamdeo.todo.domain.api.event.TodoAggregateTodoMarkedAsCompletedEventPayload;
 
 import javax.enterprise.context.Dependent;
@@ -14,7 +13,6 @@ import javax.persistence.EntityManager;
 import java.util.Objects;
 
 @Dependent
-@EventQualifier(aggregateRootType = "TodoAggregateRoot", eventType = "TodoMarkedAsCompletedEvent")
 public class TodoMarkedAsCompletedEventConsumer implements EventConsumer {
 
     final EntityManager entityManager;
@@ -53,6 +51,16 @@ public class TodoMarkedAsCompletedEventConsumer implements EventConsumer {
             // TODO log
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public String aggregateRootType() {
+        return "TodoAggregateRoot";
+    }
+
+    @Override
+    public String eventType() {
+        return "TodoMarkedAsCompletedEvent";
     }
 
 }

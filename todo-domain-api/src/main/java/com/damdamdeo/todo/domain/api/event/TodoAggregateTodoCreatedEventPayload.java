@@ -1,6 +1,6 @@
 package com.damdamdeo.todo.domain.api.event;
 
-import com.damdamdeo.eventdataspreader.debeziumeventconsumer.api.EventPayload;
+import com.damdamdeo.eventdataspreader.event.api.EventPayload;
 import com.damdamdeo.eventdataspreader.eventsourcing.infrastructure.JacksonEncryptionDeserializer;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

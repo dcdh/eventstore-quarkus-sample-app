@@ -1,6 +1,6 @@
 package com.damdamdeo.todo.infrastructure;
 
-import com.damdamdeo.eventdataspreader.debeziumeventconsumer.api.EventId;
+import com.damdamdeo.eventdataspreader.event.api.EventId;
 import com.damdamdeo.todo.domain.api.Todo;
 import com.damdamdeo.todo.domain.api.TodoStatus;
 import org.hibernate.envers.Audited;

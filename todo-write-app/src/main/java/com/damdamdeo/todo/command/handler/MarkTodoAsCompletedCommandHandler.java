@@ -1,9 +1,7 @@
 package com.damdamdeo.todo.command.handler;
 
-import com.damdamdeo.eventdataspreader.writeside.command.api.Command;
-import com.damdamdeo.eventdataspreader.writeside.command.api.CommandHandler;
-import com.damdamdeo.eventdataspreader.writeside.command.api.CommandQualifier;
-import com.damdamdeo.eventdataspreader.writeside.eventsourcing.api.AggregateRoot;
+import com.damdamdeo.eventdataspreader.writeside.command.api.AbstractCommandHandler;
+import com.damdamdeo.eventdataspreader.writeside.command.api.CommandExecutor;
 import com.damdamdeo.todo.aggregate.TodoAggregateRoot;
 import com.damdamdeo.todo.aggregate.TodoAggregateRootRepository;
 import com.damdamdeo.todo.command.MarkTodoAsCompletedCommand;
@@ -11,22 +9,20 @@ import com.damdamdeo.todo.command.MarkTodoAsCompletedCommand;
 import javax.enterprise.context.Dependent;
 
 @Dependent
-@CommandQualifier(MarkTodoAsCompletedCommand.class)
-public class MarkTodoAsCompletedCommandHandler implements CommandHandler {
+public class MarkTodoAsCompletedCommandHandler extends AbstractCommandHandler<TodoAggregateRoot, MarkTodoAsCompletedCommand> {
 
     final TodoAggregateRootRepository todoAggregateRootRepository;
 
-    public MarkTodoAsCompletedCommandHandler(final TodoAggregateRootRepository todoAggregateRootRepository) {
+    public MarkTodoAsCompletedCommandHandler(final TodoAggregateRootRepository todoAggregateRootRepository, final CommandExecutor commandExecutor) {
+        super(commandExecutor);
         this.todoAggregateRootRepository = todoAggregateRootRepository;
     }
 
     @Override
-    public AggregateRoot handle(final Command command) {
-        final TodoAggregateRoot todoAggregateRoot = todoAggregateRootRepository.load(command.aggregateId());
+    protected TodoAggregateRoot handle(final MarkTodoAsCompletedCommand markTodoAsCompletedCommand) {
+        final TodoAggregateRoot todoAggregateRoot = todoAggregateRootRepository.load(markTodoAsCompletedCommand.aggregateId());
         todoAggregateRoot.canMarkTodoAsCompletedSpecification().checkSatisfiedBy(todoAggregateRoot);
-        final MarkTodoAsCompletedCommand markTodoAsCompletedCommand = (MarkTodoAsCompletedCommand) command;
         todoAggregateRoot.handle(markTodoAsCompletedCommand);
         return todoAggregateRootRepository.save(todoAggregateRoot);
     }
-
 }

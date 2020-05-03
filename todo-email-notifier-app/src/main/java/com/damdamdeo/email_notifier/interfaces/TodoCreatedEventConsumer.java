@@ -5,9 +5,8 @@ import com.damdamdeo.email_notifier.domain.TemplateGenerator;
 import com.damdamdeo.email_notifier.domain.TodoCreated;
 import com.damdamdeo.email_notifier.domain.TodoStatus;
 import com.damdamdeo.email_notifier.infrastructure.TodoEntity;
-import com.damdamdeo.eventdataspreader.debeziumeventconsumer.api.Event;
 import com.damdamdeo.eventdataspreader.debeziumeventconsumer.api.EventConsumer;
-import com.damdamdeo.eventdataspreader.debeziumeventconsumer.api.EventQualifier;
+import com.damdamdeo.eventdataspreader.event.api.Event;
 import com.damdamdeo.todo.domain.api.event.TodoAggregateTodoCreatedEventPayload;
 
 import javax.enterprise.context.Dependent;
@@ -15,7 +14,6 @@ import javax.persistence.EntityManager;
 import java.util.Objects;
 
 @Dependent
-@EventQualifier(aggregateRootType = "TodoAggregateRoot", eventType = "TodoCreatedEvent")
 public class TodoCreatedEventConsumer implements EventConsumer {
 
     final EntityManager entityManager;
@@ -56,6 +54,16 @@ public class TodoCreatedEventConsumer implements EventConsumer {
             // TODO log
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public String aggregateRootType() {
+        return "TodoAggregateRoot";
+    }
+
+    @Override
+    public String eventType() {
+        return "TodoCreatedEvent";
     }
 
 }

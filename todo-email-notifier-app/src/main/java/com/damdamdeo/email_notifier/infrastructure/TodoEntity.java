@@ -2,7 +2,7 @@ package com.damdamdeo.email_notifier.infrastructure;
 
 import com.damdamdeo.email_notifier.domain.Todo;
 import com.damdamdeo.email_notifier.domain.TodoStatus;
-import com.damdamdeo.eventdataspreader.debeziumeventconsumer.api.EventId;
+import com.damdamdeo.eventdataspreader.event.api.EventId;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.Entity;

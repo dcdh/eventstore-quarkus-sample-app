@@ -1,9 +1,9 @@
 package com.damdamdeo.todo.interfaces;
 
-import com.damdamdeo.eventdataspreader.writeside.command.api.CommandHandlerExecutor;
-import com.damdamdeo.todo.aggregate.TodoAggregateRoot;
 import com.damdamdeo.todo.command.CreateNewTodoCommand;
 import com.damdamdeo.todo.command.MarkTodoAsCompletedCommand;
+import com.damdamdeo.todo.command.handler.CreateNewTodoCommandHandler;
+import com.damdamdeo.todo.command.handler.MarkTodoAsCompletedCommandHandler;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -13,10 +13,14 @@ import java.util.Objects;
 @Produces(MediaType.APPLICATION_JSON)
 public class TodoEndpoint {
 
-    final CommandHandlerExecutor commandHandlerExecutor;
+    final CreateNewTodoCommandHandler createNewTodoCommandHandler;
 
-    public TodoEndpoint(final CommandHandlerExecutor commandHandlerExecutor) {
-        this.commandHandlerExecutor = Objects.requireNonNull(commandHandlerExecutor);
+    final MarkTodoAsCompletedCommandHandler markTodoAsCompletedCommandHandler;
+
+    public TodoEndpoint(final CreateNewTodoCommandHandler createNewTodoCommandHandler,
+                        final MarkTodoAsCompletedCommandHandler markTodoAsCompletedCommandHandler) {
+        this.createNewTodoCommandHandler = Objects.requireNonNull(createNewTodoCommandHandler);
+        this.markTodoAsCompletedCommandHandler = Objects.requireNonNull(markTodoAsCompletedCommandHandler);
     }
 
     @POST
@@ -24,14 +28,14 @@ public class TodoEndpoint {
     @Produces(MediaType.APPLICATION_JSON)
     public TodoDTO createNewTodo(@FormParam("todoId") final String todoId,
                                  @FormParam("description") final String description) throws Throwable {
-        return new TodoDTO((TodoAggregateRoot) commandHandlerExecutor.execute(new CreateNewTodoCommand(todoId, description)).get());
+        return new TodoDTO(createNewTodoCommandHandler.executeCommand(new CreateNewTodoCommand(todoId, description)));
     }
 
     @POST
     @Path("/markTodoAsCompleted")
     @Produces(MediaType.APPLICATION_JSON)
     public TodoDTO markTodoAsCompletedCommand(@FormParam("todoId") final String todoId) throws Throwable {
-        return new TodoDTO((TodoAggregateRoot) commandHandlerExecutor.execute(new MarkTodoAsCompletedCommand(todoId)).get());
+        return new TodoDTO(markTodoAsCompletedCommandHandler.executeCommand(new MarkTodoAsCompletedCommand(todoId)));
     }
 
 }

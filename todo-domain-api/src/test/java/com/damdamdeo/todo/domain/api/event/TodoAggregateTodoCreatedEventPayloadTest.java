@@ -1,10 +1,10 @@
 package com.damdamdeo.todo.domain.api.event;
 
-import com.damdamdeo.eventdataspreader.debeziumeventconsumer.api.EventPayload;
-import com.damdamdeo.eventdataspreader.debeziumeventconsumer.api.EventPayloadDeserializer;
-import com.damdamdeo.eventdataspreader.debeziumeventconsumer.infrastructure.JacksonEventPayloadDeserializer;
-import com.damdamdeo.eventdataspreader.debeziumeventconsumer.infrastructure.spi.JacksonEventPayloadSubtypes;
-import com.damdamdeo.eventdataspreader.debeziumeventconsumer.infrastructure.spi.JacksonSubtype;
+import com.damdamdeo.eventdataspreader.event.api.EventPayload;
+import com.damdamdeo.eventdataspreader.event.api.EventPayloadDeserializer;
+import com.damdamdeo.eventdataspreader.event.infrastructure.JacksonEventPayloadDeserializer;
+import com.damdamdeo.eventdataspreader.event.infrastructure.spi.JacksonEventPayloadSubtypes;
+import com.damdamdeo.eventdataspreader.event.infrastructure.spi.JacksonSubtype;
 import com.damdamdeo.eventdataspreader.eventsourcing.api.EncryptedEventSecret;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
