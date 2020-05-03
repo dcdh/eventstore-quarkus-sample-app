@@ -12,6 +12,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <quarkus.version>1.4.1.Final</quarkus.version>
+        <event-data-spreader.version>1.0-SNAPSHOT</event-data-spreader.version>
     </properties>
 
     <modules>
@@ -23,6 +24,9 @@
         <module>todo-public-frontend</module>
     </modules>
 
+    <dependencies>
+    </dependencies>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -32,6 +36,58 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
+            <dependency>
+                <groupId>com.damdamdeo</groupId>
+                <artifactId>todo-domain-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.damdamdeo</groupId>
+                <artifactId>debezium-event-consumer</artifactId>
+                <version>${event-data-spreader.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.damdamdeo</groupId>
+                <artifactId>write-side</artifactId>
+                <version>${event-data-spreader.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.damdamdeo</groupId>
+                <artifactId>query-side</artifactId>
+                <version>${event-data-spreader.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.skyscreamer</groupId>
+                <artifactId>jsonassert</artifactId>
+                <version>1.5.0</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>2.28.2</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.jayway.restassured</groupId>
+                <artifactId>json-schema-validator</artifactId>
+                <version>2.9.0</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.awaitility</groupId>
+                <artifactId>awaitility</artifactId>
+                <version>4.0.1</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>nl.jqno.equalsverifier</groupId>
+                <artifactId>equalsverifier</artifactId>
+                <version>3.1.9</version>
+                <scope>test</scope>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
