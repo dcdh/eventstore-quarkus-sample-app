@@ -9,12 +9,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class TodoAggregateTodoMarkedAsCompletedEventPayload extends AggregateRootEventPayload<TodoAggregateRoot> {
+public class TodoAggregateTodoMarkedAsCompletedAggregateRootEventPayload extends AggregateRootEventPayload<TodoAggregateRoot> {
 
     private final String todoId;
 
     @JsonCreator
-    public TodoAggregateTodoMarkedAsCompletedEventPayload(@JsonProperty("todoId") final String todoId) {
+    public TodoAggregateTodoMarkedAsCompletedAggregateRootEventPayload(@JsonProperty("todoId") final String todoId) {
         this.todoId = Objects.requireNonNull(todoId);
     }
 
@@ -45,8 +45,8 @@ public class TodoAggregateTodoMarkedAsCompletedEventPayload extends AggregateRoo
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof TodoAggregateTodoMarkedAsCompletedEventPayload)) return false;
-        TodoAggregateTodoMarkedAsCompletedEventPayload that = (TodoAggregateTodoMarkedAsCompletedEventPayload) o;
+        if (!(o instanceof TodoAggregateTodoMarkedAsCompletedAggregateRootEventPayload)) return false;
+        TodoAggregateTodoMarkedAsCompletedAggregateRootEventPayload that = (TodoAggregateTodoMarkedAsCompletedAggregateRootEventPayload) o;
         return Objects.equals(todoId, that.todoId);
     }
 

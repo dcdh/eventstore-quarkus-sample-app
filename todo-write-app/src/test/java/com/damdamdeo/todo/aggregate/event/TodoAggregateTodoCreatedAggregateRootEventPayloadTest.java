@@ -15,18 +15,18 @@ import java.util.Optional;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TodoAggregateTodoMarkedAsCompletedEventPayloadTest {
+public class TodoAggregateTodoCreatedAggregateRootEventPayloadTest {
 
     @Test
     public void should_verify_equality() {
-        EqualsVerifier.forClass(TodoAggregateTodoCreatedEventPayload.class).verify();
+        EqualsVerifier.forClass(TodoAggregateTodoCreatedAggregateRootEventPayload.class).verify();
     }
 
     private static class DefaultJacksonAggregateRootEventPayloadSubtypes implements JacksonAggregateRootEventPayloadSubtypes {
 
         @Override
         public List<JacksonSubtype<AggregateRootEventPayload>> jacksonSubtypes() {
-            return singletonList(new JacksonSubtype<>(TodoAggregateTodoMarkedAsCompletedEventPayload.class, "TodoAggregateTodoMarkedAsCompletedEventPayload"));
+            return singletonList(new JacksonSubtype<>(TodoAggregateTodoCreatedAggregateRootEventPayload.class, "TodoAggregateTodoCreatedEventPayload"));
         }
 
     }
@@ -57,10 +57,10 @@ public class TodoAggregateTodoMarkedAsCompletedEventPayloadTest {
 
         // When
         final String serialized = aggregateRootEventPayloadDeSerializer.serialize(Optional.of(new DefaultEncryptedEventSecret()),
-                new TodoAggregateTodoMarkedAsCompletedEventPayload("todoId"));
+                new TodoAggregateTodoCreatedAggregateRootEventPayload("todoId", "lorem ipsum"));
 
         // Then
-        assertEquals("{\"@type\":\"TodoAggregateTodoMarkedAsCompletedEventPayload\",\"todoId\":\"todoId\"}", serialized);
+        assertEquals("{\"@type\":\"TodoAggregateTodoCreatedEventPayload\",\"todoId\":\"todoId\",\"description\":\"uWtQHOtmgpaw22nCiexwpg==\"}", serialized);
     }
 
     @Test
@@ -70,10 +70,10 @@ public class TodoAggregateTodoMarkedAsCompletedEventPayloadTest {
 
         // When
         final AggregateRootEventPayload deserialized = aggregateRootEventPayloadDeSerializer.deserialize(Optional.of(new DefaultEncryptedEventSecret()),
-                "{\"@type\":\"TodoAggregateTodoMarkedAsCompletedEventPayload\",\"todoId\":\"todoId\"}");
+                "{\"@type\":\"TodoAggregateTodoCreatedEventPayload\",\"todoId\":\"todoId\",\"description\":\"uWtQHOtmgpaw22nCiexwpg==\"}");
 
         // Then
-        assertEquals(new TodoAggregateTodoMarkedAsCompletedEventPayload("todoId"), deserialized);
+        assertEquals(new TodoAggregateTodoCreatedAggregateRootEventPayload("todoId", "lorem ipsum"), deserialized);
     }
 
 }

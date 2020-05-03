@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public final class TodoAggregateTodoCreatedEventPayload extends AggregateRootEventPayload<TodoAggregateRoot> {
+public final class TodoAggregateTodoCreatedAggregateRootEventPayload extends AggregateRootEventPayload<TodoAggregateRoot> {
 
     private final String todoId;
 
@@ -22,8 +22,8 @@ public final class TodoAggregateTodoCreatedEventPayload extends AggregateRootEve
     private final String description;
 
     @JsonCreator
-    public TodoAggregateTodoCreatedEventPayload(@JsonProperty("todoId") final String todoId,
-                                                @JsonProperty("description") final String description) {
+    public TodoAggregateTodoCreatedAggregateRootEventPayload(@JsonProperty("todoId") final String todoId,
+                                                             @JsonProperty("description") final String description) {
         this.todoId = Objects.requireNonNull(todoId);
         this.description = Objects.requireNonNull(description);
     }
@@ -60,7 +60,7 @@ public final class TodoAggregateTodoCreatedEventPayload extends AggregateRootEve
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        TodoAggregateTodoCreatedEventPayload that = (TodoAggregateTodoCreatedEventPayload) o;
+        TodoAggregateTodoCreatedAggregateRootEventPayload that = (TodoAggregateTodoCreatedAggregateRootEventPayload) o;
         return Objects.equals(todoId, that.todoId) &&
                 Objects.equals(description, that.description);
     }

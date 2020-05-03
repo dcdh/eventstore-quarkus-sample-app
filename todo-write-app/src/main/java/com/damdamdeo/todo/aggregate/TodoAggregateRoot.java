@@ -1,8 +1,8 @@
 package com.damdamdeo.todo.aggregate;
 
 import com.damdamdeo.eventdataspreader.writeside.eventsourcing.api.AggregateRoot;
-import com.damdamdeo.todo.aggregate.event.TodoAggregateTodoCreatedEventPayload;
-import com.damdamdeo.todo.aggregate.event.TodoAggregateTodoMarkedAsCompletedEventPayload;
+import com.damdamdeo.todo.aggregate.event.TodoAggregateTodoCreatedAggregateRootEventPayload;
+import com.damdamdeo.todo.aggregate.event.TodoAggregateTodoMarkedAsCompletedAggregateRootEventPayload;
 import com.damdamdeo.todo.command.CreateNewTodoCommand;
 import com.damdamdeo.todo.command.MarkTodoAsCompletedCommand;
 import com.damdamdeo.todo.domain.api.Todo;
@@ -35,21 +35,21 @@ public class TodoAggregateRoot extends AggregateRoot implements Todo {
     }
 
     public void handle(final CreateNewTodoCommand createNewTodoCommand) {
-        this.apply(new TodoAggregateTodoCreatedEventPayload(createNewTodoCommand.todoId(),
+        this.apply(new TodoAggregateTodoCreatedAggregateRootEventPayload(createNewTodoCommand.todoId(),
                 createNewTodoCommand.description()), new DefaultEventMetadata());
     }
 
     public void handle(final MarkTodoAsCompletedCommand markTodoAsCompletedCommand) {
-        this.apply(new TodoAggregateTodoMarkedAsCompletedEventPayload(markTodoAsCompletedCommand.todoId()), new DefaultEventMetadata());
+        this.apply(new TodoAggregateTodoMarkedAsCompletedAggregateRootEventPayload(markTodoAsCompletedCommand.todoId()), new DefaultEventMetadata());
     }
 
-    public void on(final TodoAggregateTodoCreatedEventPayload todoAggregateTodoCreatedEventPayload) {
-        this.aggregateRootId = todoAggregateTodoCreatedEventPayload.todoId();
-        this.description = todoAggregateTodoCreatedEventPayload.description();
+    public void on(final TodoAggregateTodoCreatedAggregateRootEventPayload todoAggregateTodoCreatedAggregateRootEventPayload) {
+        this.aggregateRootId = todoAggregateTodoCreatedAggregateRootEventPayload.todoId();
+        this.description = todoAggregateTodoCreatedAggregateRootEventPayload.description();
         this.todoStatus = TodoStatus.IN_PROGRESS;
     }
 
-    public void on(final TodoAggregateTodoMarkedAsCompletedEventPayload todoAggregateTodoMarkedAsCompletedEventPayload) {
+    public void on(final TodoAggregateTodoMarkedAsCompletedAggregateRootEventPayload todoAggregateTodoMarkedAsCompletedAggregateRootEventPayload) {
         this.todoStatus = TodoStatus.COMPLETED;
     }
 

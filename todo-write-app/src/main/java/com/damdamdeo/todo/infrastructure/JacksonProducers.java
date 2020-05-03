@@ -10,8 +10,8 @@ import com.damdamdeo.eventdataspreader.writeside.eventsourcing.api.AggregateRoot
 import com.damdamdeo.eventdataspreader.writeside.eventsourcing.infrastructure.spi.JacksonAggregateRootEventPayloadSubtypes;
 import com.damdamdeo.eventdataspreader.writeside.eventsourcing.infrastructure.spi.JacksonAggregateRootSubtypes;
 import com.damdamdeo.todo.aggregate.TodoAggregateRoot;
-import com.damdamdeo.todo.aggregate.event.TodoAggregateTodoCreatedEventPayload;
-import com.damdamdeo.todo.aggregate.event.TodoAggregateTodoMarkedAsCompletedEventPayload;
+import com.damdamdeo.todo.aggregate.event.TodoAggregateTodoCreatedAggregateRootEventPayload;
+import com.damdamdeo.todo.aggregate.event.TodoAggregateTodoMarkedAsCompletedAggregateRootEventPayload;
 import com.damdamdeo.todo.domain.api.event.DefaultEventMetadata;
 
 import javax.enterprise.inject.Produces;
@@ -28,8 +28,8 @@ public class JacksonProducers {
 
             @Override
             public List<JacksonSubtype<AggregateRootEventPayload>> jacksonSubtypes() {
-                return asList(new JacksonSubtype<>(TodoAggregateTodoCreatedEventPayload.class, "TodoAggregateTodoCreatedEventPayload"),
-                        new JacksonSubtype<>(TodoAggregateTodoMarkedAsCompletedEventPayload.class, "TodoAggregateTodoMarkedAsCompletedEventPayload"));
+                return asList(new JacksonSubtype<>(TodoAggregateTodoCreatedAggregateRootEventPayload.class, "TodoAggregateTodoCreatedEventPayload"),
+                        new JacksonSubtype<>(TodoAggregateTodoMarkedAsCompletedAggregateRootEventPayload.class, "TodoAggregateTodoMarkedAsCompletedEventPayload"));
             }
 
         };
