@@ -1,4 +1,4 @@
-package com.damdamdeo.todo.aggregate.event;
+package com.damdamdeo.todo.domain.event;
 
 import com.damdamdeo.eventdataspreader.debeziumeventconsumer.api.EventMetadata;
 import com.fasterxml.jackson.annotation.JsonCreator;

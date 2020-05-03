@@ -5,9 +5,9 @@ import com.damdamdeo.eventdataspreader.debeziumeventconsumer.api.EventPayload;
 import com.damdamdeo.eventdataspreader.debeziumeventconsumer.infrastructure.spi.JacksonEventMetadataSubtypes;
 import com.damdamdeo.eventdataspreader.debeziumeventconsumer.infrastructure.spi.JacksonEventPayloadSubtypes;
 import com.damdamdeo.eventdataspreader.debeziumeventconsumer.infrastructure.spi.JacksonSubtype;
-import com.damdamdeo.todo.aggregate.event.DefaultEventMetadata;
-import com.damdamdeo.todo.aggregate.event.TodoAggregateTodoCreatedEventPayload;
-import com.damdamdeo.todo.aggregate.event.TodoAggregateTodoMarkedAsCompletedEventPayload;
+import com.damdamdeo.todo.domain.event.DefaultEventMetadata;
+import com.damdamdeo.todo.domain.event.TodoAggregateTodoCreatedEventPayload;
+import com.damdamdeo.todo.domain.event.TodoAggregateTodoMarkedAsCompletedEventPayload;
 
 import javax.enterprise.inject.Produces;
 import java.util.Arrays;

@@ -1,7 +1,6 @@
-package com.damdamdeo.todo.aggregate.event;
+package com.damdamdeo.todo.domain.event;
 
-import com.damdamdeo.eventdataspreader.writeside.eventsourcing.api.AggregateRootEventPayload;
-import com.damdamdeo.todo.aggregate.TodoAggregateRoot;
+import com.damdamdeo.eventdataspreader.debeziumeventconsumer.api.EventPayload;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -9,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class TodoAggregateTodoMarkedAsCompletedEventPayload extends AggregateRootEventPayload<TodoAggregateRoot> {
+public final class TodoAggregateTodoMarkedAsCompletedEventPayload implements EventPayload {
 
     private final String todoId;
 
@@ -20,26 +19,6 @@ public class TodoAggregateTodoMarkedAsCompletedEventPayload extends AggregateRoo
 
     public String todoId() {
         return todoId;
-    }
-
-    @Override
-    protected void apply(final TodoAggregateRoot aggregateRoot) {
-        aggregateRoot.on(this);
-    }
-
-    @Override
-    public String eventName() {
-        return "TodoMarkedAsCompletedEvent";
-    }
-
-    @Override
-    public String aggregateRootId() {
-        return todoId;
-    }
-
-    @Override
-    public String aggregateRootType() {
-        return "TodoAggregateRoot";
     }
 
     @Override
@@ -57,7 +36,7 @@ public class TodoAggregateTodoMarkedAsCompletedEventPayload extends AggregateRoo
 
     @Override
     public String toString() {
-        return "TodoMarkedAsCompletedEventPayload{" +
+        return "TodoAggregateTodoMarkedAsCompletedEventPayload{" +
                 "todoId='" + todoId + '\'' +
                 '}';
     }

@@ -3,7 +3,7 @@ package com.damdamdeo.todo.interfaces;
 import com.damdamdeo.eventdataspreader.debeziumeventconsumer.api.Event;
 import com.damdamdeo.eventdataspreader.debeziumeventconsumer.api.EventConsumer;
 import com.damdamdeo.eventdataspreader.debeziumeventconsumer.api.EventQualifier;
-import com.damdamdeo.todo.aggregate.event.TodoAggregateTodoCreatedEventPayload;
+import com.damdamdeo.todo.domain.event.TodoAggregateTodoCreatedEventPayload;
 import com.damdamdeo.todo.domain.api.TodoStatus;
 import com.damdamdeo.todo.infrastructure.TodoEntity;
 

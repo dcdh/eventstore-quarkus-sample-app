@@ -9,10 +9,10 @@ import com.damdamdeo.eventdataspreader.writeside.eventsourcing.api.AggregateRoot
 import com.damdamdeo.eventdataspreader.writeside.eventsourcing.api.AggregateRootEventPayload;
 import com.damdamdeo.eventdataspreader.writeside.eventsourcing.infrastructure.spi.JacksonAggregateRootEventPayloadSubtypes;
 import com.damdamdeo.eventdataspreader.writeside.eventsourcing.infrastructure.spi.JacksonAggregateRootSubtypes;
-import com.damdamdeo.todo.aggregate.TodoAggregateRoot;
-import com.damdamdeo.todo.aggregate.event.DefaultEventMetadata;
-import com.damdamdeo.todo.aggregate.event.TodoAggregateTodoCreatedEventPayload;
-import com.damdamdeo.todo.aggregate.event.TodoAggregateTodoMarkedAsCompletedEventPayload;
+import com.damdamdeo.todo.domain.TodoAggregateRoot;
+import com.damdamdeo.todo.domain.event.DefaultEventMetadata;
+import com.damdamdeo.todo.domain.event.TodoAggregateTodoCreatedEventPayload;
+import com.damdamdeo.todo.domain.event.TodoAggregateTodoMarkedAsCompletedEventPayload;
 
 import javax.enterprise.inject.Produces;
 import java.util.Collections;

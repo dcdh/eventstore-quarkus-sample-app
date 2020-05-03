@@ -1,6 +1,6 @@
 package com.damdamdeo.todo.interfaces;
 
-import com.damdamdeo.todo.aggregate.TodoRepository;
+import com.damdamdeo.todo.domain.TodoRepository;
 import com.damdamdeo.todo.domain.api.Todo;
 import com.damdamdeo.todo.domain.api.TodoStatus;
 import com.damdamdeo.todo.domain.api.UnknownTodoException;

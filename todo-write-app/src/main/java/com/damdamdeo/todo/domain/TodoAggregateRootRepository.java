@@ -1,4 +1,4 @@
-package com.damdamdeo.todo.aggregate;
+package com.damdamdeo.todo.domain;
 
 import com.damdamdeo.eventdataspreader.writeside.eventsourcing.api.AggregateRootRepository;
 

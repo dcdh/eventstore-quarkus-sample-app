@@ -1,7 +1,7 @@
 package com.damdamdeo.todo.infrastructure;
 
 import com.damdamdeo.todo.domain.api.Todo;
-import com.damdamdeo.todo.aggregate.TodoRepository;
+import com.damdamdeo.todo.domain.TodoRepository;
 
 import javax.enterprise.context.Dependent;
 import javax.persistence.EntityManager;

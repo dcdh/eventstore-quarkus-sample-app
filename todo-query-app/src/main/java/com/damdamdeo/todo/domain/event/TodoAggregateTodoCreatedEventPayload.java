@@ -1,23 +1,19 @@
-package com.damdamdeo.todo.aggregate.event;
+package com.damdamdeo.todo.domain.event;
 
+import com.damdamdeo.eventdataspreader.debeziumeventconsumer.api.EventPayload;
 import com.damdamdeo.eventdataspreader.eventsourcing.infrastructure.JacksonEncryptionDeserializer;
-import com.damdamdeo.eventdataspreader.eventsourcing.infrastructure.JacksonEncryptionSerializer;
-import com.damdamdeo.eventdataspreader.writeside.eventsourcing.api.AggregateRootEventPayload;
-import com.damdamdeo.todo.aggregate.TodoAggregateRoot;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public final class TodoAggregateTodoCreatedEventPayload extends AggregateRootEventPayload<TodoAggregateRoot> {
+public final class TodoAggregateTodoCreatedEventPayload implements EventPayload {
 
     private final String todoId;
 
-    @JsonSerialize(using = JacksonEncryptionSerializer.class)
     @JsonDeserialize(using = JacksonEncryptionDeserializer.class)
     private final String description;
 
@@ -26,26 +22,6 @@ public final class TodoAggregateTodoCreatedEventPayload extends AggregateRootEve
                                                 @JsonProperty("description") final String description) {
         this.todoId = Objects.requireNonNull(todoId);
         this.description = Objects.requireNonNull(description);
-    }
-
-    @Override
-    protected void apply(final TodoAggregateRoot aggregateRoot) {
-        aggregateRoot.on(this);
-    }
-
-    @Override
-    public String eventName() {
-        return "TodoCreatedEvent";
-    }
-
-    @Override
-    public String aggregateRootId() {
-        return todoId;
-    }
-
-    @Override
-    public String aggregateRootType() {
-        return "TodoAggregateRoot";
     }
 
     public String todoId() {
@@ -59,7 +35,7 @@ public final class TodoAggregateTodoCreatedEventPayload extends AggregateRootEve
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof TodoAggregateTodoCreatedEventPayload)) return false;
         TodoAggregateTodoCreatedEventPayload that = (TodoAggregateTodoCreatedEventPayload) o;
         return Objects.equals(todoId, that.todoId) &&
                 Objects.equals(description, that.description);
@@ -72,7 +48,7 @@ public final class TodoAggregateTodoCreatedEventPayload extends AggregateRootEve
 
     @Override
     public String toString() {
-        return "TodoCreatedEventPayload{" +
+        return "TodoAggregateTodoCreatedEventPayload{" +
                 "todoId='" + todoId + '\'' +
                 ", description='" + description + '\'' +
                 '}';
