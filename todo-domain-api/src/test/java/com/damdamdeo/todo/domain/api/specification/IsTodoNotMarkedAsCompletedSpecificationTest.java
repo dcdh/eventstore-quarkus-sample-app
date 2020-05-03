@@ -1,9 +1,8 @@
-package com.damdamdeo.todo.domain.specification;
+package com.damdamdeo.todo.domain.api.specification;
 
 import com.damdamdeo.todo.domain.api.Todo;
 import com.damdamdeo.todo.domain.api.TodoAlreadyMarkedAsCompletedException;
 import com.damdamdeo.todo.domain.api.TodoStatus;
-import com.damdamdeo.todo.domain.api.specification.IsTodoNotMarkedAsCompletedSpecification;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

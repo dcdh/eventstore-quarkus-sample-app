@@ -1,7 +1,5 @@
-package com.damdamdeo.todo.domain;
+package com.damdamdeo.todo.domain.api;
 
-import com.damdamdeo.todo.domain.api.Todo;
-import com.damdamdeo.todo.domain.api.TodoStatus;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;

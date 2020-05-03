@@ -4,8 +4,8 @@ import com.damdamdeo.eventdataspreader.writeside.command.api.Command;
 import com.damdamdeo.eventdataspreader.writeside.command.api.CommandHandler;
 import com.damdamdeo.eventdataspreader.writeside.command.api.CommandQualifier;
 import com.damdamdeo.eventdataspreader.writeside.eventsourcing.api.AggregateRoot;
-import com.damdamdeo.todo.domain.TodoAggregateRoot;
-import com.damdamdeo.todo.domain.TodoAggregateRootRepository;
+import com.damdamdeo.todo.aggregate.TodoAggregateRoot;
+import com.damdamdeo.todo.aggregate.TodoAggregateRootRepository;
 import com.damdamdeo.todo.command.MarkTodoAsCompletedCommand;
 
 import javax.enterprise.context.Dependent;

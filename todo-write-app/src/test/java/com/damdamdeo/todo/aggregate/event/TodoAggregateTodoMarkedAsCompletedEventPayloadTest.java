@@ -1,4 +1,4 @@
-package com.damdamdeo.todo.domain.event;
+package com.damdamdeo.todo.aggregate.event;
 
 import com.damdamdeo.eventdataspreader.debeziumeventconsumer.infrastructure.spi.JacksonSubtype;
 import com.damdamdeo.eventdataspreader.eventsourcing.api.EncryptedEventSecret;
@@ -15,7 +15,7 @@ import java.util.Optional;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TodoAggregateTodoCreatedEventPayloadTest {
+public class TodoAggregateTodoMarkedAsCompletedEventPayloadTest {
 
     @Test
     public void should_verify_equality() {
@@ -26,7 +26,7 @@ public class TodoAggregateTodoCreatedEventPayloadTest {
 
         @Override
         public List<JacksonSubtype<AggregateRootEventPayload>> jacksonSubtypes() {
-            return singletonList(new JacksonSubtype<>(TodoAggregateTodoCreatedEventPayload.class, "TodoAggregateTodoCreatedEventPayload"));
+            return singletonList(new JacksonSubtype<>(TodoAggregateTodoMarkedAsCompletedEventPayload.class, "TodoAggregateTodoMarkedAsCompletedEventPayload"));
         }
 
     }
@@ -57,10 +57,10 @@ public class TodoAggregateTodoCreatedEventPayloadTest {
 
         // When
         final String serialized = aggregateRootEventPayloadDeSerializer.serialize(Optional.of(new DefaultEncryptedEventSecret()),
-                new TodoAggregateTodoCreatedEventPayload("todoId", "lorem ipsum"));
+                new TodoAggregateTodoMarkedAsCompletedEventPayload("todoId"));
 
         // Then
-        assertEquals("{\"@type\":\"TodoAggregateTodoCreatedEventPayload\",\"todoId\":\"todoId\",\"description\":\"uWtQHOtmgpaw22nCiexwpg==\"}", serialized);
+        assertEquals("{\"@type\":\"TodoAggregateTodoMarkedAsCompletedEventPayload\",\"todoId\":\"todoId\"}", serialized);
     }
 
     @Test
@@ -70,10 +70,10 @@ public class TodoAggregateTodoCreatedEventPayloadTest {
 
         // When
         final AggregateRootEventPayload deserialized = aggregateRootEventPayloadDeSerializer.deserialize(Optional.of(new DefaultEncryptedEventSecret()),
-                "{\"@type\":\"TodoAggregateTodoCreatedEventPayload\",\"todoId\":\"todoId\",\"description\":\"uWtQHOtmgpaw22nCiexwpg==\"}");
+                "{\"@type\":\"TodoAggregateTodoMarkedAsCompletedEventPayload\",\"todoId\":\"todoId\"}");
 
         // Then
-        assertEquals(new TodoAggregateTodoCreatedEventPayload("todoId", "lorem ipsum"), deserialized);
+        assertEquals(new TodoAggregateTodoMarkedAsCompletedEventPayload("todoId"), deserialized);
     }
 
 }

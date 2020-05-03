@@ -1,4 +1,4 @@
-package com.damdamdeo.todo.domain;
+package com.damdamdeo.todo.aggregate;
 
 import com.damdamdeo.eventdataspreader.debeziumeventconsumer.infrastructure.spi.JacksonSubtype;
 import com.damdamdeo.eventdataspreader.writeside.eventsourcing.api.AggregateRoot;

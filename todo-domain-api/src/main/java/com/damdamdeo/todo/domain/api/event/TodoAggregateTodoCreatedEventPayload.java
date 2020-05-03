@@ -1,4 +1,4 @@
-package com.damdamdeo.email_notifier.domain.event;
+package com.damdamdeo.todo.domain.api.event;
 
 import com.damdamdeo.eventdataspreader.debeziumeventconsumer.api.EventPayload;
 import com.damdamdeo.eventdataspreader.eventsourcing.infrastructure.JacksonEncryptionDeserializer;

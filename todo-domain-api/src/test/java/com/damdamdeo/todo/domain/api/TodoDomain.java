@@ -1,7 +1,4 @@
-package com.damdamdeo.todo.domain;
-
-import com.damdamdeo.todo.domain.api.Todo;
-import com.damdamdeo.todo.domain.api.TodoStatus;
+package com.damdamdeo.todo.domain.api;
 
 import java.util.Objects;
 

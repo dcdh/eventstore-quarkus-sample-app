@@ -1,7 +1,7 @@
-package com.damdamdeo.todo.domain.event;
+package com.damdamdeo.todo.aggregate.event;
 
 import com.damdamdeo.eventdataspreader.writeside.eventsourcing.api.AggregateRootEventPayload;
-import com.damdamdeo.todo.domain.TodoAggregateRoot;
+import com.damdamdeo.todo.aggregate.TodoAggregateRoot;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

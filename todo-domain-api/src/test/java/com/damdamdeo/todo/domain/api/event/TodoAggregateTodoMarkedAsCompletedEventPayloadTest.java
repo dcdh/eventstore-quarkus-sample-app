@@ -1,4 +1,4 @@
-package com.damdamdeo.todo.domain.event;
+package com.damdamdeo.todo.domain.api.event;
 
 import com.damdamdeo.eventdataspreader.debeziumeventconsumer.api.EventPayload;
 import com.damdamdeo.eventdataspreader.debeziumeventconsumer.api.EventPayloadDeserializer;

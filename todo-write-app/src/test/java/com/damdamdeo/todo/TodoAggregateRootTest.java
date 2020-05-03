@@ -2,10 +2,10 @@ package com.damdamdeo.todo;
 
 import com.damdamdeo.eventdataspreader.writeside.eventsourcing.api.Event;
 import com.damdamdeo.eventdataspreader.writeside.eventsourcing.api.EventRepository;
-import com.damdamdeo.todo.domain.TodoAggregateRoot;
-import com.damdamdeo.todo.domain.TodoAggregateRootRepository;
-import com.damdamdeo.todo.domain.event.TodoAggregateTodoCreatedEventPayload;
-import com.damdamdeo.todo.domain.event.TodoAggregateTodoMarkedAsCompletedEventPayload;
+import com.damdamdeo.todo.aggregate.TodoAggregateRoot;
+import com.damdamdeo.todo.aggregate.TodoAggregateRootRepository;
+import com.damdamdeo.todo.aggregate.event.TodoAggregateTodoCreatedEventPayload;
+import com.damdamdeo.todo.aggregate.event.TodoAggregateTodoMarkedAsCompletedEventPayload;
 import com.damdamdeo.todo.command.CreateNewTodoCommand;
 import com.damdamdeo.todo.command.MarkTodoAsCompletedCommand;
 import com.damdamdeo.todo.domain.api.TodoStatus;

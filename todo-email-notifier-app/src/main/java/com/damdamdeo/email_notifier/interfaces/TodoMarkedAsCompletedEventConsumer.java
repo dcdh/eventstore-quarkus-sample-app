@@ -3,11 +3,11 @@ package com.damdamdeo.email_notifier.interfaces;
 import com.damdamdeo.email_notifier.domain.EmailNotifier;
 import com.damdamdeo.email_notifier.domain.TemplateGenerator;
 import com.damdamdeo.email_notifier.domain.TodoMarkedAsCompleted;
-import com.damdamdeo.email_notifier.domain.event.TodoAggregateTodoMarkedAsCompletedEventPayload;
 import com.damdamdeo.email_notifier.infrastructure.TodoEntity;
 import com.damdamdeo.eventdataspreader.debeziumeventconsumer.api.Event;
 import com.damdamdeo.eventdataspreader.debeziumeventconsumer.api.EventConsumer;
 import com.damdamdeo.eventdataspreader.debeziumeventconsumer.api.EventQualifier;
+import com.damdamdeo.todo.domain.api.event.TodoAggregateTodoMarkedAsCompletedEventPayload;
 
 import javax.enterprise.context.Dependent;
 import javax.persistence.EntityManager;

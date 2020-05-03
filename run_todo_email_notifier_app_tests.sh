@@ -1,2 +1,3 @@
 #!/bin/bash
-mvn clean test -pl todo-email-notifier-app
+mvn clean install -pl todo-domain-api && \
+  mvn clean test -pl todo-email-notifier-app

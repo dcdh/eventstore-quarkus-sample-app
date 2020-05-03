@@ -3,8 +3,8 @@ package com.damdamdeo.todo.infrastructure;
 import com.damdamdeo.eventdataspreader.writeside.eventsourcing.api.AbstractAggregateRootRepository;
 import com.damdamdeo.eventdataspreader.writeside.eventsourcing.api.AggregateRootSerializer;
 import com.damdamdeo.eventdataspreader.writeside.eventsourcing.api.EventRepository;
-import com.damdamdeo.todo.domain.TodoAggregateRoot;
-import com.damdamdeo.todo.domain.TodoAggregateRootRepository;
+import com.damdamdeo.todo.aggregate.TodoAggregateRoot;
+import com.damdamdeo.todo.aggregate.TodoAggregateRootRepository;
 
 import javax.enterprise.context.Dependent;
 import javax.persistence.EntityManager;

@@ -1,7 +1,7 @@
 package com.damdamdeo.todo.interfaces;
 
 import com.damdamdeo.eventdataspreader.writeside.command.api.CommandHandlerExecutor;
-import com.damdamdeo.todo.domain.TodoAggregateRoot;
+import com.damdamdeo.todo.aggregate.TodoAggregateRoot;
 import com.damdamdeo.todo.command.CreateNewTodoCommand;
 import com.damdamdeo.todo.command.MarkTodoAsCompletedCommand;
 

@@ -1,13 +1,13 @@
 package com.damdamdeo.email_notifier.infrastructure;
 
-import com.damdamdeo.email_notifier.domain.event.DefaultEventMetadata;
-import com.damdamdeo.email_notifier.domain.event.TodoAggregateTodoCreatedEventPayload;
-import com.damdamdeo.email_notifier.domain.event.TodoAggregateTodoMarkedAsCompletedEventPayload;
 import com.damdamdeo.eventdataspreader.debeziumeventconsumer.api.EventMetadata;
 import com.damdamdeo.eventdataspreader.debeziumeventconsumer.api.EventPayload;
 import com.damdamdeo.eventdataspreader.debeziumeventconsumer.infrastructure.spi.JacksonEventMetadataSubtypes;
 import com.damdamdeo.eventdataspreader.debeziumeventconsumer.infrastructure.spi.JacksonEventPayloadSubtypes;
 import com.damdamdeo.eventdataspreader.debeziumeventconsumer.infrastructure.spi.JacksonSubtype;
+import com.damdamdeo.todo.domain.api.event.DefaultEventMetadata;
+import com.damdamdeo.todo.domain.api.event.TodoAggregateTodoCreatedEventPayload;
+import com.damdamdeo.todo.domain.api.event.TodoAggregateTodoMarkedAsCompletedEventPayload;
 
 import javax.enterprise.inject.Produces;
 import java.util.Arrays;

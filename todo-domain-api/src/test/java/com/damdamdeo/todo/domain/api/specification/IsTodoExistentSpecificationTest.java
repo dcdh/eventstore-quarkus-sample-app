@@ -1,8 +1,7 @@
-package com.damdamdeo.todo.domain.specification;
+package com.damdamdeo.todo.domain.api.specification;
 
 import com.damdamdeo.todo.domain.api.Todo;
 import com.damdamdeo.todo.domain.api.UnknownTodoException;
-import com.damdamdeo.todo.domain.api.specification.IsTodoExistentSpecification;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
