@@ -31,7 +31,7 @@ public class TodoAggregateRootTest extends AbstractTodoTest {
     public void should_create_todo() {
         // Given
         final TodoAggregateRoot todoAggregateRoot = new TodoAggregateRoot();
-        todoAggregateRoot.handle(new CreateNewTodoCommand("todoId", "lorem ipsum"));
+        todoAggregateRoot.handle(new CreateNewTodoCommand("lorem ipsum"), "todoId");
 
         // When
         final TodoAggregateRoot todoAggregateRootSaved = todoAggregateRootRepository.save(todoAggregateRoot);
@@ -58,7 +58,7 @@ public class TodoAggregateRootTest extends AbstractTodoTest {
     public void should_mark_todo_as_completed() {
         // Given
         final TodoAggregateRoot todoAggregateRoot = new TodoAggregateRoot();
-        todoAggregateRoot.handle(new CreateNewTodoCommand("todoId", "lorem ipsum"));
+        todoAggregateRoot.handle(new CreateNewTodoCommand("lorem ipsum"), "todoId");
         todoAggregateRoot.handle(new MarkTodoAsCompletedCommand("todoId"));
 
         // When

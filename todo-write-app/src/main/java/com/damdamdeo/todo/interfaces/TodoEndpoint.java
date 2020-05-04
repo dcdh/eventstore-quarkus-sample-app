@@ -27,9 +27,8 @@ public class TodoEndpoint {
     @Path("/createNewTodo")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
-    public TodoDTO createNewTodo(@FormParam("todoId") final String todoId,
-                                 @FormParam("description") final String description) throws Throwable {
-        return new TodoDTO(createNewTodoCommandHandler.executeCommand(new CreateNewTodoCommand(todoId, description)));
+    public TodoDTO createNewTodo(@FormParam("description") final String description) throws Throwable {
+        return new TodoDTO(createNewTodoCommandHandler.executeCommand(new CreateNewTodoCommand(description)));
     }
 
     @POST

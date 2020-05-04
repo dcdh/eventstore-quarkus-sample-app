@@ -16,9 +16,4 @@ public class MarkTodoAsCompletedCommand implements Command {
         return todoId;
     }
 
-    @Override
-    public String aggregateId() {
-        return todoId;
-    }
-
 }

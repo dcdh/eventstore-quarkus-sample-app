@@ -16,7 +16,6 @@ public class TodoEndpointTest extends AbstractTodoTest {
     @Test
     public void should_api_create_todo() {
         given()
-                .param("todoId", "todoId")
                 .param("description", "lorem ipsum")
                 .when()
                 .post("/todos/createNewTodo")
@@ -34,7 +33,6 @@ public class TodoEndpointTest extends AbstractTodoTest {
     @Test
     public void should_api_mark_todo_as_completed() {
         given()
-                .param("todoId", "todoId")
                 .param("description", "lorem ipsum")
                 .when()
                 .post("/todos/createNewTodo")
@@ -59,7 +57,6 @@ public class TodoEndpointTest extends AbstractTodoTest {
     @Test
     public void should_api_fail_when_mark_todo_already_completed_as_completed() {
         given()
-                .param("todoId", "todoId")
                 .param("description", "lorem ipsum")
                 .when()
                 .post("/todos/createNewTodo")
@@ -84,26 +81,24 @@ public class TodoEndpointTest extends AbstractTodoTest {
     @Test
     public void should_api_fail_when_mark_as_completed_unknown_todo() {
         given()
-                .param("todoId", "todoId")
+                .param("todoId", "unknownTodoId")
                 .when()
                 .post("/todos/markTodoAsCompleted")
                 .then()
                 .statusCode(404)
                 .contentType(MediaType.TEXT_PLAIN)
-                .body(Matchers.equalTo("Le todoId 'todoId' est inconnu."));
+                .body(Matchers.equalTo("Le todoId 'unknownTodoId' est inconnu."));
     }
 
     @Test
     public void should_fail_when_todoId_already_created() {
         given()
-                .param("todoId", "todoId")
                 .param("description", "lorem ipsum")
                 .when()
                 .post("/todos/createNewTodo")
                 .then()
                 .statusCode(200);
         given()
-                .param("todoId", "todoId")
                 .param("description", "lorem ipsum")
                 .when()
                 .post("/todos/createNewTodo")

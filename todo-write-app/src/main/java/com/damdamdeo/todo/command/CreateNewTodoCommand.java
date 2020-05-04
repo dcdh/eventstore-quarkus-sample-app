@@ -6,22 +6,10 @@ import java.util.Objects;
 
 public class CreateNewTodoCommand implements Command {
 
-    private final String todoId;
     private final String description;
 
-    public CreateNewTodoCommand(final String todoId,
-                                final String description) {
-        this.todoId = Objects.requireNonNull(todoId);
+    public CreateNewTodoCommand(final String description) {
         this.description = Objects.requireNonNull(description);
-    }
-
-    @Override
-    public String aggregateId() {
-        return todoId;
-    }
-
-    public String todoId() {
-        return todoId;
     }
 
     public String description() {

@@ -29,7 +29,7 @@ public class TodoAggregateRootSerializationTest {
         // Given
         final AggregateRootSerializer aggregateRootSerializer = new JacksonAggregateRootSerializer(new DefaultJacksonAggregateRootSubtypes());
         final TodoAggregateRoot todoAggregateRoot = new TodoAggregateRoot();
-        todoAggregateRoot.handle(new CreateNewTodoCommand("todoId", "lorem ipsum"));
+        todoAggregateRoot.handle(new CreateNewTodoCommand("lorem ipsum"), "todoId");
 
         // When
         final String serialized = aggregateRootSerializer.serialize(todoAggregateRoot);

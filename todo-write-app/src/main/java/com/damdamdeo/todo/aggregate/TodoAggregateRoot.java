@@ -34,8 +34,8 @@ public class TodoAggregateRoot extends AggregateRoot implements Todo {
         this.version = Objects.requireNonNull(version);
     }
 
-    public void handle(final CreateNewTodoCommand createNewTodoCommand) {
-        this.apply(new TodoAggregateTodoCreatedAggregateRootEventPayload(createNewTodoCommand.todoId(),
+    public void handle(final CreateNewTodoCommand createNewTodoCommand, final String todoId) {
+        this.apply(new TodoAggregateTodoCreatedAggregateRootEventPayload(todoId,
                 createNewTodoCommand.description()), new DefaultEventMetadata());
     }
 
