@@ -49,7 +49,7 @@ public class TodoCreatedEventConsumer implements EventConsumer {
                     return todoToCreate.description();
                 }
             });
-            emailNotifier.notify("New Todo created", content).toCompletableFuture().get();
+            emailNotifier.notify("New Todo created", content);
         } catch (Exception e) {
             // TODO log
             throw new RuntimeException(e);

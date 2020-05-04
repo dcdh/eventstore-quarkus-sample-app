@@ -46,7 +46,7 @@ public class TodoMarkedAsCompletedEventConsumer implements EventConsumer {
                     return todoToMarkAsCompleted.description();
                 }
             });
-            emailNotifier.notify("Todo marked as completed", content).toCompletableFuture().get();
+            emailNotifier.notify("Todo marked as completed", content);
         } catch (Exception e) {
             // TODO log
             throw new RuntimeException(e);

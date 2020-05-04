@@ -20,7 +20,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
-import java.util.concurrent.CompletionStage;
 import java.util.concurrent.TimeUnit;
 
 import static io.restassured.RestAssured.given;
@@ -82,8 +81,7 @@ public class EventStoreEventConsumerTest {
     @Test
     public void should_send_email() throws Exception {
         // Given
-        final CompletionStage<Void> completionStage = emailNotifier.notify("subject", "content");
-        completionStage.toCompletableFuture().get();
+        emailNotifier.notify("subject", "content");
 
         // Then
         given()
