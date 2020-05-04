@@ -95,14 +95,14 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=todoemailnotifier
 
-  secret_store:
+  secret-store:
     image: debezium/postgres:11-alpine
     ports:
       - 5435:5432
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=secret_store
+      - POSTGRES_DB=secret-store
 
   mailhog:
     image: mailhog/mailhog:v1.0.0

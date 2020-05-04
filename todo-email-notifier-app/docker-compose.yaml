@@ -68,11 +68,11 @@ services:
       - 1025:1025
       - 8025:8025
 
-  secret_store:
+  secret-store:
     image: debezium/postgres:11-alpine
     ports:
       - 5435:5432
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=secret_store
+      - POSTGRES_DB=secret-store

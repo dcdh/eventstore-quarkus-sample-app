@@ -32,7 +32,7 @@ pushd .
 ## start infrastructure
 docker kill $(docker ps -aq)
 docker rm $(docker ps -aq)
-docker-compose -f docker-compose-local-run.yaml up --detach zookeeper kafka connect eventstore todo-query todo-email-notifier secret_store mailhog
+docker-compose -f docker-compose-local-run.yaml up --detach zookeeper kafka connect eventstore todo-query todo-email-notifier secret-store mailhog
 
 ## sleep 30 sec to be up
 sleep 30

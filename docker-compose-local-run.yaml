@@ -66,14 +66,14 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=todoemailnotifier
 
-  secret_store:
+  secret-store:
     image: debezium/postgres:11-alpine
     ports:
       - 5435:5432
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=secret_store
+      - POSTGRES_DB=secret-store
 
   mailhog:
     image: mailhog/mailhog:v1.0.0
@@ -86,35 +86,35 @@ services:
     ports:
       - 8084:8084
     environment:
-      - JAVA_OPTIONS=-Dquarkus.http.host=0.0.0.0 -Dquarkus.datasource.jdbc.url=jdbc:postgresql://eventstore:5432/eventstore -Dquarkus.datasource.secret-store.jdbc.url=jdbc:postgresql://secret_store:5432/secret_store -Dmp.messaging.incoming.event-in.bootstrap.servers=kafka:9092
+      - JAVA_OPTIONS=-Dquarkus.http.host=0.0.0.0 -Dquarkus.datasource.jdbc.url=jdbc:postgresql://eventstore:5432/eventstore -Dquarkus.datasource.secret-store.jdbc.url=jdbc:postgresql://secret-store:5432/secret-store -Dmp.messaging.incoming.event-in.bootstrap.servers=kafka:9092
     links:
       - zookeeper
       - kafka
       - connect
       - eventstore
-      - secret_store
+      - secret-store
 
   todo-query-app:
     image: damdamdeo/todo-query-app:latest
     ports:
       - 8085:8085
     environment:
-      - JAVA_OPTIONS=-Dquarkus.http.host=0.0.0.0 -Dquarkus.datasource.jdbc.url=jdbc:postgresql://todo-query:5432/todo-query -Dquarkus.datasource.secret-store.jdbc.url=jdbc:postgresql://secret_store:5432/secret_store -Dmp.messaging.incoming.event-in.bootstrap.servers=kafka:9092
+      - JAVA_OPTIONS=-Dquarkus.http.host=0.0.0.0 -Dquarkus.datasource.jdbc.url=jdbc:postgresql://todo-query:5432/todo-query -Dquarkus.datasource.secret-store.jdbc.url=jdbc:postgresql://secret-store:5432/secret-store -Dmp.messaging.incoming.event-in.bootstrap.servers=kafka:9092
     links:
       - zookeeper
       - kafka
       - connect
       - todo-query
-      - secret_store
+      - secret-store
 
   todo-email-notifier-app:
     image: damdamdeo/todo-email-notifier-app:latest
     environment:
-      - JAVA_OPTIONS=-Dquarkus.datasource.jdbc.url=jdbc:postgresql://todo-email-notifier:5432/todoemailnotifier -Dquarkus.datasource.secret-store.jdbc.url=jdbc:postgresql://secret_store:5432/secret_store -Dmp.messaging.incoming.event-in.bootstrap.servers=kafka:9092
+      - JAVA_OPTIONS=-Dquarkus.datasource.jdbc.url=jdbc:postgresql://todo-email-notifier:5432/todoemailnotifier -Dquarkus.datasource.secret-store.jdbc.url=jdbc:postgresql://secret-store:5432/secret-store -Dmp.messaging.incoming.event-in.bootstrap.servers=kafka:9092
     links:
       - zookeeper
       - kafka
       - connect
       - todo-email-notifier
-      - secret_store
+      - secret-store
       - mailhog
