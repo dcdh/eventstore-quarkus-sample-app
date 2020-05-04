@@ -94,7 +94,7 @@ public class TodoEndpointTest extends AbstractTodoTest {
     }
 
     @Test
-    public void should_fail_when_todoId_already_affected() {
+    public void should_fail_when_todoId_already_created() {
         given()
                 .param("todoId", "todoId")
                 .param("description", "lorem ipsum")
