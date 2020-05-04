@@ -113,6 +113,18 @@ public class EventStoreEventConsumerTest {
                 .body("canMarkTodoAsCompleted", equalTo(false))
                 .body("version", equalTo(1));
 
+        given()
+                .get("/todos")
+                .then()
+                .log().all()
+                .statusCode(200)
+                .body("$.size()", equalTo(1))
+                .body("[0].todoId", equalTo("todoId"))
+                .body("[0].description", equalTo("lorem ipsum"))
+                .body("[0].todoStatus", equalTo("COMPLETED"))
+                .body("[0].canMarkTodoAsCompleted", equalTo(false))
+                .body("[0].version", equalTo(1));
+
         // Then Auditing
         final List<TodoEntity> todos = AuditReaderFactory.get(entityManager)
                 .createQuery()
