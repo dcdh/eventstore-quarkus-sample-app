@@ -110,7 +110,7 @@ services:
   todo-email-notifier-app:
     image: damdamdeo/todo-email-notifier-app:latest
     environment:
-      - JAVA_OPTIONS=-Dquarkus.datasource.jdbc.url=jdbc:postgresql://todo-email-notifier:5432/todoemailnotifier -Dquarkus.datasource.secret-store.jdbc.url=jdbc:postgresql://secret-store:5432/secret-store -Dmp.messaging.incoming.event-in.bootstrap.servers=kafka:9092
+      - JAVA_OPTIONS=-Dquarkus.datasource.jdbc.url=jdbc:postgresql://todo-email-notifier:5432/todoemailnotifier -Dquarkus.datasource.secret-store.jdbc.url=jdbc:postgresql://secret-store:5432/secret-store -Dmp.messaging.incoming.event-in.bootstrap.servers=kafka:9092 -Dquarkus.mailer.host=mailhog
     links:
       - zookeeper
       - kafka
