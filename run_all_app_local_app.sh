@@ -48,43 +48,11 @@ docker-compose -f docker-compose-local-run.yaml up --detach todo-query-app
 ## start todo-email-notifier-app
 docker-compose -f docker-compose-local-run.yaml up --detach todo-email-notifier-app
 
-read -r -d '' connector_setup<<CONNECTOR_SETUP
-{
-  "name": "todo-connector",
-  "config": {
-    "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
-    "tasks.max": "1",
-    "plugin.name": "wal2json",
-    "database.hostname": "eventstore",
-    "database.port": "5432",
-    "database.user": "postgres",
-    "database.password": "postgres",
-    "database.dbname" : "eventstore",
-    "database.server.name": "eventstore",
-    "schema.whitelist": "public",
-    "transforms": "route",
-    "transforms.route.type": "org.apache.kafka.connect.transforms.RegexRouter",
-    "transforms.route.regex": "([^.]+)\\\.([^.]+)\\\.([^.]+)",
-    "transforms.route.replacement": "$3",
-    "key.converter": "org.apache.kafka.connect.json.JsonConverter",
-    "key.converter.schemas.enable": "false",
-    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
-    "value.converter.schemas.enable": "false",
-    "include.schema.changes": "false",
-    "tombstones.on.delete": "false"
-  }
-}
-CONNECTOR_SETUP
-add_debezium_connector(){
-  return `curl --fail -o /dev/null -s -0 -v -X POST \
-    -w "%{http_code}" http://localhost:8083/connectors/ \
-    -H 'Accept:application/json' \
-    -H 'Content-Type:application/json' \
-    -d "$connector_setup"`
-}
-add_debezium_connector
+curl -i -X POST -H "Accept:application/json" -H  "Content-Type:application/json" http://localhost:8083/connectors/ -d @debezium_run_local.json
 
 # curl http://localhost:8083/connectors
 # curl -X DELETE http://localhost:8083/connectors/todo-connector
 # http://0.0.0.0:8084/swagger-ui/
 # http://0.0.0.0:8085/swagger-ui/
+# bin/kafka-topics.sh --list --bootstrap-server kafka:9092
+# bin/kafka-console-consumer.sh --bootstrap-server kafka:9092 --topic event --from-beginning

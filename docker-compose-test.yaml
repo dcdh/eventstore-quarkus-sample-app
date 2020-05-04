@@ -69,13 +69,13 @@ services:
       - LOG_LEVEL=WARN
 
   eventstore:
-    image: debezium/postgres:11-alpine
+    image: dcdh1983/postgresql-10-debezium-centos7:latest
     ports:
       - 5432:5432
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=eventstore
+      - POSTGRESQL_USER=postgresuser
+      - POSTGRESQL_PASSWORD=postgres
+      - POSTGRESQL_DATABASE=eventstore
 
   todo-query:
     image: postgres:11-alpine
