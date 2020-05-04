@@ -22,7 +22,7 @@ public class CreateNewTodoCommandHandler extends AbstractCommandHandler<TodoAggr
                                        final CommandExecutor commandExecutor) {
         super(commandExecutor);
         this.todoIdGenerator = Objects.requireNonNull(todoIdGenerator);
-        this.todoAggregateRootRepository = todoAggregateRootRepository;
+        this.todoAggregateRootRepository = Objects.requireNonNull(todoAggregateRootRepository);
     }
 
     @Override
