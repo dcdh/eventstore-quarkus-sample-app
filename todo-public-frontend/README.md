@@ -34,3 +34,29 @@ ng new frontend
 ng add @angular/material
 ```
 
+### generate services from endpoint
+
+Start all applications `run_all_app_local_app.sh`
+> todo-public-frontend should be accessible here http://0.0.0.0:8086/swagger-ui/
+> openapi.json `http://0.0.0.0:8086//openapi?format=json`
+
+In project root path install swagger-codegen to generate ts service from swagger
+> https://swagger.io/docs/open-source-tools/swagger-codegen/
+
+```
+mkdir tools
+cd tools
+wget https://oss.sonatype.org/content/repositories/releases/io/swagger/swagger-codegen-cli/3.0.0-rc1/swagger-codegen-cli-3.0.0-rc1.jar
+```
+
+Generate ts
+> The sed is for bug : https://github.com/swagger-api/swagger-codegen/issues/8836
+
+```
+cd ../todo-public-frontend/ && \
+  rm -rf frontend/src/generated && \
+  curl http://0.0.0.0:8086//openapi?format=json -o /tmp/todo-public-frontend-openapi.json && \
+  java -jar ../tools/swagger-codegen-cli-3.0.0-rc1.jar generate -i /tmp/todo-public-frontend-openapi.json -l typescript-angular -o frontend/src/generated/ --additional-properties ngVersion=9.0.0 && \
+  find frontend/src/generated/ -name *.ts | xargs sed -i 's#\(let formParams.*\); \};#\1 | HttpParams; \};#'
+```
+
