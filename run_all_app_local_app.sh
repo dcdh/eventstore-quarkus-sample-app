@@ -4,7 +4,7 @@ pushd .
 ## start containers use for tests
 docker kill $(docker ps -aq)
 docker rm $(docker ps -aq)
-docker-compose -f docker-compose-test.yaml up --detach
+docker-compose -f docker-compose-test.yaml up --detach zookeeper kafka connect eventstore todo-query todo-email-notifier secret-store mailhog
 
 sleep 30
 
@@ -30,14 +30,17 @@ popd
 pushd .
 
 ## build todo-public-frontend-app
+# start query et write as todo-public-frontend-app need it !
+docker-compose -f docker-compose-test.yaml up --detach todo-write-app todo-query-app
+sleep 5
 
-mvn clean install -pl todo-domain-api,todo-public-frontend-app
-cd todo-public-frontend-app && docker build -f src/main/docker/Dockerfile.jvm -t damdamdeo/todo-public-frontend-app:latest .
+mvn clean install -pl todo-domain-api,todo-public-frontend
+cd todo-public-frontend && docker build -f src/main/docker/Dockerfile.jvm -t damdamdeo/todo-public-frontend-app:latest .
 
 popd
 pushd .
 
-## start infrastructure
+## all images have been build - kill, remove and restart infrastructure
 docker kill $(docker ps -aq)
 docker rm $(docker ps -aq)
 docker-compose -f docker-compose-local-run.yaml up --detach zookeeper kafka connect eventstore todo-query todo-email-notifier secret-store mailhog
@@ -48,7 +51,7 @@ sleep 30
 ## start todo-write-app
 
 docker-compose -f docker-compose-local-run.yaml up --detach todo-write-app
-sleep 5 sec up
+sleep 5
 
 ## start todo-query-app
 docker-compose -f docker-compose-local-run.yaml up --detach todo-query-app

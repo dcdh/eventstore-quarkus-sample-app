@@ -121,6 +121,8 @@ services:
 
   todo-public-frontend-app:
     image: damdamdeo/todo-public-frontend-app:latest
+    ports:
+      - 8086:8086
     environment:
       - JAVA_OPTIONS=-Dtodo-write-api/mp-rest/url=http://todo-write-app:8084 -Dtodo-query-api/mp-rest/url=http://todo-query-app:8085
     links:

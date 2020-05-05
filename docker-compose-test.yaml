@@ -109,3 +109,29 @@ services:
     ports:
       - 1025:1025
       - 8025:8025
+
+  todo-write-app:
+    image: damdamdeo/todo-write-app:latest
+    ports:
+      - 8084:8084
+    environment:
+      - JAVA_OPTIONS=-Dquarkus.http.host=0.0.0.0 -Dquarkus.datasource.jdbc.url=jdbc:postgresql://eventstore:5432/eventstore -Dquarkus.datasource.secret-store.jdbc.url=jdbc:postgresql://secret-store:5432/secret-store -Dmp.messaging.incoming.event-in.bootstrap.servers=kafka:9092
+    links:
+      - zookeeper
+      - kafka
+      - connect
+      - eventstore
+      - secret-store
+
+  todo-query-app:
+    image: damdamdeo/todo-query-app:latest
+    ports:
+      - 8085:8085
+    environment:
+      - JAVA_OPTIONS=-Dquarkus.http.host=0.0.0.0 -Dquarkus.datasource.jdbc.url=jdbc:postgresql://todo-query:5432/todo-query -Dquarkus.datasource.secret-store.jdbc.url=jdbc:postgresql://secret-store:5432/secret-store -Dmp.messaging.incoming.event-in.bootstrap.servers=kafka:9092
+    links:
+      - zookeeper
+      - kafka
+      - connect
+      - todo-query
+      - secret-store
