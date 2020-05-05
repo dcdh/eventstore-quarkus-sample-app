@@ -2,15 +2,24 @@
 
 Have nodejs install on your computer
 
+### nodejs installation on centos7
+> https://tecadmin.net/install-latest-nodejs-and-npm-on-centos/
+
+```
+yum install -y gcc-c++ make
+curl -sL https://rpm.nodesource.com/setup_12.x | sudo -E bash -
+sudo yum install nodejs -y
+
+npm -v
+6.14.4
+
+node -v
+v12.16.3
+```
+
 ### install angular cli globally on the computer
 
 sudo npm install @angular/cli -g
-
-> you will have this kind of message `@angular/cli@9.0.2 postinstall /usr/lib/jvm/java-8-graal/jre/languages/js/lib/node_modules/@angular/cli`
-
-echo 'export PATH=$PATH:/usr/lib/jvm/java-8-graal/jre/languages/js/lib/node_modules/@angular/cli/bin' >> ~/.bashrc
-
-bash
 
 ng --version
 
