@@ -19,10 +19,39 @@ services:
       - zookeeper
     environment:
       - ZOOKEEPER_CONNECT=zookeeper:2181
-      - CREATE_TOPICS=event:1:1:delete,aggregateroot:1:1:delete,flyway_schema_history:1:1:delete
+      - CREATE_TOPICS=event:1:1:delete,aggregateroot:1:1:delete,flyway_schema_history:1:1:delete,test:1:1:delete
       - KAFKA_LOG_RETENTION_MS=5000
       - KAFKA_LOG_RETENTION_CHECK_INTERVAL_MS=5000
       - LOG_LEVEL=WARN
+
+  kafka-rest:
+    image: confluentinc/cp-kafka-rest:5.2.2-1
+    ports:
+      - 8082:8082
+    environment:
+      - ACCESS_CONTROL_ALLOW_ORIGIN_DEFAULT="*"
+      - KAFKA_REST_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_REST_LISTENERS=http://kafka-rest:8082
+      - KAFKA_REST_HOST_NAME=kafka-rest
+      - KAFKA_REST_CONSUMER_REQUEST_TIMEOUT_MS=30000
+      - KAFKA_REST_BOOTSTRAP_SERVERS=PLAINTEXT://kafka:9092
+      - KAFKA_REST_LOG4J_ROOT_LOGLEVEL=WARN
+    links:
+      - zookeeper
+      - kafka
+
+  kafka-topic-ui:
+    image: landoop/kafka-topics-ui:0.9.4
+    ports:
+      - 9991:8000
+    environment:
+      - KAFKA_REST_PROXY_URL=http://kafka-rest:8082
+      - SCHEMAREGISTRY_UI_URL=http://schema-registry:8081
+      - PROXY=true
+    links:
+      - kafka
+      - zookeeper
+      - kafka-rest
 
   connect:
     image: debezium/connect:1.0.0.Final
@@ -57,15 +86,6 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=todo-query
 
-  todo-email-notifier:
-    image: postgres:11-alpine
-    ports:
-      - 5434:5432
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=todoemailnotifier
-
   secret-store:
     image: debezium/postgres:11-alpine
     ports:
@@ -74,12 +94,6 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=secret-store
-
-  mailhog:
-    image: mailhog/mailhog:v1.0.0
-    ports:
-      - 1025:1025
-      - 8025:8025
 
   todo-write-app:
     image: damdamdeo/todo-write-app:latest
@@ -106,23 +120,3 @@ services:
       - connect
       - todo-query
       - secret-store
-
-  todo-email-notifier-app:
-    image: damdamdeo/todo-email-notifier-app:latest
-    environment:
-      - JAVA_OPTIONS=-Dquarkus.datasource.jdbc.url=jdbc:postgresql://todo-email-notifier:5432/todoemailnotifier -Dquarkus.datasource.secret-store.jdbc.url=jdbc:postgresql://secret-store:5432/secret-store -Dmp.messaging.incoming.event-in.bootstrap.servers=kafka:9092 -Dquarkus.mailer.host=mailhog
-    links:
-      - zookeeper
-      - kafka
-      - connect
-      - todo-email-notifier
-      - secret-store
-      - mailhog
-
-  todo-public-frontend-app:
-    image: damdamdeo/todo-public-frontend-app:latest
-    environment:
-      - JAVA_OPTIONS=-Dtodo-write-api/mp-rest/url=http://todo-write-app:8084 -Dtodo-query-api/mp-rest/url=http://todo-query-app:8085
-    links:
-      - todo-write-app
-      - todo-query-app

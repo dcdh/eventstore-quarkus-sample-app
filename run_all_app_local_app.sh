@@ -29,6 +29,14 @@ cd todo-email-notifier-app && docker build -f src/main/docker/Dockerfile.jvm -t 
 popd
 pushd .
 
+## build todo-public-frontend-app
+
+mvn clean install -pl todo-domain-api,todo-public-frontend-app
+cd todo-public-frontend-app && docker build -f src/main/docker/Dockerfile.jvm -t damdamdeo/todo-public-frontend-app:latest .
+
+popd
+pushd .
+
 ## start infrastructure
 docker kill $(docker ps -aq)
 docker rm $(docker ps -aq)
@@ -49,6 +57,9 @@ docker-compose -f docker-compose-local-run.yaml up --detach todo-query-app
 docker-compose -f docker-compose-local-run.yaml up --detach todo-email-notifier-app
 
 curl -i -X POST -H "Accept:application/json" -H  "Content-Type:application/json" http://localhost:8083/connectors/ -d @debezium_run_local.json
+
+## start todo-public-frontend-app
+docker-compose -f docker-compose-local-run.yaml up --detach todo-public-frontend-app
 
 # curl http://localhost:8083/connectors
 # curl -X DELETE http://localhost:8083/connectors/todo-connector

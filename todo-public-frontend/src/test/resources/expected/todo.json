@@ -1,0 +1,43 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "The Root Schema",
+  "required": [
+    "todoId",
+    "description",
+    "todoStatus",
+    "canMarkTodoAsCompleted",
+    "version"
+  ],
+  "properties": {
+    "todoId": {
+      "type": "string",
+      "title": "The TodoId Schema",
+      "default": "",
+      "pattern": "^(.*)$"
+    },
+    "description": {
+      "type": "string",
+      "title": "The Description Schema",
+      "default": "",
+      "pattern": "^(.*)$"
+    },
+    "todoStatus": {
+      "type": "string",
+      "title": "The Todostatus Schema",
+      "default": "",
+      "pattern": "^(IN_PROGRESS|COMPLETED)$"
+    },
+    "canMarkTodoAsCompleted": {
+      "type": "boolean",
+      "title": "The CanMarkTodoAsCompleted Schema",
+      "default": "true"
+    },
+    "version": {
+      "type": "integer",
+      "title": "The Version Schema",
+      "default": 0
+    }
+  }
+}

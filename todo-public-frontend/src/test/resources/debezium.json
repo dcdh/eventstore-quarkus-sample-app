@@ -1,0 +1,27 @@
+{
+  "name": "todo-connector",
+  "config": {
+    "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+    "tasks.max": "1",
+    "plugin.name": "wal2json",
+    "database.hostname": "eventstore",
+    "database.port": "5432",
+    "database.user": "postgresuser",
+    "database.password": "postgres",
+    "database.dbname": "eventstore",
+    "database.server.name": "eventstore",
+    "schema.whitelist": "public",
+    "transforms": "route",
+    "transforms.route.type": "org.apache.kafka.connect.transforms.RegexRouter",
+    "transforms.route.regex": "([^.]+)\\.([^.]+)\\.([^.]+)",
+    "transforms.route.replacement": "$3",
+    "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "key.converter.schemas.enable": "false",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter.schemas.enable": "false",
+    "include.schema.changes": "false",
+    "tombstones.on.delete": "false",
+    "slot.drop_on_stop": "true"
+  }
+}
+
