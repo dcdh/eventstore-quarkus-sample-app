@@ -27,3 +27,10 @@ ng --version
 
 ng new frontend
 
+### add material design
+> from frontend
+
+```
+ng add @angular/material
+```
+
