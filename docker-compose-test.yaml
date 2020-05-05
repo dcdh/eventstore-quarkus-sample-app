@@ -24,35 +24,6 @@ services:
       - KAFKA_LOG_RETENTION_CHECK_INTERVAL_MS=5000
       - LOG_LEVEL=WARN
 
-  kafka-rest:
-    image: confluentinc/cp-kafka-rest:5.2.2-1
-    ports:
-      - 8082:8082
-    environment:
-      - ACCESS_CONTROL_ALLOW_ORIGIN_DEFAULT="*"
-      - KAFKA_REST_ZOOKEEPER_CONNECT=zookeeper:2181
-      - KAFKA_REST_LISTENERS=http://kafka-rest:8082
-      - KAFKA_REST_HOST_NAME=kafka-rest
-      - KAFKA_REST_CONSUMER_REQUEST_TIMEOUT_MS=30000
-      - KAFKA_REST_BOOTSTRAP_SERVERS=PLAINTEXT://kafka:9092
-      - KAFKA_REST_LOG4J_ROOT_LOGLEVEL=WARN
-    links:
-      - zookeeper
-      - kafka
-
-  kafka-topic-ui:
-    image: landoop/kafka-topics-ui:0.9.4
-    ports:
-      - 9991:8000
-    environment:
-      - KAFKA_REST_PROXY_URL=http://kafka-rest:8082
-      - SCHEMAREGISTRY_UI_URL=http://schema-registry:8081
-      - PROXY=true
-    links:
-      - kafka
-      - zookeeper
-      - kafka-rest
-
   connect:
     image: debezium/connect:1.0.0.Final
     ports:
