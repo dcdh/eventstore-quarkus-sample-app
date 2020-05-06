@@ -9,7 +9,9 @@ import { TodoService } from 'src/generated';
 })
 export class TodoComponent implements OnInit {
 
-  constructor() { }
+  constructor(
+    private todoService: TodoService
+  ) { }
 
   ngOnInit(): void {
   }
