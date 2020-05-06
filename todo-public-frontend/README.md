@@ -46,17 +46,25 @@ In project root path install swagger-codegen to generate ts service from swagger
 ```
 mkdir tools
 cd tools
-wget https://oss.sonatype.org/content/repositories/releases/io/swagger/swagger-codegen-cli/3.0.0-rc1/swagger-codegen-cli-3.0.0-rc1.jar
+wget https://oss.sonatype.org/content/repositories/releases/io/swagger/swagger-codegen-cli/2.4.13/swagger-codegen-cli-2.4.13.jar
 ```
 
 Generate ts
 > The sed is for bug : https://github.com/swagger-api/swagger-codegen/issues/8836
+> Quarkus used OpenAPI version 3.0.1 which is not compatible with swagger-codegen-cli-2.4.13. It works with version 3.0.0-rc1 however an issue
+> is present when generating typescript service (missing '}' at end of service).
+> So I convert OpenAPI version 3.0.1 to swagger 2.0 to generate services using swagger-codegen-cli-2.4.13.
+
+```
+sudo npm install -g api-spec-converter
+```
 
 ```
 cd ../todo-public-frontend/ && \
   rm -rf frontend/src/generated && \
-  curl http://0.0.0.0:8086//openapi?format=json -o /tmp/todo-public-frontend-openapi.json && \
-  java -jar ../tools/swagger-codegen-cli-3.0.0-rc1.jar generate -i /tmp/todo-public-frontend-openapi.json -l typescript-angular -o frontend/src/generated/ --additional-properties ngVersion=9.0.0 && \
+  mkdir -p frontend/src/generated && \
+  api-spec-converter --from=openapi_3 --to=swagger_2 --syntax=json --order=alpha http://0.0.0.0:8086/openapi?format=json > /tmp/todo-public-frontend.json && \
+  java -jar ../tools/swagger-codegen-cli-2.4.13.jar generate -i /tmp/todo-public-frontend.json -l typescript-angular -o frontend/src/generated/ --additional-properties ngVersion=6.0.0 && \
   find frontend/src/generated/ -name *.ts | xargs sed -i 's#\(let formParams.*\); \};#\1 | HttpParams; \};#'
 ```
 

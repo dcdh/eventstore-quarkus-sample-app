@@ -1,8 +1,4 @@
-
     import { HttpUrlEncodingCodec } from '@angular/common/http';
-
-
-
 
 /**
 * CustomHttpUrlEncodingCodec
@@ -19,6 +15,4 @@ export class CustomHttpUrlEncodingCodec extends HttpUrlEncodingCodec {
         return v.replace(/\+/gi, '%2B');
     }
 }
-
-
 

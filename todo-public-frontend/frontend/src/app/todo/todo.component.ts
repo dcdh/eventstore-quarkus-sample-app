@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
+import { TodoService } from 'src/generated';
+
 @Component({
   selector: 'app-todo',
   templateUrl: './todo.component.html',
