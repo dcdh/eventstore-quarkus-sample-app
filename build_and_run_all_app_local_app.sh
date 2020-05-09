@@ -1,29 +1,31 @@
 #!/bin/bash
+docker volume prune -f
+
 pushd .
 
 ## start containers use for tests
 docker kill $(docker ps -aq)
 docker rm $(docker ps -aq)
-docker-compose -f docker-compose-test.yaml up --detach zookeeper kafka connect eventstore todo-query todo-email-notifier secret-store mailhog
+docker-compose -f docker-compose-test.yaml up --detach zookeeper kafka connect event-store todo-query todo-email-notifier secret-store mailhog
 
 sleep 30
 
 ## build todo-write-app
-mvn clean install -pl todo-domain-api,todo-write-app
+mvn clean install -pl todo-domain-api,todo-write-app || { echo 'build failed' ; exit 1; }
 cd todo-write-app && docker build -f src/main/docker/Dockerfile.jvm -t damdamdeo/todo-write-app:latest .
 
 popd
 pushd .
 
 ## build todo-query-app
-mvn clean install -pl todo-domain-api,todo-query-app
+mvn clean install -pl todo-domain-api,todo-query-app || { echo 'build failed' ; exit 1; }
 cd todo-query-app && docker build -f src/main/docker/Dockerfile.jvm -t damdamdeo/todo-query-app:latest .
 
 popd
 pushd .
 
 ## build todo-email-notifier-app
-mvn clean install -pl todo-domain-api,todo-email-notifier-app
+mvn clean install -pl todo-domain-api,todo-email-notifier-app || { echo 'build failed' ; exit 1; }
 cd todo-email-notifier-app && docker build -f src/main/docker/Dockerfile.jvm -t damdamdeo/todo-email-notifier-app:latest .
 
 popd
@@ -34,7 +36,7 @@ pushd .
 docker-compose -f docker-compose-test.yaml up --detach todo-write-app todo-query-app
 sleep 5
 
-mvn clean install -pl todo-domain-api,todo-public-frontend
+mvn clean install -pl todo-domain-api,todo-public-frontend || { echo 'build failed' ; exit 1; }
 cd todo-public-frontend && docker build -f src/main/docker/Dockerfile.jvm -t damdamdeo/todo-public-frontend-app:latest .
 
 popd
@@ -43,7 +45,7 @@ pushd .
 ## all images have been build - kill, remove and restart infrastructure
 docker kill $(docker ps -aq)
 docker rm $(docker ps -aq)
-docker-compose -f docker-compose-local-run.yaml up --detach zookeeper kafka connect eventstore todo-query todo-email-notifier secret-store mailhog
+docker-compose -f docker-compose-local-run.yaml up --detach zookeeper kafka connect event-store todo-query todo-email-notifier secret-store mailhog
 
 ## sleep 30 sec to be up
 sleep 30

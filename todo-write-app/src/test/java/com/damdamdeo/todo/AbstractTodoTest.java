@@ -5,8 +5,6 @@ import io.quarkus.agroal.DataSource;
 import org.junit.jupiter.api.BeforeEach;
 
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.transaction.Transactional;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -14,28 +12,41 @@ import java.sql.Statement;
 public abstract class AbstractTodoTest {
 
     @Inject
-    EntityManager entityManager;
-
-    @Inject
     @DataSource("secret-store")
     AgroalDataSource secretStoreDataSource;
 
+    @Inject
+    @DataSource("consumed-events")
+    AgroalDataSource consumedEventsDataSource;
+
+    @Inject
+    @DataSource("aggregate-root-projection-event-store")
+    AgroalDataSource aggregateRootProjectionEventStoreDataSource;
+
     @BeforeEach
-    @Transactional
     public void setup() {
         try (final Connection con = secretStoreDataSource.getConnection();
              final Statement stmt = con.createStatement()) {
-            stmt.executeUpdate("TRUNCATE TABLE SecretStore");
+            stmt.executeUpdate("TRUNCATE TABLE SECRET_STORE");
         } catch (SQLException e) {
-            // Do not throw an exception as the table is not present because the @PostConstruct in AgroalDataSourceSecretStore
-            // has not be called yet... bug ?!?
-            // throw new RuntimeException(e);
+            throw new RuntimeException(e);
         }
 
-        entityManager.createQuery("DELETE FROM EncryptedEventEntity").executeUpdate();
-        entityManager.createQuery("DELETE FROM AggregateRootEntity").executeUpdate();
-        entityManager.createQuery("DELETE FROM EventConsumerConsumedEntity").executeUpdate();
-        entityManager.createQuery("DELETE FROM EventConsumedEntity").executeUpdate();
+        try (final Connection con = aggregateRootProjectionEventStoreDataSource.getConnection();
+             final Statement stmt = con.createStatement()) {
+            stmt.executeUpdate("TRUNCATE TABLE AGGREGATE_ROOT_PROJECTION");
+            stmt.executeUpdate("TRUNCATE TABLE EVENT");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        try (final Connection con = consumedEventsDataSource.getConnection();
+             final Statement stmt = con.createStatement()) {
+            stmt.executeUpdate("TRUNCATE TABLE CONSUMED_EVENT CASCADE");
+            stmt.executeUpdate("TRUNCATE TABLE CONSUMED_EVENT_CONSUMER CASCADE");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

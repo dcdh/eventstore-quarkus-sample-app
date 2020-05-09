@@ -19,10 +19,10 @@
     "source": {
       "version": "0.10.0.Beta2",
       "connector": "postgresql",
-      "name": "eventstore",
+      "name": "event-store",
       "ts_ms": 1562883052768,
       "snapshot": "true",
-      "db": "eventstore",
+      "db": "event-store",
       "schema": "public",
       "table": "event",
       "txId": 576,

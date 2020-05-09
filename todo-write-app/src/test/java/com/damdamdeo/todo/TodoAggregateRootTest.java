@@ -42,7 +42,7 @@ public class TodoAggregateRootTest extends AbstractTodoTest {
         assertEquals(TodoStatus.IN_PROGRESS, todoAggregateRootSaved.todoStatus());
         assertEquals(0l, todoAggregateRootSaved.version());
 
-        final List<Event> events = eventRepository.load("todoId", "TodoAggregateRoot");
+        final List<Event> events = eventRepository.loadOrderByVersionASC("todoId", "TodoAggregateRoot");
         assertEquals(1, events.size());
         assertNotNull(events.get(0).eventId());
         assertEquals("todoId", events.get(0).aggregateRootId());
@@ -68,7 +68,7 @@ public class TodoAggregateRootTest extends AbstractTodoTest {
         assertEquals(TodoStatus.COMPLETED, todoAggregateRootSaved.todoStatus());
         assertEquals(1l, todoAggregateRootSaved.version());
 
-        final List<Event> events = eventRepository.load("todoId", "TodoAggregateRoot");
+        final List<Event> events = eventRepository.loadOrderByVersionASC("todoId", "TodoAggregateRoot");
         assertEquals(2, events.size());
         assertEquals(new TodoAggregateTodoMarkedAsCompletedAggregateRootEventPayload("todoId"), events.get(1).eventPayload());
     }

@@ -3,7 +3,7 @@ version: '2'
 services:
 
   zookeeper:
-    image: debezium/zookeeper:1.0.0.Final
+    image: debezium/zookeeper:1.1.1.Final
     ports:
       - 2181:2181
       - 2888:2888
@@ -12,7 +12,7 @@ services:
       - LOG_LEVEL=WARN
 
   kafka:
-    image: debezium/kafka:1.0.0.Final
+    image: debezium/kafka:1.1.1.Final
     ports:
       - 9092:9092
     links:
@@ -53,14 +53,14 @@ services:
       - zookeeper
       - kafka-rest
 
-  eventstore:
+  event-store:
     image: dcdh1983/postgresql-10-debezium-centos7:latest
     ports:
       - 5432:5432
     environment:
       - POSTGRESQL_USER=postgresuser
       - POSTGRESQL_PASSWORD=postgres
-      - POSTGRESQL_DATABASE=eventstore
+      - POSTGRESQL_DATABASE=event-store
 
   secret-store:
     image: debezium/postgres:11-alpine

@@ -38,16 +38,15 @@ public abstract class AbstractTodoTest {
                 .when()
                 .delete("http://localhost:8083/connectors/todo-connector");
 
-        truncateTable(secretStoreDataSource, "secretstore");
+        truncateTable(secretStoreDataSource, "SECRET_STORE");
 
-        truncateTable(todoWriteDataSource, "aggregateroot");
-        truncateTable(todoWriteDataSource, "event");
-        truncateTable(todoWriteDataSource, "eventconsumed");
-        truncateTable(todoWriteDataSource, "eventconsumerconsumed");
-        truncateTable(todoWriteDataSource, "flyway_schema_history");
+        truncateTable(todoWriteDataSource, "AGGREGATE_ROOT_PROJECTION");
+        truncateTable(todoWriteDataSource, "EVENT");
+        truncateTable(todoWriteDataSource, "CONSUMED_EVENT");
+        truncateTable(todoWriteDataSource, "CONSUMED_EVENT_CONSUMER");
 
-        truncateTable(todoQueryDataSource, "eventconsumed");
-        truncateTable(todoQueryDataSource, "eventconsumerconsumed");
+        truncateTable(todoQueryDataSource, "CONSUMED_EVENT");
+        truncateTable(todoQueryDataSource, "CONSUMED_EVENT_CONSUMER");
         truncateTable(todoQueryDataSource, "flyway_schema_history");
         truncateTable(todoQueryDataSource, "todoentity_aud");
         truncateTable(todoQueryDataSource, "revinfo");

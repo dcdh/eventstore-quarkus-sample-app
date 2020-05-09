@@ -85,7 +85,7 @@ objects:
                   value: >-
                     -Dquarkus.http.host=0.0.0.0
                     -Djava.util.logging.manager=org.jboss.logmanager.LogManager
-                    -Dquarkus.datasource.url=jdbc:postgresql://eventstore.$(OPENSHIFT_NAMESPACE).svc:5432/eventstore
+                    -Dquarkus.datasource.url=jdbc:postgresql://event-store.$(OPENSHIFT_NAMESPACE).svc:5432/event-store
                     -Dquarkus.http.port=8080
                     -Dquarkus.datasource.username=$(EVENTSTORE_DATABASE_USER)
                     -Dquarkus.datasource.password=$(EVENTSTORE_DATABASE_PASSWORD)

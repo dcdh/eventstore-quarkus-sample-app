@@ -76,13 +76,13 @@ objects:
                                       ]),
                     containerTemplate(name: 'maven', image: 'maven:3.6.3-jdk-8-slim', ttyEnabled: true, command: 'cat'),
                     containerTemplate(name: 'zookeeper',
-                                      image: 'debezium/zookeeper:1.0.0.Final',
+                                      image: 'debezium/zookeeper:1.1.1.Final',
                                       resourceLimitMemory: '128Mi',
                                       envVars: [
                                         envVar(key: 'LOG_LEVEL', value: 'WARN')
                                       ]),
                     containerTemplate(name: 'kafka',
-                                      image: 'debezium/kafka:1.0.0.Final',
+                                      image: 'debezium/kafka:1.1.1.Final',
                                       resourceLimitMemory: '512Mi',
                                       envVars: [
                                         envVar(key: 'ZOOKEEPER_CONNECT', value: 'localhost:2181'),
@@ -92,7 +92,7 @@ objects:
                                         envVar(key: 'LOG_LEVEL', value: 'WARN')
                                       ]),
                     containerTemplate(name: 'connect',
-                                      image: 'debezium/connect:1.0.0.Final',
+                                      image: 'debezium/connect:1.1.1.Final',
                                       resourceLimitMemory: '1Gi',
                                       envVars: [
                                         envVar(key: 'BOOTSTRAP_SERVERS', value: 'localhost:9092'),

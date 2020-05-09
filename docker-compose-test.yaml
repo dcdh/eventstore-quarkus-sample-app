@@ -3,7 +3,7 @@ version: '2'
 services:
 
   zookeeper:
-    image: debezium/zookeeper:1.0.0.Final
+    image: debezium/zookeeper:1.1.1.Final
     ports:
       - 2181:2181
       - 2888:2888
@@ -12,7 +12,7 @@ services:
       - LOG_LEVEL=WARN
 
   kafka:
-    image: debezium/kafka:1.0.0.Final
+    image: debezium/kafka:1.1.1.Final
     ports:
       - 9092:9092
     links:
@@ -25,12 +25,12 @@ services:
       - LOG_LEVEL=WARN
 
   connect:
-    image: debezium/connect:1.0.0.Final
+    image: debezium/connect:1.1.1.Final
     ports:
       - 8083:8083
     links:
       - kafka
-      - eventstore
+      - event-store
     environment:
       - BOOTSTRAP_SERVERS=kafka:9092
       - GROUP_ID=1
@@ -39,14 +39,14 @@ services:
       - STATUS_STORAGE_TOPIC=my_connect_statuses
       - LOG_LEVEL=WARN
 
-  eventstore:
+  event-store:
     image: dcdh1983/postgresql-10-debezium-centos7:latest
     ports:
       - 5432:5432
     environment:
       - POSTGRESQL_USER=postgresuser
       - POSTGRESQL_PASSWORD=postgres
-      - POSTGRESQL_DATABASE=eventstore
+      - POSTGRESQL_DATABASE=event-store
 
   todo-query:
     image: postgres:11-alpine
@@ -86,12 +86,17 @@ services:
     ports:
       - 8084:8084
     environment:
-      - JAVA_OPTIONS=-Dquarkus.http.host=0.0.0.0 -Dquarkus.datasource.jdbc.url=jdbc:postgresql://eventstore:5432/eventstore -Dquarkus.datasource.secret-store.jdbc.url=jdbc:postgresql://secret-store:5432/secret-store -Dmp.messaging.incoming.event-in.bootstrap.servers=kafka:9092
+      - JAVA_OPTIONS=-Dquarkus.http.host=0.0.0.0
+        -Dquarkus.datasource.jdbc.url=jdbc:postgresql://event-store:5432/event-store
+        -Dquarkus.datasource.secret-store.jdbc.url=jdbc:postgresql://secret-store:5432/secret-store
+        -Dquarkus.datasource.aggregate-root-projection-event-store.jdbc.url=jdbc:postgresql://event-store:5432/event-store
+        -Dquarkus.datasource.consumed-events.jdbc.url=jdbc:postgresql://event-store:5432/event-store
+        -Dmp.messaging.incoming.event-in.bootstrap.servers=kafka:9092
     links:
       - zookeeper
       - kafka
       - connect
-      - eventstore
+      - event-store
       - secret-store
 
   todo-query-app:
@@ -99,7 +104,11 @@ services:
     ports:
       - 8085:8085
     environment:
-      - JAVA_OPTIONS=-Dquarkus.http.host=0.0.0.0 -Dquarkus.datasource.jdbc.url=jdbc:postgresql://todo-query:5432/todo-query -Dquarkus.datasource.secret-store.jdbc.url=jdbc:postgresql://secret-store:5432/secret-store -Dmp.messaging.incoming.event-in.bootstrap.servers=kafka:9092
+      - JAVA_OPTIONS=-Dquarkus.http.host=0.0.0.0
+        -Dquarkus.datasource.jdbc.url=jdbc:postgresql://todo-query:5432/todo-query
+        -Dquarkus.datasource.secret-store.jdbc.url=jdbc:postgresql://secret-store:5432/secret-store
+        -Dquarkus.datasource.consumed-events.jdbc.url=jdbc:postgresql://todo-query:5432/todo-query
+        -Dmp.messaging.incoming.event-in.bootstrap.servers=kafka:9092
     links:
       - zookeeper
       - kafka

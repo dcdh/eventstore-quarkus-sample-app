@@ -4,12 +4,12 @@
     "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
     "tasks.max": "1",
     "plugin.name": "wal2json",
-    "database.hostname": "eventstore",
+    "database.hostname": "event-store",
     "database.port": "5432",
     "database.user": "postgresuser",
     "database.password": "postgres",
-    "database.dbname": "eventstore",
-    "database.server.name": "eventstore",
+    "database.dbname": "event-store",
+    "database.server.name": "event-store",
     "schema.whitelist": "public",
     "transforms": "route",
     "transforms.route.type": "org.apache.kafka.connect.transforms.RegexRouter",
@@ -21,7 +21,7 @@
     "value.converter.schemas.enable": "false",
     "include.schema.changes": "false",
     "tombstones.on.delete": "false",
-    "slot.drop_on_stop": "true"
+    "slot.drop.on.stop": "true"
   }
 }
 

@@ -24,11 +24,11 @@ https://github.com/Landoop/kafka-topics-ui/issues/91
 
 > docker rm $(docker ps -aq) && docker-compose up
 
-> docker pull debezium/zookeeper:1.0.0.Final && \
-  docker pull debezium/kafka:1.0.0.Final && \
+> docker pull debezium/zookeeper:1.1.1.Final && \
+  docker pull debezium/kafka:1.1.1.Final && \
   docker pull confluentinc/cp-kafka-rest:5.2.2-1 && \
   docker pull landoop/kafka-topics-ui:0.9.4 && \
-  docker pull debezium/connect:1.0.0.Final && \
+  docker pull debezium/connect:1.1.1.Final && \
   docker pull debezium/postgres:11-alpine && \
   docker pull postgres:11-alpine
 
