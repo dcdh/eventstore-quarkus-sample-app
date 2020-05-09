@@ -1,11 +1,10 @@
 #!/bin/bash
-docker volume prune -f
-
 pushd .
 
 ## start containers use for tests
 docker kill $(docker ps -aq)
 docker rm $(docker ps -aq)
+docker volume prune -f
 docker-compose -f docker-compose-test.yaml up --detach zookeeper kafka connect event-store todo-query todo-email-notifier secret-store mailhog
 
 sleep 30
@@ -45,6 +44,7 @@ pushd .
 ## all images have been build - kill, remove and restart infrastructure
 docker kill $(docker ps -aq)
 docker rm $(docker ps -aq)
+docker volume prune -f
 docker-compose -f docker-compose-local-run.yaml up --detach zookeeper kafka connect event-store todo-query todo-email-notifier secret-store mailhog
 
 ## sleep 30 sec to be up
