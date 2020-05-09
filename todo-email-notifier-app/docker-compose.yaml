@@ -84,7 +84,7 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=todoemailnotifier
+      - POSTGRES_DB=todo-email-notifier
 
   mailhog:
     image: mailhog/mailhog:v1.0.0

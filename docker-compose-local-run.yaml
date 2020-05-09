@@ -64,7 +64,7 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=todoemailnotifier
+      - POSTGRES_DB=todo-email-notifier
 
   secret-store:
     image: debezium/postgres:11-alpine
@@ -119,9 +119,9 @@ services:
   todo-email-notifier-app:
     image: damdamdeo/todo-email-notifier-app:latest
     environment:
-      - JAVA_OPTIONS=-Dquarkus.datasource.jdbc.url=jdbc:postgresql://todo-email-notifier:5432/todoemailnotifier
+      - JAVA_OPTIONS=-Dquarkus.datasource.jdbc.url=jdbc:postgresql://todo-email-notifier:5432/todo-email-notifier
         -Dquarkus.datasource.secret-store.jdbc.url=jdbc:postgresql://secret-store:5432/secret-store
-        -Dquarkus.datasource.consumed-events.jdbc.url=jdbc:postgresql://todo-email-notifier:5432/todoemailnotifier
+        -Dquarkus.datasource.consumed-events.jdbc.url=jdbc:postgresql://todo-email-notifier:5432/todo-email-notifier
         -Dmp.messaging.incoming.event-in.bootstrap.servers=kafka:9092 -Dquarkus.mailer.host=mailhog
     links:
       - zookeeper

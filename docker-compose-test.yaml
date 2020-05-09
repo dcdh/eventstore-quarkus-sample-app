@@ -64,7 +64,7 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=todoemailnotifier
+      - POSTGRES_DB=todo-email-notifier
 
   secret-store:
     image: debezium/postgres:11-alpine

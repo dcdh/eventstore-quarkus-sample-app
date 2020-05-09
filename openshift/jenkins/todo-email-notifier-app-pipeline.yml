@@ -109,7 +109,7 @@ objects:
                                       envVars: [
                                         envVar(key: 'POSTGRESQL_USER', value: 'postgresuser'),
                                         envVar(key: 'POSTGRESQL_PASSWORD', value: 'postgrespassword'),
-                                        envVar(key: 'POSTGRESQL_DATABASE', value: 'todoemailnotifier')
+                                        envVar(key: 'POSTGRESQL_DATABASE', value: 'todo-email-notifier')
                                       ]),
                     containerTemplate(name: 'mailhog',
                                       image: 'mailhog/mailhog:v1.0.0',
@@ -199,7 +199,7 @@ objects:
             # earliest obligatoire lors de la relance du service et des tests !!!
             smallrye.messaging.source.event.auto.offset.reset=earliest
 
-            quarkus.datasource.url=jdbc:postgresql://localhost:5432/todoemailnotifier
+            quarkus.datasource.url=jdbc:postgresql://localhost:5432/todo-email-notifier
             quarkus.datasource.driver=org.postgresql.Driver
             quarkus.datasource.username=postgresuser
             quarkus.datasource.password=postgrespassword
