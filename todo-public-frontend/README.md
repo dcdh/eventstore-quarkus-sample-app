@@ -36,7 +36,7 @@ ng add @angular/material
 
 ### generate services from endpoint
 
-Start all applications `run_all_app_local_app.sh`
+Start all applications `./build_and_run_all_app_local_app.sh`
 > todo-public-frontend should be accessible here http://0.0.0.0:8086/swagger-ui/
 > openapi.json `http://0.0.0.0:8086//openapi?format=json`
 
