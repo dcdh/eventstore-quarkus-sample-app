@@ -5,6 +5,7 @@ import com.damdamdeo.todo.publicfrontend.infrastructure.TodoWriteRemoteService;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -27,6 +28,7 @@ public class TodoEndpoint {
     @RestClient
     TodoQueryRemoteService todoQueryRemoteService;
 
+    @RolesAllowed("frontend-user")
     @POST
     @Path("/createNewTodo")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -35,6 +37,7 @@ public class TodoEndpoint {
         return todoWriteRemoteService.createNewTodo(description);
     }
 
+    @RolesAllowed("frontend-user")
     @POST
     @Path("/markTodoAsCompleted")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -43,12 +46,14 @@ public class TodoEndpoint {
         return todoWriteRemoteService.markTodoAsCompleted(todoId);
     }
 
+    @RolesAllowed("frontend-user")
     @GET
     @Path("/{todoId}")
     public TodoDTO getTodo(@PathParam("todoId") final String todoId) {
         return todoQueryRemoteService.getTodoByTodoId(todoId);
     }
 
+    @RolesAllowed("frontend-user")
     @GET
     public List<TodoDTO> listAllTodos() {
         return todoQueryRemoteService.getAllTodos();

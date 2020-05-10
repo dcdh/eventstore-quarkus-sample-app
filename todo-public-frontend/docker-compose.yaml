@@ -120,3 +120,27 @@ services:
       - connect
       - todo-query
       - secret-store
+
+  keycloak-db:
+    image: debezium/postgres:11-alpine
+    ports:
+      - 5436:5432
+    environment:
+      - POSTGRES_USER=keycloak
+      - POSTGRES_PASSWORD=keycloak
+      - POSTGRES_DB=keycloak
+
+  keycloak:
+    image: jboss/keycloak:10.0.1
+    ports:
+      - 8087:8080
+    environment:
+      - KEYCLOAK_USER=keycloak
+      - KEYCLOAK_PASSWORD=keycloak
+      - DB_VENDOR=postgres
+      - DB_ADDR=keycloak-db:5432
+      - DB_DATABASE=keycloak
+      - DB_USER=keycloak
+      - DB_PASSWORD=keycloak
+    links:
+      - keycloak-db

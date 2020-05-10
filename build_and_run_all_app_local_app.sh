@@ -63,6 +63,19 @@ docker-compose -f docker-compose-local-run.yaml up --detach todo-email-notifier-
 
 curl -i -X POST -H "Accept:application/json" -H  "Content-Type:application/json" http://localhost:8083/connectors/ -d @debezium_run_local.json
 
+## build custom version of keycloak having specific realm
+
+cd keycloak && docker build -f Dockerfile -t damdamdeo/todo-keycloak:latest .
+
+popd
+pushd .
+
+## start keycloak
+
+docker-compose -f docker-compose-local-run.yaml up --detach keycloak-db
+sleep 5
+docker-compose -f docker-compose-local-run.yaml up --detach keycloak
+
 ## start todo-public-frontend-app
 docker-compose -f docker-compose-local-run.yaml up --detach todo-public-frontend-app
 

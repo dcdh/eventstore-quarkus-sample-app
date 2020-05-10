@@ -13,7 +13,8 @@ docker pull quay.io/openshift/origin-cli:v3.11 && \
     docker pull giantswarm/tiny-tools && \
     docker pull docker.io/openshift/jenkins-2-centos7:v3.11 && \
     docker pull maven:3.6.3-jdk-8-slim && \
-    docker pull neo4j:3.5.14
+    docker pull neo4j:3.5.14 && \
+    docker pull jboss/keycloak:10.0.1
 
 image dcdh1983/postgresql-10-debezium-centos7 source:
 - https://github.com/dcdh/postgresql-10-debezium-alpine.git
@@ -40,9 +41,9 @@ git clone -b $STRIMZI_VERSION https://github.com/strimzi/strimzi-kafka-operator
 cd strimzi-kafka-operator
 
 oc create -f install/cluster-operator ; oc create -f examples/templates/cluster-operator ; \
-    oc adm policy add-cluster-role-to-user strimzi-cluster-operator-namespaced --serviceaccount strimzi-cluster-operator ; \
-    oc adm policy add-cluster-role-to-user strimzi-entity-operator --serviceaccount strimzi-cluster-operator ; \
-    oc adm policy add-cluster-role-to-user strimzi-topic-operator --serviceaccount strimzi-cluster-operator
+    oc adm policy add-cluster-role-to-userDTO strimzi-cluster-operator-namespaced --serviceaccount strimzi-cluster-operator ; \
+    oc adm policy add-cluster-role-to-userDTO strimzi-entity-operator --serviceaccount strimzi-cluster-operator ; \
+    oc adm policy add-cluster-role-to-userDTO strimzi-topic-operator --serviceaccount strimzi-cluster-operator
 
 oc process strimzi-persistent -p CLUSTER_NAME=broker -p ZOOKEEPER_NODE_COUNT=1 -p KAFKA_NODE_COUNT=1 -p KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1 -p KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=1 | oc apply -f -
 
@@ -107,10 +108,10 @@ oc process -f openshift/jenkins/todo-query-app-pipeline.yml | oc create -f - -n 
 
 oc process -f openshift/jenkins/todo-email-notifier-app-pipeline.yml | oc create -f - -n ci
 
-> #oc policy add-role-to-user edit system:serviceaccount:ci:default -n production
+> #oc policy add-role-to-userDTO edit system:serviceaccount:ci:default -n production
 > allow serviceaccount to tag image in production project
 
-> #oc policy add-role-to-user edit system:serviceaccount:ci:default -n ci
+> #oc policy add-role-to-userDTO edit system:serviceaccount:ci:default -n ci
 > allow serviceaccount to tag image in ci project
 
 oc process -f openshift/jenkins/todo-app-go-production-pipeline.yml | oc create -f - -n ci
