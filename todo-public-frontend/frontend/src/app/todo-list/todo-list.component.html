@@ -1,0 +1,12 @@
+<div>
+  <div>
+    <strong>Damien</strong>
+  </div>
+  <input #newTodo placeholder="Create new todo"
+         (keyup.enter)="createNewTodo(newTodo.value); newTodo.value='' ">
+  <ul>
+    <li *ngFor="let todo of listTodoDTO">
+      <todo [todo]="todo"></todo>
+    </li>
+  </ul>
+</div>
