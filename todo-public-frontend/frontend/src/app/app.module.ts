@@ -11,6 +11,7 @@ import { ApiModule } from 'src/generated';
 import { TodoListComponent } from './todo-list/todo-list.component';
 
 import { HttpClientModule } from '@angular/common/http';
+import { BASE_PATH } from 'src/generated';
 import { environment } from '../environments/environment';
 
 @NgModule({
@@ -27,7 +28,7 @@ import { environment } from '../environments/environment';
     ApiModule,
     HttpClientModule
   ],
-  providers: [],
+  providers: [{ provide: BASE_PATH, useValue: environment.API_BASE_PATH }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
