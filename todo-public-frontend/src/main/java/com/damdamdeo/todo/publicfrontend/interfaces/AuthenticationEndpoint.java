@@ -16,7 +16,7 @@ import java.util.Set;
 @Path("/users")
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "User")
-public class UserEndpoint {
+public class AuthenticationEndpoint {
 
     @Inject
     SecurityIdentity keycloakSecurityContext;

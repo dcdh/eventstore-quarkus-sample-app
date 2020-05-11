@@ -13,7 +13,7 @@ import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInA
 import static org.hamcrest.core.IsEqual.equalTo;
 
 @QuarkusTest
-public class UserEndpointTest {
+public class AuthenticationEndpointTest {
 
     @ConfigProperty(name = "quarkus.oidc.auth-server-url")
     String keyCloakServerAuthUrl;

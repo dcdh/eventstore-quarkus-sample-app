@@ -7,7 +7,7 @@ public class UserDTOTest {
 
     @Test
     public void should_verify_equality() {
-        EqualsVerifier.forClass(UserEndpoint.UserDTO.class).verify();
+        EqualsVerifier.forClass(AuthenticationEndpoint.UserDTO.class).verify();
     }
 
 }
