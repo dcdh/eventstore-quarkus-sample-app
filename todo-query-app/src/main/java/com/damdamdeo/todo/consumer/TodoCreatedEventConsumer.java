@@ -1,4 +1,4 @@
-package com.damdamdeo.todo.interfaces;
+package com.damdamdeo.todo.consumer;
 
 import com.damdamdeo.eventdataspreader.debeziumeventconsumer.api.EventConsumer;
 import com.damdamdeo.eventdataspreader.event.api.Event;
