@@ -1,43 +1,90 @@
 package com.damdamdeo.todo.infrastructure;
 
-import com.damdamdeo.eventdataspreader.event.api.EventMetadata;
-import com.damdamdeo.eventdataspreader.event.api.EventPayload;
-import com.damdamdeo.eventdataspreader.event.infrastructure.spi.JacksonEventMetadataSubtypes;
-import com.damdamdeo.eventdataspreader.event.infrastructure.spi.JacksonEventPayloadSubtypes;
-import com.damdamdeo.eventdataspreader.event.infrastructure.spi.JacksonSubtype;
-import com.damdamdeo.todo.domain.api.event.DefaultEventMetadata;
-import com.damdamdeo.todo.domain.api.event.TodoAggregateTodoCreatedEventPayload;
-import com.damdamdeo.todo.domain.api.event.TodoAggregateTodoMarkedAsCompletedEventPayload;
+import com.damdamdeo.eventsourced.consumer.infra.eventsourcing.serialization.JacksonAggregateRootEventMetadataConsumer;
+import com.damdamdeo.eventsourced.consumer.infra.eventsourcing.serialization.JacksonAggregateRootEventPayloadConsumer;
+import com.damdamdeo.eventsourced.consumer.infra.eventsourcing.serialization.JacksonAggregateRootMaterializedStateConsumer;
+import com.damdamdeo.eventsourced.consumer.infra.eventsourcing.serialization.spi.JacksonAggregateRootEventMetadataConsumerMixInSubtypeDiscovery;
+import com.damdamdeo.eventsourced.consumer.infra.eventsourcing.serialization.spi.JacksonAggregateRootEventPayloadConsumerMixInSubtypeDiscovery;
+import com.damdamdeo.eventsourced.consumer.infra.eventsourcing.serialization.spi.JacksonAggregateRootMaterializedStateConsumerMixInSubtypeDiscovery;
+import com.damdamdeo.eventsourced.consumer.infra.eventsourcing.serialization.spi.JacksonMixInSubtype;
+import com.damdamdeo.eventsourced.encryption.infra.serialization.JacksonEncryptionDeserializer;
+import com.damdamdeo.todo.consumer.DefaultEventMetadataConsumer;
+import com.damdamdeo.todo.consumer.TodoAggregateRootMaterializedStateConsumer;
+import com.damdamdeo.todo.consumer.event.TodoAggregateTodoCreatedEventPayloadConsumer;
+import com.damdamdeo.todo.consumer.event.TodoAggregateTodoMarkedAsCompletedEventPayloadConsumer;
+import com.damdamdeo.todo.domain.api.TodoStatus;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import javax.enterprise.inject.Produces;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collections;
+
+import static java.util.Collections.singletonList;
 
 public class JacksonProducers {
 
-    @Produces
-    public JacksonEventMetadataSubtypes jacksonEventMetadataSubtypes() {
-        return new JacksonEventMetadataSubtypes() {
+    public static abstract class JacksonDefaultEventMetadataConsumer extends JacksonAggregateRootEventMetadataConsumer {
 
-            @Override
-            public List<JacksonSubtype<EventMetadata>> jacksonSubtypes() {
-                return Arrays.asList(new JacksonSubtype<>(DefaultEventMetadata.class, "DefaultEventMetadata"));
-            }
+        @JsonCreator
+        public JacksonDefaultEventMetadataConsumer() {
 
-        };
+        }
+
+    }
+
+    public static abstract class JacksonTodoAggregateTodoCreatedEventPayloadConsumer extends JacksonAggregateRootEventPayloadConsumer {
+
+        @JsonCreator
+        public JacksonTodoAggregateTodoCreatedEventPayloadConsumer(@JsonProperty("todoId") String todoId,
+                                                                   @JsonProperty("description") @JsonDeserialize(using = JacksonEncryptionDeserializer.class) String description) {
+
+        }
+
+    }
+
+    public static abstract class JacksonTodoAggregateTodoMarkedAsCompletedEventPayloadConsumer extends JacksonAggregateRootEventPayloadConsumer {
+
+        @JsonCreator
+        public JacksonTodoAggregateTodoMarkedAsCompletedEventPayloadConsumer(@JsonProperty("todoId") String todoId) {
+
+        }
+
+    }
+
+    public static abstract class JacksonTodoAggregateRootMaterializedStateConsumer extends JacksonAggregateRootMaterializedStateConsumer {
+
+        @JsonCreator
+        public JacksonTodoAggregateRootMaterializedStateConsumer(@JsonProperty("aggregateRootId") final String aggregateRootId,
+                                                                 @JsonProperty("aggregateRootType") final String aggregateRootType,
+                                                                 @JsonProperty("version") final Long version,
+                                                                 @JsonProperty("description")
+                                                                 @JsonDeserialize(using = JacksonEncryptionDeserializer.class)
+                                                                 final String description,
+                                                                 @JsonProperty("todoStatus") final TodoStatus todoStatus) {
+        }
+
     }
 
     @Produces
-    public JacksonEventPayloadSubtypes jacksonEventPayloadSubtypes() {
-        return new JacksonEventPayloadSubtypes() {
+    public JacksonAggregateRootEventMetadataConsumerMixInSubtypeDiscovery jacksonAggregateRootEventMetadataConsumerMixInSubtypeDiscovery() {
+        return () -> Collections.singletonList(
+                new JacksonMixInSubtype<>(DefaultEventMetadataConsumer.class, JacksonDefaultEventMetadataConsumer.class, "DefaultEventMetadata"));
+    }
 
-            @Override
-            public List<JacksonSubtype<EventPayload>> jacksonSubtypes() {
-                return Arrays.asList(new JacksonSubtype<>(TodoAggregateTodoCreatedEventPayload.class, "TodoAggregateTodoCreatedEventPayload"),
-                        new JacksonSubtype<>(TodoAggregateTodoMarkedAsCompletedEventPayload.class, "TodoAggregateTodoMarkedAsCompletedEventPayload"));
-            }
+    @Produces
+    public JacksonAggregateRootEventPayloadConsumerMixInSubtypeDiscovery jacksonAggregateRootEventPayloadConsumerMixInSubtypeDiscovery() {
+        return () -> Arrays.asList(
+                new JacksonMixInSubtype<>(TodoAggregateTodoCreatedEventPayloadConsumer.class, JacksonTodoAggregateTodoCreatedEventPayloadConsumer.class, "TodoAggregateTodoCreatedEventPayload"),
+                new JacksonMixInSubtype<>(TodoAggregateTodoMarkedAsCompletedEventPayloadConsumer.class, JacksonTodoAggregateTodoMarkedAsCompletedEventPayloadConsumer.class, "TodoAggregateTodoMarkedAsCompletedEventPayload")
+        );
+    }
 
-        };
+    @Produces
+    public JacksonAggregateRootMaterializedStateConsumerMixInSubtypeDiscovery jacksonAggregateRootMaterializedStateConsumerMixInSubtypeDiscovery() {
+        return () -> singletonList(
+                new JacksonMixInSubtype<>(TodoAggregateRootMaterializedStateConsumer.class, JacksonTodoAggregateRootMaterializedStateConsumer.class, "TodoAggregateRoot"));
     }
 
 }

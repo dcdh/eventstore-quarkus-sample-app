@@ -20,11 +20,11 @@ public abstract class AbstractTodoTest {
     AgroalDataSource consumedEventsDataSource;
 
     @Inject
-    @DataSource("aggregate-root-projection-event-store")
-    AgroalDataSource aggregateRootProjectionEventStoreDataSource;
+    @DataSource("mutable")
+    AgroalDataSource mutableDataSource;
 
     @BeforeEach
-    public void setup() {
+    public void setupDatabases() {
         try (final Connection con = secretStoreDataSource.getConnection();
              final Statement stmt = con.createStatement()) {
             stmt.executeUpdate("TRUNCATE TABLE SECRET_STORE");
@@ -32,9 +32,9 @@ public abstract class AbstractTodoTest {
             throw new RuntimeException(e);
         }
 
-        try (final Connection con = aggregateRootProjectionEventStoreDataSource.getConnection();
+        try (final Connection con = mutableDataSource.getConnection();
              final Statement stmt = con.createStatement()) {
-            stmt.executeUpdate("TRUNCATE TABLE AGGREGATE_ROOT_PROJECTION");
+            stmt.executeUpdate("TRUNCATE TABLE AGGREGATE_ROOT_MATERIALIZED_STATE");
             stmt.executeUpdate("TRUNCATE TABLE EVENT");
         } catch (SQLException e) {
             throw new RuntimeException(e);

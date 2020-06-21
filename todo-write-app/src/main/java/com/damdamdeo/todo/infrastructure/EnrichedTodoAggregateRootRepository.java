@@ -1,7 +1,7 @@
 package com.damdamdeo.todo.infrastructure;
 
-import com.damdamdeo.eventdataspreader.writeside.eventsourcing.api.AggregateRootRepository;
-import com.damdamdeo.eventdataspreader.writeside.eventsourcing.api.UnknownAggregateRootException;
+import com.damdamdeo.eventsourced.mutable.api.eventsourcing.AggregateRootRepository;
+import com.damdamdeo.eventsourced.mutable.api.eventsourcing.UnknownAggregateRootException;
 import com.damdamdeo.todo.aggregate.TodoAggregateRoot;
 import com.damdamdeo.todo.aggregate.TodoAggregateRootRepository;
 import io.agroal.api.AgroalDataSource;
@@ -16,21 +16,21 @@ import java.util.Objects;
 @ApplicationScoped
 public class EnrichedTodoAggregateRootRepository implements TodoAggregateRootRepository {
 
-    private final AgroalDataSource aggregateRootProjectionEventStoreDataSource;
+    private final AgroalDataSource mutableDataSource;
     private final AggregateRootRepository aggregateRootRepository;
 
-    public EnrichedTodoAggregateRootRepository(@DataSource("aggregate-root-projection-event-store") final AgroalDataSource aggregateRootProjectionEventStoreDataSource,
+    public EnrichedTodoAggregateRootRepository(@DataSource("mutable") final AgroalDataSource mutableDataSource,
                                                final AggregateRootRepository aggregateRootRepository) {
-        this.aggregateRootProjectionEventStoreDataSource = Objects.requireNonNull(aggregateRootProjectionEventStoreDataSource);
+        this.mutableDataSource = Objects.requireNonNull(mutableDataSource);
         this.aggregateRootRepository = Objects.requireNonNull(aggregateRootRepository);
     }
 
     @Override
     public boolean isTodoExistent(final String todoIdToCheck) {
-        try (final Connection con = aggregateRootProjectionEventStoreDataSource.getConnection();
+        try (final Connection con = mutableDataSource.getConnection();
              // I could use the aggregaterootid column directly however I wanted to do a request using serializedaggregateroot jsonb feature.
              // In an other application the data can be only present in serializedaggregateroot like email for example.
-             final PreparedStatement stmt = con.prepareStatement("SELECT EXISTS (SELECT * FROM AGGREGATE_ROOT_PROJECTION WHERE aggregateroottype = 'TodoAggregateRoot' AND serializedaggregateroot->>'aggregateRootId' = ?)")) {
+             final PreparedStatement stmt = con.prepareStatement("SELECT EXISTS (SELECT * FROM AGGREGATE_ROOT_MATERIALIZED_STATE WHERE aggregateroottype = 'TodoAggregateRoot' AND serializedmaterializedstate->>'aggregateRootId' = ?)")) {
             stmt.setString(1, todoIdToCheck);
             try (final ResultSet resultSet = stmt.executeQuery()) {
                 resultSet.next();

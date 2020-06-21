@@ -4,7 +4,7 @@ import com.damdamdeo.todo.domain.api.shared.specification.UnsatisfiedSpecificati
 
 import java.util.Objects;
 
-public class TodoAlreadyMarkedAsCompletedException extends UnsatisfiedSpecificationException {
+public final class TodoAlreadyMarkedAsCompletedException extends UnsatisfiedSpecificationException {
 
     private final Todo todoAlreadyMarkedAsCompleted;
 
@@ -16,4 +16,16 @@ public class TodoAlreadyMarkedAsCompletedException extends UnsatisfiedSpecificat
         return todoAlreadyMarkedAsCompleted;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TodoAlreadyMarkedAsCompletedException that = (TodoAlreadyMarkedAsCompletedException) o;
+        return Objects.equals(todoAlreadyMarkedAsCompleted, that.todoAlreadyMarkedAsCompleted);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(todoAlreadyMarkedAsCompleted);
+    }
 }

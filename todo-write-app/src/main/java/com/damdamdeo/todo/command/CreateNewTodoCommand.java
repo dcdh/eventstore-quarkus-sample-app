@@ -1,10 +1,10 @@
 package com.damdamdeo.todo.command;
 
-import com.damdamdeo.eventdataspreader.writeside.command.api.Command;
+import com.damdamdeo.eventsourced.mutable.api.eventsourcing.command.Command;
 
 import java.util.Objects;
 
-public class CreateNewTodoCommand implements Command {
+public final class CreateNewTodoCommand implements Command {
 
     private final String description;
 
@@ -16,4 +16,16 @@ public class CreateNewTodoCommand implements Command {
         return description;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CreateNewTodoCommand that = (CreateNewTodoCommand) o;
+        return Objects.equals(description, that.description);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(description);
+    }
 }

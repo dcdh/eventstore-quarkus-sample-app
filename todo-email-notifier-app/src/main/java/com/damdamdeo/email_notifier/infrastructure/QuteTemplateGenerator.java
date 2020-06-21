@@ -6,11 +6,11 @@ import com.damdamdeo.email_notifier.domain.TodoMarkedAsCompleted;
 import io.quarkus.qute.Template;
 import io.quarkus.qute.api.ResourcePath;
 
-import javax.enterprise.context.Dependent;
+import javax.enterprise.context.ApplicationScoped;
 import java.io.IOException;
 import java.util.Objects;
 
-@Dependent
+@ApplicationScoped
 public class QuteTemplateGenerator implements TemplateGenerator {
 
     final Template todoCreatedTemplate;

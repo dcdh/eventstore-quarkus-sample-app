@@ -14,7 +14,8 @@
       "creationdate": 1562890044922000,
       "eventtype": "TodoMarkedAsCompletedEvent",
       "eventmetadata": "{\"@type\": \"DefaultEventMetadata\"}",
-      "eventpayload": "{\"@type\":\"TodoAggregateTodoMarkedAsCompletedEventPayload\",\"todoId\":\"todoId\"}"
+      "eventpayload": "{\"@type\":\"TodoAggregateTodoMarkedAsCompletedEventPayload\",\"todoId\":\"todoId\"}",
+      "materializedstate": "{\"@type\": \"TodoAggregateRoot\", \"aggregateRootId\": \"todoId\", \"version\":1, \"aggregateRootType\": \"TodoAggregateRoot\", \"description\": \"uWtQHOtmgpaw22nCiexwpg==\", \"todoStatus\": \"COMPLETED\"}"
     },
     "source": {
       "version": "0.10.0.Beta2",

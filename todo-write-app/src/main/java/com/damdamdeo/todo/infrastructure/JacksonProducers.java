@@ -1,74 +1,92 @@
 package com.damdamdeo.todo.infrastructure;
 
-import com.damdamdeo.eventdataspreader.event.api.EventMetadata;
-import com.damdamdeo.eventdataspreader.event.api.EventPayload;
-import com.damdamdeo.eventdataspreader.event.infrastructure.spi.JacksonEventMetadataSubtypes;
-import com.damdamdeo.eventdataspreader.event.infrastructure.spi.JacksonEventPayloadSubtypes;
-import com.damdamdeo.eventdataspreader.event.infrastructure.spi.JacksonSubtype;
-import com.damdamdeo.eventdataspreader.writeside.eventsourcing.api.AggregateRoot;
-import com.damdamdeo.eventdataspreader.writeside.eventsourcing.api.AggregateRootEventPayload;
-import com.damdamdeo.eventdataspreader.writeside.eventsourcing.infrastructure.spi.JacksonAggregateRootEventPayloadSubtypes;
-import com.damdamdeo.eventdataspreader.writeside.eventsourcing.infrastructure.spi.JacksonAggregateRootSubtypes;
+import com.damdamdeo.eventsourced.encryption.infra.serialization.JacksonEncryptionDeserializer;
+import com.damdamdeo.eventsourced.encryption.infra.serialization.JacksonEncryptionSerializer;
+import com.damdamdeo.eventsourced.mutable.infra.eventsourcing.serialization.JacksonAggregateRootEventMetadata;
+import com.damdamdeo.eventsourced.mutable.infra.eventsourcing.serialization.JacksonAggregateRootEventPayload;
+import com.damdamdeo.eventsourced.mutable.infra.eventsourcing.serialization.JacksonAggregateRootMaterializedState;
+import com.damdamdeo.eventsourced.mutable.infra.eventsourcing.serialization.spi.JacksonAggregateRootEventMetadataMixInSubtypeDiscovery;
+import com.damdamdeo.eventsourced.mutable.infra.eventsourcing.serialization.spi.JacksonAggregateRootEventPayloadMixInSubtypeDiscovery;
+import com.damdamdeo.eventsourced.mutable.infra.eventsourcing.serialization.spi.JacksonAggregateRootMaterializedStateMixInSubtypeDiscovery;
+import com.damdamdeo.eventsourced.mutable.infra.eventsourcing.serialization.spi.JacksonMixInSubtype;
+import com.damdamdeo.todo.aggregate.DefaultEventMetadata;
 import com.damdamdeo.todo.aggregate.TodoAggregateRoot;
-import com.damdamdeo.todo.aggregate.event.TodoAggregateTodoCreatedAggregateRootEventPayload;
-import com.damdamdeo.todo.aggregate.event.TodoAggregateTodoMarkedAsCompletedAggregateRootEventPayload;
-import com.damdamdeo.todo.domain.api.event.DefaultEventMetadata;
+import com.damdamdeo.todo.aggregate.event.*;
+import com.damdamdeo.todo.domain.api.TodoStatus;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import javax.enterprise.inject.Produces;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
-import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 
 public class JacksonProducers {
 
-    @Produces
-    public JacksonAggregateRootEventPayloadSubtypes jacksonAggregateRootEventPayloadSubtypes() {
-        return new JacksonAggregateRootEventPayloadSubtypes() {
+    public static abstract class JacksonDefaultEventMetadata extends JacksonAggregateRootEventMetadata {
 
-            @Override
-            public List<JacksonSubtype<AggregateRootEventPayload>> jacksonSubtypes() {
-                return asList(new JacksonSubtype<>(TodoAggregateTodoCreatedAggregateRootEventPayload.class, "TodoAggregateTodoCreatedEventPayload"),
-                        new JacksonSubtype<>(TodoAggregateTodoMarkedAsCompletedAggregateRootEventPayload.class, "TodoAggregateTodoMarkedAsCompletedEventPayload"));
-            }
+        @JsonCreator
+        public JacksonDefaultEventMetadata() {
 
-        };
+        }
+
+    }
+
+    public static abstract class JacksonTodoAggregateTodoCreatedEventPayload extends JacksonAggregateRootEventPayload {
+
+        @JsonCreator
+        public JacksonTodoAggregateTodoCreatedEventPayload(@JsonProperty("todoId") final String todoId,
+                                                           @JsonProperty("description")
+                                                           @JsonSerialize(using = JacksonEncryptionSerializer.class)
+                                                           @JsonDeserialize(using = JacksonEncryptionDeserializer.class) final String description) {
+
+        }
+
+    }
+
+    public static abstract class JacksonTodoAggregateTodoMarkedAsCompletedEventPayload extends JacksonAggregateRootEventPayload {
+
+        @JsonCreator
+        public JacksonTodoAggregateTodoMarkedAsCompletedEventPayload(@JsonProperty("todoId") final String todoId) {
+
+        }
+
+    }
+
+    public static abstract class JacksonTodoAggregateRootMaterializedState extends JacksonAggregateRootMaterializedState {
+
+        @JsonCreator
+        public JacksonTodoAggregateRootMaterializedState(@JsonProperty("aggregateRootId") final String aggregateRootId,
+                                                         @JsonProperty("aggregateRootType") final String aggregateRootType,
+                                                         @JsonProperty("version") final Long version,
+                                                         @JsonProperty("description")
+                                                         @JsonSerialize(using = JacksonEncryptionSerializer.class)
+                                                         @JsonDeserialize(using = JacksonEncryptionDeserializer.class) final String description,
+                                                         @JsonProperty("todoStatus") final TodoStatus todoStatus) {
+        }
+
     }
 
     @Produces
-    public JacksonEventMetadataSubtypes jacksonEventMetadataSubtypes() {
-        return new JacksonEventMetadataSubtypes() {
-
-            @Override
-            public List<JacksonSubtype<EventMetadata>> jacksonSubtypes() {
-                return asList(new JacksonSubtype<>(DefaultEventMetadata.class, "DefaultEventMetadata"));
-            }
-
-        };
+    public JacksonAggregateRootEventMetadataMixInSubtypeDiscovery jacksonAggregateRootEventMetadataMixInSubtypeDiscovery() {
+        return () -> Collections.singletonList(
+                new JacksonMixInSubtype<>(DefaultEventMetadata.class, JacksonDefaultEventMetadata.class, "DefaultEventMetadata"));
     }
 
     @Produces
-    public JacksonEventPayloadSubtypes jacksonEventPayloadSubtypes() {
-        return new JacksonEventPayloadSubtypes() {
-
-            @Override
-            public List<JacksonSubtype<EventPayload>> jacksonSubtypes() {
-                return Collections.emptyList();
-            }
-
-        };
+    public JacksonAggregateRootEventPayloadMixInSubtypeDiscovery jacksonAggregateRootEventPayloadMixInSubtypeDiscovery() {
+        return () -> Arrays.asList(
+                new JacksonMixInSubtype<>(TodoAggregateTodoCreatedEventPayload.class, JacksonTodoAggregateTodoCreatedEventPayload.class, "TodoAggregateTodoCreatedEventPayload"),
+                new JacksonMixInSubtype<>(TodoAggregateTodoMarkedAsCompletedEventPayload.class, JacksonTodoAggregateTodoMarkedAsCompletedEventPayload.class, "TodoAggregateTodoMarkedAsCompletedEventPayload")
+        );
     }
 
     @Produces
-    public JacksonAggregateRootSubtypes jacksonAggregateRootSubtypes() {
-        return new JacksonAggregateRootSubtypes() {
-
-            @Override
-            public List<JacksonSubtype<AggregateRoot>> jacksonSubtypes() {
-                return asList(new JacksonSubtype<>(TodoAggregateRoot.class, "TodoAggregateRoot"));
-            }
-
-        };
+    public JacksonAggregateRootMaterializedStateMixInSubtypeDiscovery jacksonAggregateRootMaterializedStateMixInSubtypeDiscovery() {
+        return () -> singletonList(
+                new JacksonMixInSubtype<>(TodoAggregateRoot.class, JacksonTodoAggregateRootMaterializedState.class, "TodoAggregateRoot"));
     }
-
 }

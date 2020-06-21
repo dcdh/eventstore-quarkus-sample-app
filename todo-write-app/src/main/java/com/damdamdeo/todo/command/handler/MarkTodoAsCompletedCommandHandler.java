@@ -1,29 +1,36 @@
 package com.damdamdeo.todo.command.handler;
 
-import com.damdamdeo.eventdataspreader.writeside.command.api.AbstractCommandHandler;
-import com.damdamdeo.eventdataspreader.writeside.command.api.CommandExecutor;
+import com.damdamdeo.eventsourced.mutable.api.eventsourcing.UnknownAggregateRootException;
+import com.damdamdeo.eventsourced.mutable.api.eventsourcing.command.CommandHandler;
+import com.damdamdeo.eventsourced.mutable.infra.eventsourcing.command.CommandExecutorBinding;
 import com.damdamdeo.todo.aggregate.TodoAggregateRoot;
 import com.damdamdeo.todo.aggregate.TodoAggregateRootRepository;
 import com.damdamdeo.todo.command.MarkTodoAsCompletedCommand;
+import com.damdamdeo.todo.domain.api.UnknownTodoException;
 
-import javax.enterprise.context.Dependent;
+import javax.enterprise.context.ApplicationScoped;
 import java.util.Objects;
 
-@Dependent
-public class MarkTodoAsCompletedCommandHandler extends AbstractCommandHandler<TodoAggregateRoot, MarkTodoAsCompletedCommand> {
+@ApplicationScoped
+public class MarkTodoAsCompletedCommandHandler implements CommandHandler<TodoAggregateRoot, MarkTodoAsCompletedCommand> {
 
     final TodoAggregateRootRepository todoAggregateRootRepository;
 
-    public MarkTodoAsCompletedCommandHandler(final TodoAggregateRootRepository todoAggregateRootRepository, final CommandExecutor commandExecutor) {
-        super(commandExecutor);
+    public MarkTodoAsCompletedCommandHandler(final TodoAggregateRootRepository todoAggregateRootRepository) {
         this.todoAggregateRootRepository = Objects.requireNonNull(todoAggregateRootRepository);
     }
 
+    @CommandExecutorBinding
     @Override
-    protected TodoAggregateRoot handle(final MarkTodoAsCompletedCommand markTodoAsCompletedCommand) {
-        final TodoAggregateRoot todoAggregateRoot = todoAggregateRootRepository.load(markTodoAsCompletedCommand.todoId());
-        todoAggregateRoot.canMarkTodoAsCompletedSpecification().checkSatisfiedBy(todoAggregateRoot);
-        todoAggregateRoot.handle(markTodoAsCompletedCommand);
-        return todoAggregateRootRepository.save(todoAggregateRoot);
+    public TodoAggregateRoot execute(MarkTodoAsCompletedCommand markTodoAsCompletedCommand) throws Throwable {
+        try {
+            final TodoAggregateRoot todoAggregateRoot = todoAggregateRootRepository.load(markTodoAsCompletedCommand.todoId());
+            todoAggregateRoot.canMarkTodoAsCompletedSpecification().checkSatisfiedBy(todoAggregateRoot);
+            todoAggregateRoot.handle(markTodoAsCompletedCommand);
+            return todoAggregateRootRepository.save(todoAggregateRoot);
+        } catch (final UnknownAggregateRootException unknownAggregateRootException) {
+            throw new UnknownTodoException(markTodoAsCompletedCommand.todoId());
+        }
     }
+
 }

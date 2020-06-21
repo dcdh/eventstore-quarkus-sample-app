@@ -1,33 +1,33 @@
 package com.damdamdeo.todo.consumer;
 
-import com.damdamdeo.eventdataspreader.debeziumeventconsumer.api.EventConsumer;
-import com.damdamdeo.eventdataspreader.event.api.Event;
+import com.damdamdeo.eventsourced.consumer.api.eventsourcing.AggregateRootEventConsumable;
+import com.damdamdeo.eventsourced.consumer.api.eventsourcing.AggregateRootEventConsumer;
+import com.damdamdeo.todo.consumer.event.TodoAggregateTodoCreatedEventPayloadConsumer;
 import com.damdamdeo.todo.domain.api.TodoStatus;
-import com.damdamdeo.todo.domain.api.event.TodoAggregateTodoCreatedEventPayload;
+import com.damdamdeo.todo.infrastructure.JpaTodoRepository;
 import com.damdamdeo.todo.infrastructure.TodoEntity;
 
-import javax.enterprise.context.Dependent;
-import javax.persistence.EntityManager;
+import javax.enterprise.context.ApplicationScoped;
 import java.util.Objects;
 
-@Dependent
-public class TodoCreatedEventConsumer implements EventConsumer {
+@ApplicationScoped
+public class TodoCreatedEventConsumer implements AggregateRootEventConsumer {
 
-    final EntityManager entityManager;
+    final JpaTodoRepository jpaTodoRepository;
 
-    public TodoCreatedEventConsumer(final EntityManager entityManager) {
-        this.entityManager = Objects.requireNonNull(entityManager);
+    public TodoCreatedEventConsumer(final JpaTodoRepository jpaTodoRepository) {
+        this.jpaTodoRepository = Objects.requireNonNull(jpaTodoRepository);
     }
 
     @Override
-    public void consume(final Event event) {
-        final TodoAggregateTodoCreatedEventPayload todoAggregateTodoCreatedEventPayload = (TodoAggregateTodoCreatedEventPayload) event.eventPayload();
+    public void consume(final AggregateRootEventConsumable aggregateRootEventConsumable) {
+        final TodoAggregateTodoCreatedEventPayloadConsumer todoAggregateTodoCreatedEventPayloadConsumer = (TodoAggregateTodoCreatedEventPayloadConsumer) aggregateRootEventConsumable.eventPayload();
         final TodoEntity todoToCreate = new TodoEntity(
-                todoAggregateTodoCreatedEventPayload.todoId(),
-                todoAggregateTodoCreatedEventPayload.description(),
+                todoAggregateTodoCreatedEventPayloadConsumer.todoId(),
+                todoAggregateTodoCreatedEventPayloadConsumer.description(),
                 TodoStatus.IN_PROGRESS,
-                event.eventId());
-        entityManager.persist(todoToCreate);
+                aggregateRootEventConsumable.eventId());
+        jpaTodoRepository.persist(todoToCreate);
     }
 
     @Override

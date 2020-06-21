@@ -3,13 +3,13 @@ package com.damdamdeo.todo.infrastructure;
 import com.damdamdeo.todo.domain.api.Todo;
 import com.damdamdeo.todo.domain.TodoRepository;
 
-import javax.enterprise.context.Dependent;
+import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Dependent
+@ApplicationScoped
 public class JpaTodoRepository implements TodoRepository {
 
     final EntityManager entityManager;
@@ -33,6 +33,18 @@ public class JpaTodoRepository implements TodoRepository {
                 .stream()
                 .map(Todo.class::cast)
                 .collect(Collectors.toList());
+    }
+
+    public void persist(final TodoEntity todoEntity) {
+        entityManager.persist(todoEntity);
+    }
+
+    public void merge(final TodoEntity todoEntity) {
+        entityManager.merge(todoEntity);
+    }
+
+    public TodoEntity find(final String todoId) {
+        return entityManager.find(TodoEntity.class, todoId);
     }
 
 }
