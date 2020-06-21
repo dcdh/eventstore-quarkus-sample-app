@@ -48,7 +48,9 @@ public class IsTodoNotMarkedAsCompletedSpecificationTest {
         final IsTodoNotMarkedAsCompletedSpecification isTodoNotMarkedAsCompleted = new IsTodoNotMarkedAsCompletedSpecification();
 
         // When && Then
-        assertThrows(TodoAlreadyMarkedAsCompletedException.class, () -> isTodoNotMarkedAsCompleted.checkSatisfiedBy(todo));
+        final TodoAlreadyMarkedAsCompletedException todoAlreadyMarkedAsCompletedException = assertThrows(TodoAlreadyMarkedAsCompletedException.class,
+                () -> isTodoNotMarkedAsCompleted.checkSatisfiedBy(todo));
+        assertEquals(new TodoAlreadyMarkedAsCompletedException(todo), todoAlreadyMarkedAsCompletedException);
         verify(todo).todoStatus();
     }
 

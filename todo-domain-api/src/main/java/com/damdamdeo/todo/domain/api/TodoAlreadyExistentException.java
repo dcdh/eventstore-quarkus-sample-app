@@ -4,7 +4,7 @@ import com.damdamdeo.todo.domain.api.shared.specification.UnsatisfiedSpecificati
 
 import java.util.Objects;
 
-public class TodoAlreadyExistentException extends UnsatisfiedSpecificationException {
+public final class TodoAlreadyExistentException extends UnsatisfiedSpecificationException {
 
     private final Todo todoAlreadyExistent;
 
@@ -16,4 +16,16 @@ public class TodoAlreadyExistentException extends UnsatisfiedSpecificationExcept
         return todoAlreadyExistent;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TodoAlreadyExistentException that = (TodoAlreadyExistentException) o;
+        return Objects.equals(todoAlreadyExistent, that.todoAlreadyExistent);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(todoAlreadyExistent);
+    }
 }

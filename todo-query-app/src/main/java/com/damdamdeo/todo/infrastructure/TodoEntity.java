@@ -1,6 +1,6 @@
 package com.damdamdeo.todo.infrastructure;
 
-import com.damdamdeo.eventdataspreader.event.api.EventId;
+import com.damdamdeo.eventsourced.model.api.AggregateRootEventId;
 import com.damdamdeo.todo.domain.api.Todo;
 import com.damdamdeo.todo.domain.api.TodoStatus;
 import org.hibernate.envers.Audited;
@@ -37,13 +37,13 @@ public class TodoEntity implements Todo {
     public TodoEntity(final String todoId,
                       final String description,
                       final TodoStatus todoStatus,
-                      final EventId currentEventId) {
-        this(todoId, description, todoStatus, currentEventId.version());
+                      final AggregateRootEventId currentAggregateRootEventId) {
+        this(todoId, description, todoStatus, currentAggregateRootEventId.version());
     }
 
-    public void markAsCompleted(final EventId currentEventId) {
+    public void markAsCompleted(final AggregateRootEventId currentAggregateRootEventId) {
         this.todoStatus = TodoStatus.COMPLETED;
-        this.version = currentEventId.version();
+        this.version = currentAggregateRootEventId.version();
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.damdamdeo.todo.interfaces;
 
-import com.damdamdeo.eventdataspreader.writeside.eventsourcing.api.UnknownAggregateRootException;
+import com.damdamdeo.eventsourced.mutable.api.eventsourcing.UnknownAggregateRootException;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;

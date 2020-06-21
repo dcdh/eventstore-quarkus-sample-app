@@ -4,16 +4,28 @@ import com.damdamdeo.todo.domain.api.shared.specification.UnsatisfiedSpecificati
 
 import java.util.Objects;
 
-public class UnknownTodoException extends UnsatisfiedSpecificationException {
+public final class UnknownTodoException extends UnsatisfiedSpecificationException {
 
-    private final Todo unknownTodo;
+    private final String unknownTodoId;
 
-    public UnknownTodoException(final Todo unknownTodo) {
-        this.unknownTodo = Objects.requireNonNull(unknownTodo);
+    public UnknownTodoException(final String unknownTodoId) {
+        this.unknownTodoId = Objects.requireNonNull(unknownTodoId);
     }
 
-    public Todo unknownTodoId() {
-        return unknownTodo;
+    public String unknownTodoId() {
+        return unknownTodoId;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UnknownTodoException that = (UnknownTodoException) o;
+        return Objects.equals(unknownTodoId, that.unknownTodoId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(unknownTodoId);
+    }
 }

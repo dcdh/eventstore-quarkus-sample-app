@@ -1,8 +1,6 @@
 package com.damdamdeo.todo.interfaces;
 
 import com.damdamdeo.todo.domain.TodoRepository;
-import com.damdamdeo.todo.domain.api.Todo;
-import com.damdamdeo.todo.domain.api.TodoStatus;
 import com.damdamdeo.todo.domain.api.UnknownTodoException;
 
 import javax.ws.rs.GET;
@@ -29,28 +27,7 @@ public class TodoEndpoint {
     public TodoDTO getTodo(@PathParam("todoId") final String todoId) {
         return Optional.ofNullable(todoRepository.get(todoId))
                 .map(TodoDTO::new)
-                .orElseThrow(() -> new UnknownTodoException(new Todo() {
-                    @Override
-                    public String todoId() {
-                        return todoId;
-                    }
-
-                    @Override
-                    public String description() {
-                        return null;
-                    }
-
-                    @Override
-                    public TodoStatus todoStatus() {
-                        return null;
-                    }
-
-                    @Override
-                    public Long version() {
-                        return null;
-                    }
-
-                }));
+                .orElseThrow(() -> new UnknownTodoException(todoId));
     }
 
     @GET

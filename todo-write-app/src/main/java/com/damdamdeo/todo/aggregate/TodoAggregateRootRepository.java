@@ -1,6 +1,6 @@
 package com.damdamdeo.todo.aggregate;
 
-import com.damdamdeo.eventdataspreader.writeside.eventsourcing.api.UnknownAggregateRootException;
+import com.damdamdeo.eventsourced.mutable.api.eventsourcing.UnknownAggregateRootException;
 
 public interface TodoAggregateRootRepository {
 

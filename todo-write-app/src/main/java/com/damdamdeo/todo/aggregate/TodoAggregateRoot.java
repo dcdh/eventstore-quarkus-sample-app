@@ -1,20 +1,14 @@
 package com.damdamdeo.todo.aggregate;
 
-import com.damdamdeo.eventdataspreader.writeside.eventsourcing.api.AggregateRoot;
-import com.damdamdeo.todo.aggregate.event.TodoAggregateTodoCreatedAggregateRootEventPayload;
-import com.damdamdeo.todo.aggregate.event.TodoAggregateTodoMarkedAsCompletedAggregateRootEventPayload;
+import com.damdamdeo.eventsourced.mutable.api.eventsourcing.AggregateRoot;
+import com.damdamdeo.todo.aggregate.event.*;
 import com.damdamdeo.todo.command.CreateNewTodoCommand;
 import com.damdamdeo.todo.command.MarkTodoAsCompletedCommand;
 import com.damdamdeo.todo.domain.api.Todo;
 import com.damdamdeo.todo.domain.api.TodoStatus;
-import com.damdamdeo.todo.domain.api.event.DefaultEventMetadata;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Objects;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class TodoAggregateRoot extends AggregateRoot implements Todo {
 
     private String description;
@@ -23,39 +17,39 @@ public class TodoAggregateRoot extends AggregateRoot implements Todo {
 
     public TodoAggregateRoot() {}
 
-    @JsonCreator
-    public TodoAggregateRoot(@JsonProperty("aggregateRootId") final String aggregateRootId,
-                             @JsonProperty("description") final String description,
-                             @JsonProperty("todoStatus") final TodoStatus todoStatus,
-                             @JsonProperty("version") final Long version) {
-        this.aggregateRootId = Objects.requireNonNull(aggregateRootId);
-        this.description = Objects.requireNonNull(description);
-        this.todoStatus = Objects.requireNonNull(todoStatus);
-        this.version = Objects.requireNonNull(version);
+    // needed to be able to well serialized using custom serializer de-serializer.
+    public TodoAggregateRoot(final String aggregateRootId,
+                             final String aggregateRootType,
+                             final Long version,
+                             final String description,
+                             final TodoStatus todoStatus) {
+        super(aggregateRootId, aggregateRootType, version);
+        this.description = description;
+        this.todoStatus = todoStatus;
     }
 
     public void handle(final CreateNewTodoCommand createNewTodoCommand, final String todoId) {
-        this.apply(new TodoAggregateTodoCreatedAggregateRootEventPayload(todoId,
+        this.apply(new TodoAggregateTodoCreatedEventPayload(todoId,
                 createNewTodoCommand.description()), new DefaultEventMetadata());
     }
 
     public void handle(final MarkTodoAsCompletedCommand markTodoAsCompletedCommand) {
-        this.apply(new TodoAggregateTodoMarkedAsCompletedAggregateRootEventPayload(markTodoAsCompletedCommand.todoId()), new DefaultEventMetadata());
+        this.apply(new TodoAggregateTodoMarkedAsCompletedEventPayload(markTodoAsCompletedCommand.todoId()),
+                new DefaultEventMetadata());
     }
 
-    public void on(final TodoAggregateTodoCreatedAggregateRootEventPayload todoAggregateTodoCreatedAggregateRootEventPayload) {
-        this.aggregateRootId = todoAggregateTodoCreatedAggregateRootEventPayload.todoId();
-        this.description = todoAggregateTodoCreatedAggregateRootEventPayload.description();
+    public void on(final TodoAggregateTodoCreatedEventPayload todoAggregateTodoCreatedEventPayload) {
+        this.description = todoAggregateTodoCreatedEventPayload.description();
         this.todoStatus = TodoStatus.IN_PROGRESS;
     }
 
-    public void on(final TodoAggregateTodoMarkedAsCompletedAggregateRootEventPayload todoAggregateTodoMarkedAsCompletedAggregateRootEventPayload) {
+    public void on(final TodoAggregateTodoMarkedAsCompletedEventPayload todoAggregateTodoMarkedAsCompletedEventPayload) {
         this.todoStatus = TodoStatus.COMPLETED;
     }
 
     @Override
     public String todoId() {
-        return aggregateRootId;
+        return aggregateRootId().aggregateRootId();
     }
 
     @Override
@@ -71,7 +65,7 @@ public class TodoAggregateRoot extends AggregateRoot implements Todo {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof TodoAggregateRoot)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         TodoAggregateRoot that = (TodoAggregateRoot) o;
         return Objects.equals(description, that.description) &&
                 todoStatus == that.todoStatus;
@@ -87,8 +81,6 @@ public class TodoAggregateRoot extends AggregateRoot implements Todo {
         return "TodoAggregateRoot{" +
                 "description='" + description + '\'' +
                 ", todoStatus=" + todoStatus +
-                ", aggregateRootId='" + aggregateRootId + '\'' +
-                ", version=" + version +
                 '}';
     }
 }

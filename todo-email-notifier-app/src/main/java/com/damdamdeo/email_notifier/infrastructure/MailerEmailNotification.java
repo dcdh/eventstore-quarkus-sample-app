@@ -5,12 +5,12 @@ import io.quarkus.mailer.Mail;
 import io.quarkus.mailer.Mailer;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
-import javax.enterprise.context.Dependent;
+import javax.enterprise.context.ApplicationScoped;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@Dependent
+@ApplicationScoped
 public class MailerEmailNotification implements EmailNotifier {
 
     private final static Logger LOGGER = Logger.getLogger(MailerEmailNotification.class.getName());

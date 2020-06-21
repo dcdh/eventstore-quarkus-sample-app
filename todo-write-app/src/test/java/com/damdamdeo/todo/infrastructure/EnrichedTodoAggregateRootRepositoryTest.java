@@ -26,8 +26,8 @@ public class EnrichedTodoAggregateRootRepositoryTest {
     AgroalDataSource secretStoreDataSource;
 
     @Inject
-    @DataSource("aggregate-root-projection-event-store")
-    AgroalDataSource aggregateRootProjectionEventStoreDataSource;
+    @DataSource("mutable")
+    AgroalDataSource mutableDataSource;
 
     @Inject
     TodoAggregateRootRepository todoAggregateRootRepository;
@@ -41,9 +41,9 @@ public class EnrichedTodoAggregateRootRepositoryTest {
             throw new RuntimeException(e);
         }
 
-        try (final Connection con = aggregateRootProjectionEventStoreDataSource.getConnection();
+        try (final Connection con = mutableDataSource.getConnection();
              final Statement stmt = con.createStatement()) {
-            stmt.executeUpdate("TRUNCATE TABLE AGGREGATE_ROOT_PROJECTION");
+            stmt.executeUpdate("TRUNCATE TABLE AGGREGATE_ROOT_MATERIALIZED_STATE");
             stmt.executeUpdate("TRUNCATE TABLE EVENT");
         } catch (SQLException e) {
             throw new RuntimeException(e);

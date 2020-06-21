@@ -28,7 +28,7 @@ public class TodoEndpoint {
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public TodoDTO createNewTodo(@FormParam("description") final String description) throws Throwable {
-        return new TodoDTO(createNewTodoCommandHandler.executeCommand(new CreateNewTodoCommand(description)));
+        return new TodoDTO(createNewTodoCommandHandler.execute(new CreateNewTodoCommand(description)));
     }
 
     @POST
@@ -36,7 +36,7 @@ public class TodoEndpoint {
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public TodoDTO markTodoAsCompletedCommand(@FormParam("todoId") final String todoId) throws Throwable {
-        return new TodoDTO(markTodoAsCompletedCommandHandler.executeCommand(new MarkTodoAsCompletedCommand(todoId)));
+        return new TodoDTO(markTodoAsCompletedCommandHandler.execute(new MarkTodoAsCompletedCommand(todoId)));
     }
 
 }

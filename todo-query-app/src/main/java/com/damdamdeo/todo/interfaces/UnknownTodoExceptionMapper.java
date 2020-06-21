@@ -14,7 +14,7 @@ public class UnknownTodoExceptionMapper implements ExceptionMapper<UnknownTodoEx
     public Response toResponse(final UnknownTodoException exception) {
         return Response.status(Response.Status.NOT_FOUND)
                 .type(MediaType.TEXT_PLAIN)
-                .entity(String.format("Le todoId '%s' est inconnu.", exception.unknownTodoId().todoId())).build();
+                .entity(String.format("Le todoId '%s' est inconnu.", exception.unknownTodoId())).build();
     }
 
 }

@@ -3,10 +3,12 @@ package com.damdamdeo.todo.publicfrontend.infrastructure;
 import com.damdamdeo.todo.publicfrontend.interfaces.TodoDTO;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 @Path("/")
+@ApplicationScoped
 @RegisterRestClient(configKey="todo-write-api")
 public interface TodoWriteRemoteService {
 

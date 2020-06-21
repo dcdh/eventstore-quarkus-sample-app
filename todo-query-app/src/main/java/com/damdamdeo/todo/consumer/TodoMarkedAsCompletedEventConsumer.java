@@ -1,30 +1,30 @@
 package com.damdamdeo.todo.consumer;
 
-import com.damdamdeo.eventdataspreader.debeziumeventconsumer.api.EventConsumer;
-import com.damdamdeo.eventdataspreader.event.api.Event;
-import com.damdamdeo.todo.domain.api.event.TodoAggregateTodoMarkedAsCompletedEventPayload;
+import com.damdamdeo.eventsourced.consumer.api.eventsourcing.AggregateRootEventConsumable;
+import com.damdamdeo.eventsourced.consumer.api.eventsourcing.AggregateRootEventConsumer;
+import com.damdamdeo.todo.consumer.event.TodoAggregateTodoMarkedAsCompletedEventPayloadConsumer;
+import com.damdamdeo.todo.infrastructure.JpaTodoRepository;
 import com.damdamdeo.todo.infrastructure.TodoEntity;
 
-import javax.enterprise.context.Dependent;
-import javax.persistence.EntityManager;
+import javax.enterprise.context.ApplicationScoped;
 import java.util.Objects;
 
-@Dependent
-public class TodoMarkedAsCompletedEventConsumer implements EventConsumer {
+@ApplicationScoped
+public class TodoMarkedAsCompletedEventConsumer implements AggregateRootEventConsumer {
 
-    final EntityManager entityManager;
+    final JpaTodoRepository jpaTodoRepository;
 
-    public TodoMarkedAsCompletedEventConsumer(final EntityManager entityManager) {
-        this.entityManager = Objects.requireNonNull(entityManager);
+    public TodoMarkedAsCompletedEventConsumer(final JpaTodoRepository jpaTodoRepository) {
+        this.jpaTodoRepository = Objects.requireNonNull(jpaTodoRepository);
     }
 
     @Override
-    public void consume(final Event event) {
-        final TodoAggregateTodoMarkedAsCompletedEventPayload todoAggregateTodoMarkedAsCompletedEventPayload = (TodoAggregateTodoMarkedAsCompletedEventPayload) event.eventPayload();
-        final TodoEntity todoToMarkAsCompleted = entityManager.find(TodoEntity.class,
-                todoAggregateTodoMarkedAsCompletedEventPayload.todoId());
-        todoToMarkAsCompleted.markAsCompleted(event.eventId());
-        entityManager.merge(todoToMarkAsCompleted);
+    public void consume(final AggregateRootEventConsumable aggregateRootEventConsumable) {
+        final TodoAggregateTodoMarkedAsCompletedEventPayloadConsumer todoAggregateTodoMarkedAsCompletedEventPayloadConsumer = (TodoAggregateTodoMarkedAsCompletedEventPayloadConsumer) aggregateRootEventConsumable.eventPayload();
+        final TodoEntity todoToMarkAsCompleted = jpaTodoRepository.find(
+                todoAggregateTodoMarkedAsCompletedEventPayloadConsumer.todoId());
+        todoToMarkAsCompleted.markAsCompleted(aggregateRootEventConsumable.eventId());
+        jpaTodoRepository.merge(todoToMarkAsCompleted);
     }
 
     @Override

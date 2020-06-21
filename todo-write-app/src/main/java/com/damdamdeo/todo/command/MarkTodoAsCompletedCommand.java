@@ -1,10 +1,10 @@
 package com.damdamdeo.todo.command;
 
-import com.damdamdeo.eventdataspreader.writeside.command.api.Command;
+import com.damdamdeo.eventsourced.mutable.api.eventsourcing.command.Command;
 
 import java.util.Objects;
 
-public class MarkTodoAsCompletedCommand implements Command {
+public final class MarkTodoAsCompletedCommand implements Command {
 
     private final String todoId;
 
@@ -16,4 +16,16 @@ public class MarkTodoAsCompletedCommand implements Command {
         return todoId;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MarkTodoAsCompletedCommand that = (MarkTodoAsCompletedCommand) o;
+        return Objects.equals(todoId, that.todoId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(todoId);
+    }
 }
