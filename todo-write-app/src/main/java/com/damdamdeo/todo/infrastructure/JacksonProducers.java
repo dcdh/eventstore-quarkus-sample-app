@@ -1,7 +1,7 @@
 package com.damdamdeo.todo.infrastructure;
 
-import com.damdamdeo.eventsourced.encryption.infra.serialization.JacksonEncryptionDeserializer;
-import com.damdamdeo.eventsourced.encryption.infra.serialization.JacksonEncryptionSerializer;
+import com.damdamdeo.eventsourced.encryption.infra.serialization.JacksonStringEncryptionDeserializer;
+import com.damdamdeo.eventsourced.encryption.infra.serialization.JacksonStringEncryptionSerializer;
 import com.damdamdeo.eventsourced.mutable.infra.eventsourcing.serialization.JacksonAggregateRootEventMetadata;
 import com.damdamdeo.eventsourced.mutable.infra.eventsourcing.serialization.JacksonAggregateRootEventPayload;
 import com.damdamdeo.eventsourced.mutable.infra.eventsourcing.serialization.JacksonAggregateRootMaterializedState;
@@ -40,8 +40,8 @@ public class JacksonProducers {
         @JsonCreator
         public JacksonTodoAggregateTodoCreatedEventPayload(@JsonProperty("todoId") final String todoId,
                                                            @JsonProperty("description")
-                                                           @JsonSerialize(using = JacksonEncryptionSerializer.class)
-                                                           @JsonDeserialize(using = JacksonEncryptionDeserializer.class) final String description) {
+                                                           @JsonSerialize(using = JacksonStringEncryptionSerializer.class)
+                                                           @JsonDeserialize(using = JacksonStringEncryptionDeserializer.class) final String description) {
 
         }
 
@@ -63,8 +63,8 @@ public class JacksonProducers {
                                                          @JsonProperty("aggregateRootType") final String aggregateRootType,
                                                          @JsonProperty("version") final Long version,
                                                          @JsonProperty("description")
-                                                         @JsonSerialize(using = JacksonEncryptionSerializer.class)
-                                                         @JsonDeserialize(using = JacksonEncryptionDeserializer.class) final String description,
+                                                         @JsonSerialize(using = JacksonStringEncryptionSerializer.class)
+                                                         @JsonDeserialize(using = JacksonStringEncryptionDeserializer.class) final String description,
                                                          @JsonProperty("todoStatus") final TodoStatus todoStatus) {
         }
 

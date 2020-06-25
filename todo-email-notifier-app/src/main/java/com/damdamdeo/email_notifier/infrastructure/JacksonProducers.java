@@ -15,7 +15,7 @@ import com.damdamdeo.eventsourced.consumer.infra.eventsourcing.serialization.spi
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.damdamdeo.eventsourced.encryption.infra.serialization.JacksonEncryptionDeserializer;
+import com.damdamdeo.eventsourced.encryption.infra.serialization.JacksonStringEncryptionDeserializer;
 
 import javax.enterprise.inject.Produces;
 import java.util.Arrays;
@@ -38,7 +38,7 @@ public class JacksonProducers {
 
         @JsonCreator
         public JacksonTodoAggregateTodoCreatedEventPayloadConsumer(@JsonProperty("todoId") String todoId,
-                                                                   @JsonProperty("description") @JsonDeserialize(using = JacksonEncryptionDeserializer.class) String description) {
+                                                                   @JsonProperty("description") @JsonDeserialize(using = JacksonStringEncryptionDeserializer.class) String description) {
 
         }
 
@@ -59,7 +59,7 @@ public class JacksonProducers {
         public JacksonTodoAggregateRootMaterializedStateConsumer(@JsonProperty("aggregateRootId") final String aggregateRootId,
                                                                  @JsonProperty("aggregateRootType") final String aggregateRootType,
                                                                  @JsonProperty("version") final Long version,
-                                                                 @JsonProperty("description") @JsonDeserialize(using = JacksonEncryptionDeserializer.class) final String description,
+                                                                 @JsonProperty("description") @JsonDeserialize(using = JacksonStringEncryptionDeserializer.class) final String description,
                                                                  @JsonProperty("todoStatus") final TodoStatus todoStatus) {
         }
 

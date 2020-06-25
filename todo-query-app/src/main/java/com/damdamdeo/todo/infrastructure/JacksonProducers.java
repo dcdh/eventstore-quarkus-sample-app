@@ -7,7 +7,7 @@ import com.damdamdeo.eventsourced.consumer.infra.eventsourcing.serialization.spi
 import com.damdamdeo.eventsourced.consumer.infra.eventsourcing.serialization.spi.JacksonAggregateRootEventPayloadConsumerMixInSubtypeDiscovery;
 import com.damdamdeo.eventsourced.consumer.infra.eventsourcing.serialization.spi.JacksonAggregateRootMaterializedStateConsumerMixInSubtypeDiscovery;
 import com.damdamdeo.eventsourced.consumer.infra.eventsourcing.serialization.spi.JacksonMixInSubtype;
-import com.damdamdeo.eventsourced.encryption.infra.serialization.JacksonEncryptionDeserializer;
+import com.damdamdeo.eventsourced.encryption.infra.serialization.JacksonStringEncryptionDeserializer;
 import com.damdamdeo.todo.consumer.DefaultEventMetadataConsumer;
 import com.damdamdeo.todo.consumer.TodoAggregateRootMaterializedStateConsumer;
 import com.damdamdeo.todo.consumer.event.TodoAggregateTodoCreatedEventPayloadConsumer;
@@ -38,7 +38,7 @@ public class JacksonProducers {
 
         @JsonCreator
         public JacksonTodoAggregateTodoCreatedEventPayloadConsumer(@JsonProperty("todoId") String todoId,
-                                                                   @JsonProperty("description") @JsonDeserialize(using = JacksonEncryptionDeserializer.class) String description) {
+                                                                   @JsonProperty("description") @JsonDeserialize(using = JacksonStringEncryptionDeserializer.class) String description) {
 
         }
 
@@ -60,7 +60,7 @@ public class JacksonProducers {
                                                                  @JsonProperty("aggregateRootType") final String aggregateRootType,
                                                                  @JsonProperty("version") final Long version,
                                                                  @JsonProperty("description")
-                                                                 @JsonDeserialize(using = JacksonEncryptionDeserializer.class)
+                                                                 @JsonDeserialize(using = JacksonStringEncryptionDeserializer.class)
                                                                  final String description,
                                                                  @JsonProperty("todoStatus") final TodoStatus todoStatus) {
         }
