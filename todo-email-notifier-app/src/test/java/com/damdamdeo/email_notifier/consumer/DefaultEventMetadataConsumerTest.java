@@ -2,14 +2,15 @@ package com.damdamdeo.email_notifier.consumer;
 
 import com.damdamdeo.eventsourced.consumer.api.eventsourcing.AggregateRootEventMetadataConsumer;
 import com.damdamdeo.eventsourced.consumer.infra.eventsourcing.serialization.JacksonAggregateRootEventMetadataConsumerDeserializer;
+import com.damdamdeo.eventsourced.encryption.api.Secret;
 import io.quarkus.test.junit.QuarkusTest;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
 
 @QuarkusTest
 public class DefaultEventMetadataConsumerTest {
@@ -27,7 +28,7 @@ public class DefaultEventMetadataConsumerTest {
         // Given
 
         // When
-        final AggregateRootEventMetadataConsumer deserialized = jacksonAggregateRootEventMetadataConsumerDeserializer.deserialize(Optional.empty(),
+        final AggregateRootEventMetadataConsumer deserialized = jacksonAggregateRootEventMetadataConsumerDeserializer.deserialize(mock(Secret.class),
                 "{\"@type\":\"DefaultEventMetadata\"}");
 
         // Then

@@ -5,8 +5,8 @@ import com.damdamdeo.email_notifier.consumer.event.TodoAggregateTodoMarkedAsComp
 import com.damdamdeo.email_notifier.domain.TodoStatus;
 import com.damdamdeo.eventsourced.consumer.infra.eventsourcing.DebeziumAggregateRootEventId;
 import com.damdamdeo.eventsourced.consumer.infra.eventsourcing.DecryptedAggregateRootEventConsumable;
+import com.damdamdeo.eventsourced.encryption.api.PresentSecret;
 import com.damdamdeo.eventsourced.encryption.api.SecretStore;
-import com.damdamdeo.eventsourced.encryption.infra.JdbcAggregateRootSecret;
 import io.agroal.api.AgroalDataSource;
 import io.quarkus.agroal.DataSource;
 import io.quarkus.test.junit.QuarkusTest;
@@ -22,7 +22,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.await;
@@ -62,7 +61,7 @@ public class DebeziumTodoMarkedAsCompletedEventConsumerTest {
         // Given
         doCallRealMethod().when(todoMarkedAsCompletedEventConsumer).aggregateRootType();
         doCallRealMethod().when(todoMarkedAsCompletedEventConsumer).eventType();
-        doReturn(Optional.of(new JdbcAggregateRootSecret("TodoAggregateRoot", "todoId", "AAlwSnNqyIRebwRqBfHufaCTXoRFRllg")))
+        doReturn(new PresentSecret("AAlwSnNqyIRebwRqBfHufaCTXoRFRllg"))
                 .when(secretStore).read("TodoAggregateRoot", "todoId");
 
         // When
@@ -90,6 +89,8 @@ public class DebeziumTodoMarkedAsCompletedEventConsumerTest {
         // Given
         doCallRealMethod().when(todoMarkedAsCompletedEventConsumer).aggregateRootType();
         doCallRealMethod().when(todoMarkedAsCompletedEventConsumer).eventType();
+        doReturn(new PresentSecret("AAlwSnNqyIRebwRqBfHufaCTXoRFRllg"))
+                .when(secretStore).read("TodoAggregateRoot", "todoId");
         kafkaDebeziumProducer.produce("TodoMarkedAsCompletedEvent.json");
         waitForEventToBeConsumed();
 
@@ -102,11 +103,12 @@ public class DebeziumTodoMarkedAsCompletedEventConsumerTest {
 
         verify(todoMarkedAsCompletedEventConsumer, times(1)).aggregateRootType();
         verify(todoMarkedAsCompletedEventConsumer, times(1)).eventType();
-        verifyNoMoreInteractions(todoMarkedAsCompletedEventConsumer);
+        verify(secretStore, times(2)).read("TodoAggregateRoot", "todoId");
+        verifyNoMoreInteractions(todoMarkedAsCompletedEventConsumer, secretStore);
     }
 
     private void waitForEventToBeConsumed() {
-        await().atMost(10, TimeUnit.SECONDS)
+        await().atMost(2, TimeUnit.SECONDS)
                 .until(() -> {
                     try (final Connection con = consumedEventsDataSource.getConnection();
                          final Statement stmt = con.createStatement();

@@ -77,7 +77,7 @@ public class E2ETest {
         // When
         secretStore.store("TodoAggregateRoot", "todoId", "AAlwSnNqyIRebwRqBfHufaCTXoRFRllg");
         kafkaDebeziumProducer.produce("TodoCreatedEvent.json");
-        await().atMost(10, TimeUnit.SECONDS).until(() ->
+        await().atMost(2, TimeUnit.SECONDS).until(() ->
                 given()
                     .get("/todos/todoId")
                     .then().log().all()
@@ -99,7 +99,7 @@ public class E2ETest {
 
         // When
         kafkaDebeziumProducer.produce("TodoMarkedAsCompletedEvent.json");
-        await().atMost(10, TimeUnit.SECONDS).until(() ->
+        await().atMost(2, TimeUnit.SECONDS).until(() ->
                 given()
                         .get("/todos/todoId")
                         .then().log().all()

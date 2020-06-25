@@ -110,12 +110,12 @@ public class E2ETest {
         // When
         secretStore.store("TodoAggregateRoot", "todoId", "AAlwSnNqyIRebwRqBfHufaCTXoRFRllg");
         kafkaDebeziumProducer.produce("TodoCreatedEvent.json");
-        await().atMost(10, TimeUnit.SECONDS).until(() ->
+        await().atMost(2, TimeUnit.SECONDS).until(() ->
                 given()
                         .when()
                         .get("http://localhost:" + quarkusMailerApiPort + "/api/v1/messages")
                         .then()
-                        .log().all()
+                        .log().ifValidationFails()
                         .statusCode(200)
                         .extract()
                         .body()
@@ -133,12 +133,12 @@ public class E2ETest {
 
         // When
         kafkaDebeziumProducer.produce("TodoMarkedAsCompletedEvent.json");
-        await().atMost(10, TimeUnit.SECONDS).until(() ->
+        await().atMost(2, TimeUnit.SECONDS).until(() ->
                 given()
                         .when()
                         .get("http://localhost:" + quarkusMailerApiPort + "/api/v1/messages")
                         .then()
-                        .log().all()
+                        .log().ifValidationFails()
                         .statusCode(200)
                         .extract()
                         .body()

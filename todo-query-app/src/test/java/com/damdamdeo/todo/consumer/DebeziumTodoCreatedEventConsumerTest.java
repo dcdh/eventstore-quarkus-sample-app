@@ -2,8 +2,8 @@ package com.damdamdeo.todo.consumer;
 
 import com.damdamdeo.eventsourced.consumer.infra.eventsourcing.DebeziumAggregateRootEventId;
 import com.damdamdeo.eventsourced.consumer.infra.eventsourcing.DecryptedAggregateRootEventConsumable;
+import com.damdamdeo.eventsourced.encryption.api.PresentSecret;
 import com.damdamdeo.eventsourced.encryption.api.SecretStore;
-import com.damdamdeo.eventsourced.encryption.infra.JdbcAggregateRootSecret;
 import com.damdamdeo.todo.KafkaDebeziumProducer;
 import com.damdamdeo.todo.consumer.event.TodoAggregateTodoCreatedEventPayloadConsumer;
 import com.damdamdeo.todo.domain.api.TodoStatus;
@@ -22,7 +22,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.await;
@@ -62,7 +61,7 @@ public class DebeziumTodoCreatedEventConsumerTest {
         // Given
         doCallRealMethod().when(todoCreatedEventConsumer).aggregateRootType();
         doCallRealMethod().when(todoCreatedEventConsumer).eventType();
-        doReturn(Optional.of(new JdbcAggregateRootSecret("TodoAggregateRoot", "todoId", "AAlwSnNqyIRebwRqBfHufaCTXoRFRllg")))
+        doReturn(new PresentSecret("AAlwSnNqyIRebwRqBfHufaCTXoRFRllg"))
                 .when(secretStore).read("TodoAggregateRoot", "todoId");
 
         // When
@@ -90,6 +89,8 @@ public class DebeziumTodoCreatedEventConsumerTest {
         // Given
         doCallRealMethod().when(todoCreatedEventConsumer).aggregateRootType();
         doCallRealMethod().when(todoCreatedEventConsumer).eventType();
+        doReturn(new PresentSecret("AAlwSnNqyIRebwRqBfHufaCTXoRFRllg"))
+                .when(secretStore).read("TodoAggregateRoot", "todoId");
         kafkaDebeziumProducer.produce("TodoCreatedEvent.json");
         waitForEventToBeConsumed();
 
@@ -102,7 +103,8 @@ public class DebeziumTodoCreatedEventConsumerTest {
 
         verify(todoCreatedEventConsumer, times(1)).aggregateRootType();
         verify(todoCreatedEventConsumer, times(1)).eventType();
-        verifyNoMoreInteractions(todoCreatedEventConsumer);
+        verify(secretStore, atLeastOnce()).read(any(), any());
+        verifyNoMoreInteractions(todoCreatedEventConsumer, secretStore);
     }
 
     private void waitForEventToBeConsumed() {
