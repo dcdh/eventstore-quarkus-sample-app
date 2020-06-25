@@ -4,8 +4,8 @@ import java.io.IOException;
 
 public interface TemplateGenerator {
 
-    String generate(TodoCreated todoCreated) throws IOException;
+    String generateTodoCreated(Todo todoCreated) throws IOException;
 
-    String generate(TodoMarkedAsCompleted todoMarkedAsCompleted) throws IOException;
+    String generateTodoMarkedAsCompleted(Todo todoMarkedAsCompleted) throws IOException;
 
 }

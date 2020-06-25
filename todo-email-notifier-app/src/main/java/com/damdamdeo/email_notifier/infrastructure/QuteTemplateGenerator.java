@@ -1,8 +1,7 @@
 package com.damdamdeo.email_notifier.infrastructure;
 
 import com.damdamdeo.email_notifier.domain.TemplateGenerator;
-import com.damdamdeo.email_notifier.domain.TodoCreated;
-import com.damdamdeo.email_notifier.domain.TodoMarkedAsCompleted;
+import com.damdamdeo.email_notifier.domain.Todo;
 import io.quarkus.qute.Template;
 import io.quarkus.qute.api.ResourcePath;
 
@@ -24,17 +23,16 @@ public class QuteTemplateGenerator implements TemplateGenerator {
     }
 
     @Override
-    public String generate(final TodoCreated todoCreated) throws IOException {
+    public String generateTodoCreated(final Todo todoCreated) throws IOException {
         return todoCreatedTemplate.data("todoId", todoCreated.todoId())
                 .data("description", todoCreated.description())
                 .render();
     }
 
     @Override
-    public String generate(final TodoMarkedAsCompleted todoMarkedAsCompleted) throws IOException {
+    public String generateTodoMarkedAsCompleted(final Todo todoMarkedAsCompleted) throws IOException {
         return todoMarkedAsCompletedTemplate.data("todoId", todoMarkedAsCompleted.todoId())
                 .data("description", todoMarkedAsCompleted.description())
                 .render();
     }
-
 }

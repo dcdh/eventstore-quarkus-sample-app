@@ -1,43 +1,31 @@
 package com.damdamdeo.email_notifier;
 
 import com.damdamdeo.email_notifier.domain.EmailNotifier;
-import com.damdamdeo.email_notifier.domain.TodoStatus;
-import com.damdamdeo.email_notifier.infrastructure.TodoEntity;
 import com.damdamdeo.eventsourced.encryption.api.SecretStore;
 import io.agroal.api.AgroalDataSource;
 import io.quarkus.agroal.DataSource;
 import io.quarkus.test.junit.QuarkusTest;
-import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.hibernate.envers.AuditReaderFactory;
-import org.hibernate.envers.query.AuditEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static io.restassured.RestAssured.given;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @QuarkusTest
 public class E2ETest {
 
     @Inject
     KafkaDebeziumProducer kafkaDebeziumProducer;
-
-    @Inject
-    EntityManager entityManager;
 
     @Inject
     EmailNotifier emailNotifier;
@@ -82,12 +70,6 @@ public class E2ETest {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
-        entityManager.createQuery("DELETE FROM TodoEntity").executeUpdate();
-
-        entityManager.createNativeQuery("TRUNCATE TABLE todoentity_aud CASCADE").executeUpdate();
-        entityManager.createNativeQuery("TRUNCATE TABLE revinfo CASCADE").executeUpdate();
-        entityManager.createNativeQuery("ALTER SEQUENCE public.hibernate_sequence RESTART WITH 1");
     }
 
     @Test
@@ -152,17 +134,6 @@ public class E2ETest {
                 .statusCode(200)
                 .body("[0].Content.Headers.Subject[0]", equalTo("Todo marked as completed"))
                 .body("[0].MIME.Parts[0].MIME.Parts[0].Body", containsString("lorem ipsum"));
-
-        // Then Auditing
-        final List<TodoEntity> todos = AuditReaderFactory.get(entityManager)
-                .createQuery()
-                .forRevisionsOfEntity(TodoEntity.class, true, true)
-                .add(AuditEntity.id().eq("todoId"))
-                .getResultList();
-
-        assertEquals(2, todos.size());
-        assertTrue(EqualsBuilder.reflectionEquals(new TodoEntity("todoId", "lorem ipsum", TodoStatus.IN_PROGRESS, 0l), todos.get(0)));
-        assertTrue(EqualsBuilder.reflectionEquals(new TodoEntity("todoId", "lorem ipsum", TodoStatus.COMPLETED, 1l), todos.get(1)));
     }
 
 }
