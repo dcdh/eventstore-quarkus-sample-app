@@ -1,8 +1,8 @@
 package com.damdamdeo.email_notifier.consumer;
 
 import com.damdamdeo.email_notifier.KafkaDebeziumProducer;
-import com.damdamdeo.email_notifier.consumer.event.TodoAggregateTodoCreatedEventPayloadConsumer;
 import com.damdamdeo.email_notifier.domain.TodoStatus;
+import com.damdamdeo.eventsourced.consumer.api.eventsourcing.UnsupportedAggregateRootEventPayloadConsumer;
 import com.damdamdeo.eventsourced.consumer.infra.eventsourcing.DebeziumAggregateRootEventId;
 import com.damdamdeo.eventsourced.consumer.infra.eventsourcing.DecryptedAggregateRootEventConsumable;
 import com.damdamdeo.eventsourced.encryption.api.PresentSecret;
@@ -73,7 +73,7 @@ public class DebeziumTodoCreatedEventConsumerTest {
                 new DebeziumAggregateRootEventId("todoId", "TodoAggregateRoot", 0l),
                 "TodoCreatedEvent",
                 LocalDateTime.of(2019, Month.JULY, 12, 0, 7, 24, 742000000),
-                new TodoAggregateTodoCreatedEventPayloadConsumer("todoId", "lorem ipsum"),
+                new UnsupportedAggregateRootEventPayloadConsumer(),
                 new DefaultEventMetadataConsumer(),
                 new TodoAggregateRootMaterializedStateConsumer("todoId", "TodoAggregateRoot", 0L, "lorem ipsum", TodoStatus.IN_PROGRESS)
         ));
