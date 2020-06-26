@@ -53,14 +53,14 @@ services:
       - zookeeper
       - kafka-rest
 
-  event-store:
+  mutable:
     image: dcdh1983/postgresql-10-debezium-centos7:latest
     ports:
       - 5432:5432
     environment:
       - POSTGRESQL_USER=postgresuser
       - POSTGRESQL_PASSWORD=postgres
-      - POSTGRESQL_DATABASE=event-store
+      - POSTGRESQL_DATABASE=mutable
 
   secret-store:
     image: debezium/postgres:11-alpine
