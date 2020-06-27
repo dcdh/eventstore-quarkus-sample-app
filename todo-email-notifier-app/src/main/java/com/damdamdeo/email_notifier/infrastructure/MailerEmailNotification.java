@@ -7,13 +7,13 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @ApplicationScoped
 public class MailerEmailNotification implements EmailNotifier {
 
-    private final static Logger LOGGER = Logger.getLogger(MailerEmailNotification.class.getName());
+    private final static Logger LOGGER = LoggerFactory.getLogger(MailerEmailNotification.class);
 
     final String sendTo;
 
@@ -27,7 +27,7 @@ public class MailerEmailNotification implements EmailNotifier {
 
     @Override
     public void notify(final String subject, final String content) {
-        LOGGER.log(Level.INFO, "email notification with subject ''{0}'' and content ''{1}''", new Object[] {subject, content});
+        LOGGER.info("email notification with subject ''{0}'' and content ''{1}''", new Object[] {subject, content});
         mailer.send(Mail.withHtml(sendTo, subject, content));
     }
 
