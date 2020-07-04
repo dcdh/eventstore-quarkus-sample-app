@@ -1,6 +1,6 @@
 package com.damdamdeo.todo.publicfrontend.interfaces;
 
-import com.damdamdeo.todo.publicfrontend.domain.UserRegistrationRemoteService;
+import com.damdamdeo.todo.publicfrontend.domain.user.UserRegistrationRemoteService;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.jboss.resteasy.annotations.cache.NoCache;
 

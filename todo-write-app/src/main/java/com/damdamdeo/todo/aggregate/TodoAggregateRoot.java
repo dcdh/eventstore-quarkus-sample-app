@@ -29,12 +29,14 @@ public class TodoAggregateRoot extends AggregateRoot implements Todo {
     }
 
     public void handle(final CreateNewTodoCommand createNewTodoCommand, final String todoId) {
-        this.apply(new TodoAggregateTodoCreatedEventPayload(todoId,
+        this.apply("TodoCreatedEvent",
+                new TodoAggregateTodoCreatedEventPayload(todoId,
                 createNewTodoCommand.description()), new DefaultEventMetadata());
     }
 
     public void handle(final MarkTodoAsCompletedCommand markTodoAsCompletedCommand) {
-        this.apply(new TodoAggregateTodoMarkedAsCompletedEventPayload(markTodoAsCompletedCommand.todoId()),
+        this.apply("TodoMarkedAsCompletedEvent",
+                new TodoAggregateTodoMarkedAsCompletedEventPayload(markTodoAsCompletedCommand.todoId()),
                 new DefaultEventMetadata());
     }
 

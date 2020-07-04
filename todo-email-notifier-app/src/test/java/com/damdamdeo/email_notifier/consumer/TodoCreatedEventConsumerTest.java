@@ -41,6 +41,7 @@ public class TodoCreatedEventConsumerTest {
 
         verify(mockTodoAggregateRootMaterializedStateConsumer, times(1)).toDomain();
         verify(mockAggregateRootEventConsumable, times(1)).materializedState();
+        verify(mockAggregateRootEventConsumable, times(1)).eventId();
         verify(mockTemplateGenerator, times(1)).generateTodoCreated(any());
         verifyNoMoreInteractions(mockAggregateRootEventConsumable, mockTodoAggregateRootMaterializedStateConsumer, mockTodo, mockEmailNotifier, mockTemplateGenerator);
     }

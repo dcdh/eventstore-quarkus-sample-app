@@ -7,12 +7,16 @@ import com.damdamdeo.todo.aggregate.TodoAggregateRootRepository;
 import com.damdamdeo.todo.domain.api.Todo;
 import com.damdamdeo.todo.domain.api.TodoAlreadyExistentException;
 import com.damdamdeo.todo.command.CreateNewTodoCommand;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.Objects;
 
 @ApplicationScoped
 public class CreateNewTodoCommandHandler implements CommandHandler<TodoAggregateRoot, CreateNewTodoCommand> {
+
+    private final Logger logger = LoggerFactory.getLogger(CreateNewTodoCommandHandler.class);
 
     final TodoAggregateRootRepository todoAggregateRootRepository;
     final TodoIdGenerator todoIdGenerator;
@@ -29,6 +33,7 @@ public class CreateNewTodoCommandHandler implements CommandHandler<TodoAggregate
     @CommandExecutorBinding
     @Override
     public TodoAggregateRoot execute(CreateNewTodoCommand createNewTodoCommand) throws Throwable {
+        logger.info(String.format("Handling '%s'", "CreateNewTodoCommand"));
         final String generatedTodoId = todoIdGenerator.generateTodoId();
         if (todoAggregateRootRepository.isTodoExistent(generatedTodoId)) {
             final Todo todoExistent = todoAggregateRootRepository.load(generatedTodoId);

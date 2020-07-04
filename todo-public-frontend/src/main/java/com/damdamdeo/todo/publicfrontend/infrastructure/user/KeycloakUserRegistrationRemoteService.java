@@ -1,8 +1,8 @@
-package com.damdamdeo.todo.publicfrontend.infrastructure;
+package com.damdamdeo.todo.publicfrontend.infrastructure.user;
 
-import com.damdamdeo.todo.publicfrontend.domain.UnexpectedException;
-import com.damdamdeo.todo.publicfrontend.domain.UsernameOrEmailAlreadyUsedException;
-import com.damdamdeo.todo.publicfrontend.domain.UserRegistrationRemoteService;
+import com.damdamdeo.todo.publicfrontend.domain.user.UnexpectedException;
+import com.damdamdeo.todo.publicfrontend.domain.user.UsernameOrEmailAlreadyUsedException;
+import com.damdamdeo.todo.publicfrontend.domain.user.UserRegistrationRemoteService;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.core.Response;
@@ -34,7 +34,13 @@ public class KeycloakUserRegistrationRemoteService implements UserRegistrationRe
     private final RoleRepresentation frontendUserRole;
     private final RetryPolicy<Object> retryPolicy;
 
-    public KeycloakUserRegistrationRemoteService(@ConfigProperty(name = "quarkus.oidc.auth-server-url") final String authServerUrl) {
+    // TODO je devrai injecter les conf keycloak !!! realm, username, password et clientId!
+
+    public KeycloakUserRegistrationRemoteService(@ConfigProperty(name = "quarkus.oidc.auth-server-url") final String authServerUrl,
+                                                 @ConfigProperty(name = "keycloak.admin.adminRealm") final String keycloakAdminAdminRealm,
+                                                 @ConfigProperty(name = "keycloak.admin.clientId") final String keycloakAdminClientId,
+                                                 @ConfigProperty(name = "keycloak.admin.username") final String keycloakAdminUsername,
+                                                 @ConfigProperty(name = "keycloak.admin.password") final String keycloakAdminPassword) {
         // quarkus.oidc.auth-server-url=http://localhost:8087/auth/realms/todos
         // -> http://localhost:8087/auth
         // -> todos
@@ -42,7 +48,7 @@ public class KeycloakUserRegistrationRemoteService implements UserRegistrationRe
         final Matcher matcher = pattern.matcher(authServerUrl);
         Validate.validState(matcher.matches());
         final String serverUrl = matcher.group(1);
-        this.keycloak = Keycloak.getInstance(serverUrl, "master", "keycloak", "keycloak", "admin-cli");
+        this.keycloak = Keycloak.getInstance(serverUrl, keycloakAdminAdminRealm, keycloakAdminUsername, keycloakAdminPassword, keycloakAdminClientId);
         this.userRealm = matcher.group(2);
         this.frontendUserRole = keycloak.realm(userRealm)
                 .roles()

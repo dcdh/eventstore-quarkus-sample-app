@@ -19,11 +19,6 @@
     </properties>
 
     <dependencies>
-<!--  FIXME domain api used debezium-event-consumer which come with kafka, hibernate ... and we do not want it -->
-<!--        <dependency>-->
-<!--            <groupId>com.damdamdeo</groupId>-->
-<!--            <artifactId>todo-domain-api</artifactId>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-resteasy</artifactId>
@@ -63,6 +58,10 @@
         <dependency>
             <groupId>net.jodah</groupId>
             <artifactId>failsafe</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
         </dependency>
 
         <dependency>
@@ -113,6 +112,21 @@
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-junit5-mockito</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.debezium</groupId>
+            <artifactId>debezium-testing-testcontainers</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>kafka</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>postgresql</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

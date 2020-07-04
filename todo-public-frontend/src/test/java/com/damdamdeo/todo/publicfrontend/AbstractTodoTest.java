@@ -2,13 +2,11 @@ package com.damdamdeo.todo.publicfrontend;
 
 import io.agroal.api.AgroalDataSource;
 import io.quarkus.agroal.DataSource;
-import org.apache.commons.io.IOUtils;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.junit.jupiter.api.BeforeEach;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -31,16 +29,22 @@ public abstract class AbstractTodoTest {
     @DataSource("secret-store")
     AgroalDataSource secretStoreDataSource;
 
+    @ConfigProperty(name = "connector.port")
+    Integer connectorPort;
+
     @BeforeEach
     @Transactional
     public void setup() throws Exception {
+        // https://docs.confluent.io/3.2.0/connect/managing.html
         given()
                 .when()
-                .delete("http://localhost:8083/connectors/todo-connector");
+                .put(String.format("http://localhost:%d/connectors/event-sourced-connector/pause", connectorPort))
+                .then().log().all()
+                .statusCode(202);
 
         truncateTable(secretStoreDataSource, "SECRET_STORE");
 
-        truncateTable(todoWriteDataSource, "AGGREGATE_ROOT_PROJECTION");
+        truncateTable(todoWriteDataSource, "AGGREGATE_ROOT_MATERIALIZED_STATE");
         truncateTable(todoWriteDataSource, "EVENT");
         truncateTable(todoWriteDataSource, "CONSUMED_EVENT");
         truncateTable(todoWriteDataSource, "CONSUMED_EVENT_CONSUMER");
@@ -52,28 +56,19 @@ public abstract class AbstractTodoTest {
         truncateTable(todoQueryDataSource, "revinfo");
         truncateTable(todoQueryDataSource, "todoentity");
 
-        final ClassLoader classLoader = getClass().getClassLoader();
-        try (final InputStream inputStream = classLoader.getResourceAsStream("debezium.json")) {
-            final String debezium = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
-            given()
-                    .contentType("application/json")
-                    .accept("application/json")
-                    .body(debezium)
-                    .when()
-                    .post("http://localhost:8083/connectors/")
-                    .then()
-                    .log()
-                    .all()
-                    .statusCode(201)
-            ;
-        }
+        given()
+                .when()
+                .put(String.format("http://localhost:%d/connectors/event-sourced-connector/resume", connectorPort))
+                .then().log().all()
+                .statusCode(202);
+
         await().atMost(30, TimeUnit.SECONDS).until(() -> given()
-                .get("http://localhost:8083/connectors/todo-connector/status")
+                .get(String.format("http://localhost:%d/connectors/event-sourced-connector/status", connectorPort))
                 .then().log().all()
                 .extract()
                 .body().jsonPath().getList("tasks").isEmpty() == false);
         await().atMost(30, TimeUnit.SECONDS).until(() -> given()
-                .get("http://localhost:8083/connectors/todo-connector/status")
+                .get(String.format("http://localhost:%d/connectors/event-sourced-connector/status", connectorPort))
                 .then().log().all()
                 .extract()
                 .body().jsonPath().getString("tasks[0].state").equals("RUNNING"));

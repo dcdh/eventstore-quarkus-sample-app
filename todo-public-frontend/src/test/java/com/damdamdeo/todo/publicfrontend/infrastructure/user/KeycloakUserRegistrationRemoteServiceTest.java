@@ -1,6 +1,7 @@
-package com.damdamdeo.todo.publicfrontend.infrastructure;
+package com.damdamdeo.todo.publicfrontend.infrastructure.user;
 
-import com.damdamdeo.todo.publicfrontend.domain.UsernameOrEmailAlreadyUsedException;
+import com.damdamdeo.todo.publicfrontend.domain.user.UsernameOrEmailAlreadyUsedException;
+import com.damdamdeo.todo.publicfrontend.infrastructure.user.KeycloakUserRegistrationRemoteService;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
 import org.apache.commons.lang3.Validate;

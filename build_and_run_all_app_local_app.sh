@@ -1,87 +1,62 @@
 #!/bin/bash
-pushd .
+########################################################################################################################
+# Build
+### prepare build
+#docker kill $(docker ps -aq)
+#docker rm $(docker ps -aq)
+#docker volume prune -f
+#docker network prune -f
+#export TESTCONTAINERS_RYUK_DISABLED=true
+#
+#### build todo-write-app
+#mvn -f pom.xml clean install -pl todo-domain-api,todo-write-app || { echo 'build todo-write-app failed' ; exit 1; }
+#docker build -f todo-write-app/src/main/docker/Dockerfile.jvm -t damdamdeo/todo-write-app:latest todo-write-app
+#
+#### build todo-query-app
+#mvn -f pom.xml clean install -pl todo-domain-api,todo-query-app || { echo 'build todo-query-app failed' ; exit 1; }
+#docker build -f todo-query-app/src/main/docker/Dockerfile.jvm -t damdamdeo/todo-query-app:latest todo-query-app
+#
+#### build todo-email-notifier-app
+#mvn -f pom.xml clean install -pl todo-domain-api,todo-email-notifier-app || { echo 'build todo-email-notifier-app failed' ; exit 1; }
+#docker build -f todo-email-notifier-app/src/main/docker/Dockerfile.jvm -t damdamdeo/todo-email-notifier-app:latest todo-email-notifier-app
+#
+#### build custom version of keycloak having specific realm and users
+#docker build -f todo-keycloak/Dockerfile -t damdamdeo/todo-keycloak:latest todo-keycloak
+#
+#### build todo-public-frontend-app
+#mvn -f pom.xml clean install -pl todo-public-frontend || { echo 'build failed' ; exit 1; }
+#docker build -f todo-public-frontend/src/main/docker/Dockerfile.jvm -t damdamdeo/todo-public-frontend-app:latest todo-public-frontend
 
-## start containers use for tests
+
+
+
+########################################################################################################################
+# Run
 docker kill $(docker ps -aq)
 docker rm $(docker ps -aq)
 docker volume prune -f
-docker-compose -f docker-compose-test.yaml up --detach zookeeper kafka connect event-store todo-query todo-email-notifier secret-store mailhog
+docker network prune -f
 
-sleep 30
+### start infra
+docker-compose -f docker-compose-local-run.yaml up --detach zookeeper kafka connect mutable todo-query todo-email-notifier secret-store mailhog keycloak-db
+sleep 20
 
-## build todo-write-app
-mvn clean install -pl todo-domain-api,todo-write-app || { echo 'build failed' ; exit 1; }
-cd todo-write-app && docker build -f src/main/docker/Dockerfile.jvm -t damdamdeo/todo-write-app:latest .
-
-popd
-pushd .
-
-## build todo-query-app
-mvn clean install -pl todo-domain-api,todo-query-app || { echo 'build failed' ; exit 1; }
-cd todo-query-app && docker build -f src/main/docker/Dockerfile.jvm -t damdamdeo/todo-query-app:latest .
-
-popd
-pushd .
-
-## build todo-email-notifier-app
-mvn clean install -pl todo-domain-api,todo-email-notifier-app || { echo 'build failed' ; exit 1; }
-cd todo-email-notifier-app && docker build -f src/main/docker/Dockerfile.jvm -t damdamdeo/todo-email-notifier-app:latest .
-
-popd
-pushd .
-
-## build todo-public-frontend-app
-# start query et write as todo-public-frontend-app need it !
-docker-compose -f docker-compose-test.yaml up --detach todo-write-app todo-query-app
+### start keycloak
+docker-compose -f docker-compose-local-run.yaml up --detach keycloak
 sleep 5
 
-mvn clean install -pl todo-domain-api,todo-public-frontend || { echo 'build failed' ; exit 1; }
-cd todo-public-frontend && docker build -f src/main/docker/Dockerfile.jvm -t damdamdeo/todo-public-frontend-app:latest .
-
-popd
-pushd .
-
-## all images have been build - kill, remove and restart infrastructure
-docker kill $(docker ps -aq)
-docker rm $(docker ps -aq)
-docker volume prune -f
-docker-compose -f docker-compose-local-run.yaml up --detach zookeeper kafka connect event-store todo-query todo-email-notifier secret-store mailhog
-
-## sleep 30 sec to be up
-sleep 30
-
-## start todo-write-app
-
+### start todo-write-app
 docker-compose -f docker-compose-local-run.yaml up --detach todo-write-app
 sleep 5
 
-## start todo-query-app
+### start todo-query-app
 docker-compose -f docker-compose-local-run.yaml up --detach todo-query-app
 
-## start todo-email-notifier-app
+### start todo-email-notifier-app
 docker-compose -f docker-compose-local-run.yaml up --detach todo-email-notifier-app
 
-curl -i -X POST -H "Accept:application/json" -H  "Content-Type:application/json" http://localhost:8083/connectors/ -d @debezium_run_local.json
-
-## build custom version of keycloak having specific realm
-
-cd keycloak && docker build -f Dockerfile -t damdamdeo/todo-keycloak:latest .
-
-popd
-pushd .
-
-## start keycloak
-
-docker-compose -f docker-compose-local-run.yaml up --detach keycloak-db
-sleep 5
-docker-compose -f docker-compose-local-run.yaml up --detach keycloak
-
-## start todo-public-frontend-app
+### start todo-public-frontend-app
 docker-compose -f docker-compose-local-run.yaml up --detach todo-public-frontend-app
 
-# curl http://localhost:8083/connectors
-# curl -X DELETE http://localhost:8083/connectors/todo-connector
 # http://0.0.0.0:8084/swagger-ui/
 # http://0.0.0.0:8085/swagger-ui/
-# bin/kafka-topics.sh --list --bootstrap-server kafka:9092
-# bin/kafka-console-consumer.sh --bootstrap-server kafka:9092 --topic event --from-beginning

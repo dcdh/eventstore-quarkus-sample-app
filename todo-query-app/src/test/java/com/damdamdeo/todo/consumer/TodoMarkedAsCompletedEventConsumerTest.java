@@ -47,7 +47,7 @@ public class TodoMarkedAsCompletedEventConsumerTest {
         verify(mockJpaTodoRepository, times(1)).find(any());
         verify(mockJpaTodoRepository, times(1)).merge(mockTodoEntity);
 
-        verify(mockAggregateRootEventConsumable, times(1)).eventId();
+        verify(mockAggregateRootEventConsumable, times(2)).eventId();
         verify(mockTodoAggregateTodoMarkedAsCompletedEventPayloadConsumer, times(1)).todoId();
         verify(mockAggregateRootEventConsumable, times(1)).eventPayload();
         verifyNoMoreInteractions(mockAggregateRootEventConsumable, mockAggregateRootEventId, mockTodoAggregateTodoMarkedAsCompletedEventPayloadConsumer, mockTodoEntity, mockJpaTodoRepository);

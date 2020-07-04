@@ -1,8 +1,8 @@
 package com.damdamdeo.todo.publicfrontend.interfaces;
 
-import com.damdamdeo.todo.publicfrontend.domain.UnexpectedException;
-import com.damdamdeo.todo.publicfrontend.domain.UserRegistrationRemoteService;
-import com.damdamdeo.todo.publicfrontend.domain.UsernameOrEmailAlreadyUsedException;
+import com.damdamdeo.todo.publicfrontend.domain.user.UnexpectedException;
+import com.damdamdeo.todo.publicfrontend.domain.user.UserRegistrationRemoteService;
+import com.damdamdeo.todo.publicfrontend.domain.user.UsernameOrEmailAlreadyUsedException;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
 import org.junit.jupiter.api.AfterEach;

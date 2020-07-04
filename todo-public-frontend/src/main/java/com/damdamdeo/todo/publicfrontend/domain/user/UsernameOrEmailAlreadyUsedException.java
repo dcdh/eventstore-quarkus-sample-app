@@ -1,4 +1,4 @@
-package com.damdamdeo.todo.publicfrontend.domain;
+package com.damdamdeo.todo.publicfrontend.domain.user;
 
 import java.util.Objects;
 

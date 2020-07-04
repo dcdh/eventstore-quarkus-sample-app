@@ -46,6 +46,7 @@ public class TodoMarkedAsCompletedEventConsumerTest {
 
         verify(mockTodoAggregateRootMaterializedStateConsumer, times(1)).toDomain();
         verify(mockAggregateRootEventConsumable, times(1)).materializedState();
+        verify(mockAggregateRootEventConsumable, times(1)).eventId();
         verify(mockTemplateGenerator, times(1)).generateTodoMarkedAsCompleted(any());
         verifyNoMoreInteractions(mockAggregateRootEventConsumable, mockAggregateRootEventId, mockTodoAggregateRootMaterializedStateConsumer, mockTodo, mockEmailNotifier, mockTemplateGenerator);
     }

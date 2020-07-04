@@ -19,7 +19,7 @@ services:
       - zookeeper
     environment:
       - ZOOKEEPER_CONNECT=zookeeper:2181
-      - CREATE_TOPICS=event:1:1:delete,aggregateroot:1:1:delete,flyway_schema_history:1:1:delete
+      - CREATE_TOPICS=event:1:1:delete
       - KAFKA_LOG_RETENTION_MS=5000
       - KAFKA_LOG_RETENTION_CHECK_INTERVAL_MS=5000
       - LOG_LEVEL=WARN
@@ -30,7 +30,7 @@ services:
       - 8083:8083
     links:
       - kafka
-      - event-store
+      - mutable
     environment:
       - BOOTSTRAP_SERVERS=kafka:9092
       - GROUP_ID=1
@@ -39,14 +39,14 @@ services:
       - STATUS_STORAGE_TOPIC=my_connect_statuses
       - LOG_LEVEL=WARN
 
-  event-store:
+  mutable:
     image: dcdh1983/postgresql-10-debezium-centos7:latest
     ports:
       - 5432:5432
     environment:
       - POSTGRESQL_USER=postgresuser
-      - POSTGRESQL_PASSWORD=postgres
-      - POSTGRESQL_DATABASE=event-store
+      - POSTGRESQL_PASSWORD=postgrespassword
+      - POSTGRESQL_DATABASE=mutable
 
   todo-query:
     image: postgres:11-alpine
@@ -84,31 +84,51 @@ services:
   todo-write-app:
     image: damdamdeo/todo-write-app:latest
     ports:
-      - 8084:8084
+      - 8084:8080
     environment:
       - JAVA_OPTIONS=-Dquarkus.http.host=0.0.0.0
-        -Dquarkus.datasource.jdbc.url=jdbc:postgresql://event-store:5432/event-store
-        -Dquarkus.datasource.secret-store.jdbc.url=jdbc:postgresql://secret-store:5432/secret-store
-        -Dquarkus.datasource.aggregate-root-projection-event-store.jdbc.url=jdbc:postgresql://event-store:5432/event-store
-        -Dquarkus.datasource.consumed-events.jdbc.url=jdbc:postgresql://event-store:5432/event-store
         -Dmp.messaging.incoming.event-in.bootstrap.servers=kafka:9092
+        -Dquarkus.datasource.jdbc.url=jdbc:postgresql://mutable:5432/mutable
+        -Dquarkus.datasource.username=postgresuser
+        -Dquarkus.datasource.password=postgrespassword
+        -Dquarkus.datasource.secret-store.jdbc.url=jdbc:postgresql://secret-store:5432/secret-store
+        -Dquarkus.datasource.secret-store.username=postgres
+        -Dquarkus.datasource.secret-store.password=postgres
+        -Dquarkus.datasource.mutable.jdbc.url=jdbc:postgresql://mutable:5432/mutable
+        -Dquarkus.datasource.mutable.username=postgresuser
+        -Dquarkus.datasource.mutable.password=postgrespassword
+        -Dquarkus.datasource.consumed-events.jdbc.url=jdbc:postgresql://mutable:5432/mutable
+        -Dquarkus.datasource.consumed-events.username=postgresuser
+        -Dquarkus.datasource.consumed-events.password=postgrespassword
+        -Dkafka-connector-api/mp-rest/url=http://connect:8083
+        -Dconnector.mutable.database.hostname=mutable
+        -Dconnector.mutable.database.username=postgresuser
+        -Dconnector.mutable.database.password=postgrespassword
+        -Dconnector.mutable.database.port=5432
+        -Dconnector.mutable.database.dbname=mutable
     links:
       - zookeeper
       - kafka
       - connect
-      - event-store
+      - mutable
       - secret-store
 
   todo-query-app:
     image: damdamdeo/todo-query-app:latest
     ports:
-      - 8085:8085
+      - 8085:8080
     environment:
       - JAVA_OPTIONS=-Dquarkus.http.host=0.0.0.0
-        -Dquarkus.datasource.jdbc.url=jdbc:postgresql://todo-query:5432/todo-query
-        -Dquarkus.datasource.secret-store.jdbc.url=jdbc:postgresql://secret-store:5432/secret-store
-        -Dquarkus.datasource.consumed-events.jdbc.url=jdbc:postgresql://todo-query:5432/todo-query
         -Dmp.messaging.incoming.event-in.bootstrap.servers=kafka:9092
+        -Dquarkus.datasource.jdbc.url=jdbc:postgresql://todo-query:5432/todo-query
+        -Dquarkus.datasource.username=postgres
+        -Dquarkus.datasource.password=postgres
+        -Dquarkus.datasource.secret-store.jdbc.url=jdbc:postgresql://secret-store:5432/secret-store
+        -Dquarkus.datasource.secret-store.username=postgres
+        -Dquarkus.datasource.secret-store.password=postgres
+        -Dquarkus.datasource.consumed-events.jdbc.url=jdbc:postgresql://todo-query:5432/todo-query
+        -Dquarkus.datasource.consumed-events.username=postgres
+        -Dquarkus.datasource.consumed-events.password=postgres
     links:
       - zookeeper
       - kafka
@@ -119,10 +139,16 @@ services:
   todo-email-notifier-app:
     image: damdamdeo/todo-email-notifier-app:latest
     environment:
-      - JAVA_OPTIONS=-Dquarkus.datasource.jdbc.url=jdbc:postgresql://todo-email-notifier:5432/todo-email-notifier
+      - JAVA_OPTIONS=-Dmp.messaging.incoming.event-in.bootstrap.servers=kafka:9092
         -Dquarkus.datasource.secret-store.jdbc.url=jdbc:postgresql://secret-store:5432/secret-store
+        -Dquarkus.datasource.secret-store.username=postgres
+        -Dquarkus.datasource.secret-store.password=postgres
         -Dquarkus.datasource.consumed-events.jdbc.url=jdbc:postgresql://todo-email-notifier:5432/todo-email-notifier
-        -Dmp.messaging.incoming.event-in.bootstrap.servers=kafka:9092 -Dquarkus.mailer.host=mailhog
+        -Dquarkus.datasource.consumed-events.username=postgres
+        -Dquarkus.datasource.consumed-events.password=postgres
+        -Dquarkus.mailer.host=mailhog
+        -Dquarkus.mailer.username=
+        -Dquarkus.mailer.password=
     links:
       - zookeeper
       - kafka
@@ -134,9 +160,14 @@ services:
   todo-public-frontend-app:
     image: damdamdeo/todo-public-frontend-app:latest
     ports:
-      - 8086:8086
+      - 8086:8080
     environment:
-      - JAVA_OPTIONS=-Dtodo-write-api/mp-rest/url=http://todo-write-app:8084 -Dtodo-query-api/mp-rest/url=http://todo-query-app:8085
+      - JAVA_OPTIONS=-Dtodo-write-api/mp-rest/url=http://todo-write-app:8080
+        -Dtodo-query-api/mp-rest/url=http://todo-query-app:8080
+        -Dkeycloak.admin.clientId=admin-cli
+        -Dkeycloak.admin.username=keycloak
+        -Dkeycloak.admin.password=keycloak
+        -Dquarkus.http.cors.origins=http://localhost:8086
     links:
       - todo-write-app
       - todo-query-app
