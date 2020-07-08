@@ -5,8 +5,6 @@ import com.damdamdeo.todo.publicfrontend.domain.user.UserRegistrationRemoteServi
 import com.damdamdeo.todo.publicfrontend.domain.user.UsernameOrEmailAlreadyUsedException;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
@@ -19,12 +17,6 @@ public class UserRegistrationEndpointTest {
     @InjectMock
     UserRegistrationRemoteService userRegistrationRemoteService;
 
-    @BeforeEach
-    @AfterEach
-    public void flush() {
-        reset(userRegistrationRemoteService);
-    }
-
     @Test
     public void should_call_user_registration_remote_service() throws Exception {
         // Given
@@ -35,7 +27,7 @@ public class UserRegistrationEndpointTest {
                         "password", "password",
                         "email", "email")
                 .when()
-                .post("/registration")
+                .post("/users/registration")
                 .then()
                 .statusCode(204);
         verify(userRegistrationRemoteService, times(1)).register("username", "password", "email");
@@ -54,7 +46,7 @@ public class UserRegistrationEndpointTest {
                         "password", "password",
                         "email", "email")
                 .when()
-                .post("/registration")
+                .post("/users/registration")
                 .then()
                 .statusCode(409)
                 .contentType("text/plain")
@@ -75,7 +67,7 @@ public class UserRegistrationEndpointTest {
                         "password", "password",
                         "email", "email")
                 .when()
-                .post("/registration")
+                .post("/users/registration")
                 .then()
                 .statusCode(500)
                 .contentType("text/plain")

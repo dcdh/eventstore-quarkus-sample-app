@@ -8,8 +8,6 @@ import io.quarkus.security.identity.SecurityIdentity;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
@@ -34,12 +32,6 @@ public class TodoEndpointTest {
 
     @InjectMock
     SecurityIdentity securityIdentity;
-
-    @BeforeEach
-    @AfterEach
-    public void flush() {
-        reset(todoWriteRemoteService, todoQueryRemoteService);
-    }
 
     // create new todo
 

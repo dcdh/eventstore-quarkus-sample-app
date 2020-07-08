@@ -4,6 +4,8 @@ import com.damdamdeo.todo.publicfrontend.domain.user.AccessToken;
 import com.damdamdeo.todo.publicfrontend.domain.user.UsernameOrPasswordInvalidException;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import javax.inject.Inject;
 
@@ -16,12 +18,15 @@ public class KeycloakUserLoginRemoteServiceTest {
     @Inject
     KeycloakUserLoginRemoteService keycloakUserLoginRemoteService;
 
-    @Test
-    public void should_login() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {"damdamdeo/damdamdeo", "roger/roger"})
+    public void should_login(final String usernamePassorwd) throws Exception {
         // Given
+        final String username = usernamePassorwd.split("/")[0];
+        final String password = usernamePassorwd.split("/")[1];
 
         // When
-        final AccessToken accessToken = keycloakUserLoginRemoteService.login("damdamdeo", "damdamdeo");
+        final AccessToken accessToken = keycloakUserLoginRemoteService.login(username, password);
 
         // Then
         assertNotNull(accessToken.accessToken());

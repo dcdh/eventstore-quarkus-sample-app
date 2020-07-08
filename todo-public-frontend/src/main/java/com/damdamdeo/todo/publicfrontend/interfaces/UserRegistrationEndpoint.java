@@ -8,7 +8,7 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
-@Path("/registration")
+@Path("/users")
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "Registration")
 public class UserRegistrationEndpoint {
@@ -17,6 +17,7 @@ public class UserRegistrationEndpoint {
     UserRegistrationRemoteService userRegistrationRemoteService;
 
     @POST
+    @Path("/registration")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @NoCache
     public void register(@FormParam("username") final String username,
