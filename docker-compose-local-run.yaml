@@ -164,6 +164,7 @@ services:
     environment:
       - JAVA_OPTIONS=-Dtodo-write-api/mp-rest/url=http://todo-write-app:8080
         -Dtodo-query-api/mp-rest/url=http://todo-query-app:8080
+        -Dquarkus.oidc.auth-server-url=http://keycloak:8080/auth/realms/todos
         -Dkeycloak.admin.clientId=admin-cli
         -Dkeycloak.admin.username=keycloak
         -Dkeycloak.admin.password=keycloak
@@ -171,6 +172,7 @@ services:
     links:
       - todo-write-app
       - todo-query-app
+      - keycloak
 
   keycloak-db:
     image: debezium/postgres:11-alpine
