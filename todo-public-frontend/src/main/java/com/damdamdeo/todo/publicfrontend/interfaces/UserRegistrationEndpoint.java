@@ -19,9 +19,9 @@ public class UserRegistrationEndpoint {
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @NoCache
-    public void login(@FormParam("username") final String username,
-                      @FormParam("password") final String password,
-                      @FormParam("email") final String email) throws Exception {
+    public void register(@FormParam("username") final String username,
+                         @FormParam("password") final String password,
+                         @FormParam("email") final String email) throws Exception {
         this.userRegistrationRemoteService.register(username, password, email);
     }
 
