@@ -30,26 +30,29 @@ describe('TodoListComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create and get all todos at component initialization', (async () => {
-    await fixture.detectChanges();
-    expect(component).toBeTruthy();
-    expect(component.listTodoDTO).toEqual([{ todoId: 'todoId', description: 'lorem', todoStatus: 'IN_PROGRESS', canMarkTodoAsCompleted: false, version: 0 }]);
-    expect(todoServiceSpy.todosGet).toHaveBeenCalled();
-  }));
+  it('should create and get all todos at component initialization', () => {
+    fixture.whenStable().then(() => {
+      expect(component).toBeTruthy();
+      expect(component.listTodoDTO).toEqual([{ todoId: 'todoId', description: 'lorem', todoStatus: 'IN_PROGRESS', canMarkTodoAsCompleted: false, version: 0 }]);
+      expect(todoServiceSpy.todosGet).toHaveBeenCalled();
+    });
+  });
 
-  it('should create new todo call remote service', (async () => {
+  it('should create new todo call remote service', () => {
     // Given
     todoServiceSpy.todosCreateNewTodoPost.and.callFake(function() {
       return defer(() => Promise.resolve({ todoId: 'todoId2', description: 'ipsum', todoStatus: 'IN_PROGRESS', canMarkTodoAsCompleted: false, version: 0 }));
     });
 
     // When
-    await component.createNewTodo('ipsum');
+    component.createNewTodo('ipsum');
 
     // Then
-    expect(component.listTodoDTO).toEqual([{ todoId: 'todoId', description: 'lorem', todoStatus: 'IN_PROGRESS', canMarkTodoAsCompleted: false, version: 0 },
-      { todoId: 'todoId2', description: 'ipsum', todoStatus: 'IN_PROGRESS', canMarkTodoAsCompleted: false, version: 0 }]);
-    expect(todoServiceSpy.todosCreateNewTodoPost).toHaveBeenCalled();
-  }));
+    fixture.whenStable().then(() => {
+      expect(component.listTodoDTO).toEqual([{ todoId: 'todoId', description: 'lorem', todoStatus: 'IN_PROGRESS', canMarkTodoAsCompleted: false, version: 0 },
+        { todoId: 'todoId2', description: 'ipsum', todoStatus: 'IN_PROGRESS', canMarkTodoAsCompleted: false, version: 0 }]);
+      expect(todoServiceSpy.todosCreateNewTodoPost).toHaveBeenCalled();
+    });
+  });
 
 });

@@ -38,7 +38,7 @@ ng add @angular/material
 
 Start all applications `./build_and_run_all_app_local_app.sh`
 > todo-public-frontend should be accessible here http://0.0.0.0:8086/swagger-ui/
-> openapi.json `http://0.0.0.0:8086//openapi?format=json`
+> openapi.json `http://0.0.0.0:8086/openapi?format=json`
 
 In project root path install swagger-codegen to generate ts service from swagger
 > https://swagger.io/docs/open-source-tools/swagger-codegen/

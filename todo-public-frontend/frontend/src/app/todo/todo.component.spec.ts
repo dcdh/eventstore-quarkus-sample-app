@@ -39,19 +39,21 @@ describe('TodoComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should mark todo as completed call remote service and assign response to todo variable', (async () => {
+  it('should mark todo as completed call remote service and assign response to todo variable', () => {
     // Given
     todoServiceSpy.todosMarkTodoAsCompletedPost.and.callFake(function() {
       return defer(() => Promise.resolve({ todoId: 'todoId', description: 'lorem', todoStatus: 'COMPLETED', canMarkTodoAsCompleted: false, version: 1 }));
     });
 
     // When
-    await component.markTodoAsCompleted({ todoId: 'todoId', description: 'lorem', todoStatus: 'IN_PROGRESS', canMarkTodoAsCompleted: true, version: 0 });
+    component.markTodoAsCompleted({ todoId: 'todoId', description: 'lorem', todoStatus: 'IN_PROGRESS', canMarkTodoAsCompleted: true, version: 0 });
 
     // Then
-    expect(component.todo).toEqual({ todoId: 'todoId', description: 'lorem', todoStatus: 'COMPLETED', canMarkTodoAsCompleted: false, version: 1 });
-    expect(todoServiceSpy.todosMarkTodoAsCompletedPost).toHaveBeenCalled();
-  }));
+    fixture.whenStable().then(() => {
+      expect(component.todo).toEqual({ todoId: 'todoId', description: 'lorem', todoStatus: 'COMPLETED', canMarkTodoAsCompleted: false, version: 1 });
+      expect(todoServiceSpy.todosMarkTodoAsCompletedPost).toHaveBeenCalled();
+    });
+  });
 
   it('should button mark as completed be disabled if todo cannot be marked as completed', () => {
     // Given

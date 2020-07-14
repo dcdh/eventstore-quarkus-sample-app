@@ -4,6 +4,16 @@ ng generate component todo
 
 ng generate component todo-list
 
+ng generate component login
+
+ng g guard auth
+
+ng g service auth
+
+ng g service tokenInterceptor
+
+ng g component connected-user
+
 npm install --save rxjs-compat
 
 ## build production

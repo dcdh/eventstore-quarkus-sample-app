@@ -1,7 +1,5 @@
 <div>
-  <div>
-    <strong>Damien</strong>
-  </div>
+  <app-connected-user></app-connected-user>
   <input #newTodo placeholder="Create new todo"
          (keyup.enter)="createNewTodo(newTodo.value); newTodo.value='' ">
   <ul>
