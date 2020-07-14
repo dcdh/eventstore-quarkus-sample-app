@@ -4,7 +4,7 @@ import { TodoListComponent } from './todo-list/todo-list.component';
 import { LoginComponent } from './login/login.component';
 import { AuthGuard } from "./auth.guard";
 
-const routes: Routes = [
+export const routes: Routes = [
   {
     path: 'todos',
     component: TodoListComponent,
