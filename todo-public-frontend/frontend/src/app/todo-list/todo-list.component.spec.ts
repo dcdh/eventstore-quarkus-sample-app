@@ -30,15 +30,15 @@ describe('TodoListComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create and get all todos at component initialization', () => {
+  it('should create and get all todos at component initialization', async(() => {
     fixture.whenStable().then(() => {
       expect(component).toBeTruthy();
       expect(component.listTodoDTO).toEqual([{ todoId: 'todoId', description: 'lorem', todoStatus: 'IN_PROGRESS', canMarkTodoAsCompleted: false, version: 0 }]);
       expect(todoServiceSpy.todosGet).toHaveBeenCalled();
     });
-  });
+  }));
 
-  it('should create new todo call remote service', () => {
+  it('should create new todo call remote service', async(() => {
     // Given
     todoServiceSpy.todosCreateNewTodoPost.and.callFake(function() {
       return defer(() => Promise.resolve({ todoId: 'todoId2', description: 'ipsum', todoStatus: 'IN_PROGRESS', canMarkTodoAsCompleted: false, version: 0 }));
@@ -53,6 +53,6 @@ describe('TodoListComponent', () => {
         { todoId: 'todoId2', description: 'ipsum', todoStatus: 'IN_PROGRESS', canMarkTodoAsCompleted: false, version: 0 }]);
       expect(todoServiceSpy.todosCreateNewTodoPost).toHaveBeenCalled();
     });
-  });
+  }));
 
 });

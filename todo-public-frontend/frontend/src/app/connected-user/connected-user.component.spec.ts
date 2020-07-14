@@ -41,7 +41,7 @@ describe('ConnectedUserComponent', () => {
     })
   }));
 
-  it('should display username connected', () => {
+  it('should display username connected', async(() => {
     fixture.whenStable().then(() => {
       fixture.detectChanges();
 
@@ -49,7 +49,7 @@ describe('ConnectedUserComponent', () => {
       expect(usernameEl.innerText).toEqual('damdamdeo');
       expect(userServiceSpy.usersMeGet).toHaveBeenCalled();
     })
-  });
+  }));
 
 // TODO cas ou une exception est émise !!!
 });

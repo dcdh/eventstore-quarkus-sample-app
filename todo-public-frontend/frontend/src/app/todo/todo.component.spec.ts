@@ -39,7 +39,7 @@ describe('TodoComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should mark todo as completed call remote service and assign response to todo variable', () => {
+  it('should mark todo as completed call remote service and assign response to todo variable', async(() => {
     // Given
     todoServiceSpy.todosMarkTodoAsCompletedPost.and.callFake(function() {
       return defer(() => Promise.resolve({ todoId: 'todoId', description: 'lorem', todoStatus: 'COMPLETED', canMarkTodoAsCompleted: false, version: 1 }));
@@ -53,7 +53,7 @@ describe('TodoComponent', () => {
       expect(component.todo).toEqual({ todoId: 'todoId', description: 'lorem', todoStatus: 'COMPLETED', canMarkTodoAsCompleted: false, version: 1 });
       expect(todoServiceSpy.todosMarkTodoAsCompletedPost).toHaveBeenCalled();
     });
-  });
+  }));
 
   it('should button mark as completed be disabled if todo cannot be marked as completed', () => {
     // Given
