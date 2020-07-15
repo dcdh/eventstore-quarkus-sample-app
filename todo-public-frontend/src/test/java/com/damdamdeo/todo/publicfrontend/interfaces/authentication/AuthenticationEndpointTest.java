@@ -1,7 +1,7 @@
-package com.damdamdeo.todo.publicfrontend.interfaces;
+package com.damdamdeo.todo.publicfrontend.interfaces.authentication;
 
-import com.damdamdeo.todo.publicfrontend.domain.user.UserAuthenticationRemoteService;
-import com.damdamdeo.todo.publicfrontend.domain.user.UsernameOrPasswordInvalidException;
+import com.damdamdeo.todo.publicfrontend.domain.authentication.UserAuthenticationRemoteService;
+import com.damdamdeo.todo.publicfrontend.domain.authentication.UsernameOrPasswordInvalidException;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectSpy;
 import org.eclipse.microprofile.config.inject.ConfigProperty;

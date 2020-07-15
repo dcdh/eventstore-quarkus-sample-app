@@ -1,4 +1,4 @@
-package com.damdamdeo.todo.publicfrontend.infrastructure.user;
+package com.damdamdeo.todo.publicfrontend.infrastructure.authentication;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;

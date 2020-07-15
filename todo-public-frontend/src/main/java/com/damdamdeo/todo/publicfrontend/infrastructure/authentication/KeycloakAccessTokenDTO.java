@@ -1,6 +1,6 @@
-package com.damdamdeo.todo.publicfrontend.infrastructure.user;
+package com.damdamdeo.todo.publicfrontend.infrastructure.authentication;
 
-import com.damdamdeo.todo.publicfrontend.domain.user.AccessToken;
+import com.damdamdeo.todo.publicfrontend.domain.authentication.AccessToken;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import org.keycloak.representations.AccessTokenResponse;
 

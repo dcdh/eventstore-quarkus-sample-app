@@ -1,6 +1,6 @@
-package com.damdamdeo.todo.publicfrontend.interfaces;
+package com.damdamdeo.todo.publicfrontend.interfaces.authentication;
 
-import com.damdamdeo.todo.publicfrontend.domain.user.UsernameOrPasswordInvalidException;
+import com.damdamdeo.todo.publicfrontend.domain.authentication.UsernameOrPasswordInvalidException;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;

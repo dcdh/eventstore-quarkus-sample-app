@@ -1,6 +1,6 @@
-package com.damdamdeo.todo.publicfrontend.interfaces;
+package com.damdamdeo.todo.publicfrontend.interfaces.authentication;
 
-import com.damdamdeo.todo.publicfrontend.domain.user.RefreshTokenInvalidException;
+import com.damdamdeo.todo.publicfrontend.domain.authentication.RefreshTokenInvalidException;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;

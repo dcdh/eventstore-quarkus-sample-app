@@ -1,6 +1,5 @@
-package com.damdamdeo.todo.publicfrontend.infrastructure;
+package com.damdamdeo.todo.publicfrontend.infrastructure.authentication;
 
-import com.damdamdeo.todo.publicfrontend.infrastructure.user.KeycloakAccessTokenDTO;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 import javax.enterprise.context.ApplicationScoped;

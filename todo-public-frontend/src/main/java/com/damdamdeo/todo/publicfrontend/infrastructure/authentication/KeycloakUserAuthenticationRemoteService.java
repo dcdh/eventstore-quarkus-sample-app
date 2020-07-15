@@ -1,10 +1,9 @@
-package com.damdamdeo.todo.publicfrontend.infrastructure.user;
+package com.damdamdeo.todo.publicfrontend.infrastructure.authentication;
 
-import com.damdamdeo.todo.publicfrontend.domain.user.AccessToken;
-import com.damdamdeo.todo.publicfrontend.domain.user.RefreshTokenInvalidException;
-import com.damdamdeo.todo.publicfrontend.domain.user.UserAuthenticationRemoteService;
-import com.damdamdeo.todo.publicfrontend.domain.user.UsernameOrPasswordInvalidException;
-import com.damdamdeo.todo.publicfrontend.infrastructure.KeycloakClientRemoteService;
+import com.damdamdeo.todo.publicfrontend.domain.authentication.AccessToken;
+import com.damdamdeo.todo.publicfrontend.domain.authentication.RefreshTokenInvalidException;
+import com.damdamdeo.todo.publicfrontend.domain.authentication.UserAuthenticationRemoteService;
+import com.damdamdeo.todo.publicfrontend.domain.authentication.UsernameOrPasswordInvalidException;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
