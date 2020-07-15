@@ -1,6 +1,6 @@
 package com.damdamdeo.todo.publicfrontend.interfaces;
 
-import com.damdamdeo.todo.publicfrontend.domain.user.UserLoginRemoteService;
+import com.damdamdeo.todo.publicfrontend.domain.user.UserAuthenticationRemoteService;
 import com.damdamdeo.todo.publicfrontend.domain.user.UsernameOrPasswordInvalidException;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectSpy;
@@ -24,7 +24,7 @@ public class AuthenticationEndpointTest {
     String keyCloakServerAuthUrl;
 
     @InjectSpy
-    UserLoginRemoteService userLoginRemoteService;
+    UserAuthenticationRemoteService userAuthenticationRemoteService;
 
     @ParameterizedTest
     @ValueSource(strings = {"damdamdeo/damdamdeo", "roger/roger"})
@@ -38,21 +38,21 @@ public class AuthenticationEndpointTest {
                 .formParams("username", username,
                         "password", password)
                 .when()
-                .post("/users/login")
+                .post("/authentication/login")
                 .then()
                 .statusCode(200)
                 .body("accessToken", notNullValue())
                 .body("expiresIn", notNullValue())
                 .body("refreshToken", notNullValue())
                 .body("refreshExpiresIn", notNullValue());
-        verify(userLoginRemoteService, times(1)).login(username, password);
-        verifyNoMoreInteractions(userLoginRemoteService);
+        verify(userAuthenticationRemoteService, times(1)).login(username, password);
+        verifyNoMoreInteractions(userAuthenticationRemoteService);
     }
 
     @Test
     public void should_return_expected_response_when_logging_using_a_wrong_username_or_password() throws Exception {
         // Given
-        doThrow(new UsernameOrPasswordInvalidException()).when(userLoginRemoteService).login(any(), any());
+        doThrow(new UsernameOrPasswordInvalidException()).when(userAuthenticationRemoteService).login(any(), any());
 
         // When && Then
         given()
@@ -60,19 +60,19 @@ public class AuthenticationEndpointTest {
                         "password", "password",
                         "email", "email")
                 .when()
-                .post("/users/login")
+                .post("/authentication/login")
                 .then()
                 .statusCode(401)
                 .contentType("text/plain")
                 .body(Matchers.equalTo("Username or password invalid"));
-        verify(userLoginRemoteService, times(1)).login(any(), any());
-        verifyNoMoreInteractions(userLoginRemoteService);
+        verify(userAuthenticationRemoteService, times(1)).login(any(), any());
+        verifyNoMoreInteractions(userAuthenticationRemoteService);
     }
 
     @Test
     public void should_get_anonymous_user() {
         given()
-                .get("/users/me")
+                .get("/authentication/me")
                 .then()
                 .log().all()
                 .statusCode(200)
@@ -89,7 +89,7 @@ public class AuthenticationEndpointTest {
                 .formParams("username", username,
                         "password", password)
                 .when()
-                .post("/users/login")
+                .post("/authentication/login")
                 .then()
                 .statusCode(200)
                 .extract()
@@ -98,13 +98,51 @@ public class AuthenticationEndpointTest {
         // When && Then
         given()
                 .header("Authorization", "Bearer " + accessToken)
-                .when().get("/users/me")
+                .when().get("/authentication/me")
                 .then()
                 .log().all()
                 .statusCode(200)
                 .body("anonymous", equalTo(Boolean.FALSE))
                 .body("roles", containsInAnyOrder("frontend-user"))
                 .body("userName", equalTo(username));
+    }
+
+    @Test
+    public void should_refresh_token() {
+        // Given
+        final String refreshToken = given()
+                .formParams("username", "damdamdeo",
+                        "password", "damdamdeo")
+                .when()
+                .post("/authentication/login")
+                .then()
+                .statusCode(200)
+                .extract()
+                .path("refreshToken");
+
+        // When && Then
+        given()
+                .formParams("refreshToken", refreshToken)
+                .when().post("/authentication/refresh-token")
+                .then()
+                .log().all()
+                .statusCode(200)
+                .body("accessToken", notNullValue())
+                .body("expiresIn", notNullValue())
+                .body("refreshToken", notNullValue())
+                .body("refreshExpiresIn", notNullValue());
+    }
+
+    @Test
+    public void should_return_expected_response_when_refreshing_token_using_an_invalid_refresh_token() throws Exception {
+        given()
+                .formParams("refreshToken", "invalidRefreshToken")
+                .when().post("/authentication/refresh-token")
+                .then()
+                .log().all()
+                .statusCode(400)
+                .contentType("text/plain")
+                .body(Matchers.equalTo("Refresh token invalid"));
     }
 
 }

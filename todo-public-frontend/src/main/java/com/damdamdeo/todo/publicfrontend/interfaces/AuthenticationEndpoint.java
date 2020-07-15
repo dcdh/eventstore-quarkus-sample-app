@@ -1,7 +1,8 @@
 package com.damdamdeo.todo.publicfrontend.interfaces;
 
 import com.damdamdeo.todo.publicfrontend.domain.user.AccessToken;
-import com.damdamdeo.todo.publicfrontend.domain.user.UserLoginRemoteService;
+import com.damdamdeo.todo.publicfrontend.domain.user.RefreshTokenInvalidException;
+import com.damdamdeo.todo.publicfrontend.domain.user.UserAuthenticationRemoteService;
 import com.damdamdeo.todo.publicfrontend.domain.user.UsernameOrPasswordInvalidException;
 import io.quarkus.security.identity.SecurityIdentity;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
@@ -14,7 +15,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-@Path("/users")
+@Path("/authentication")
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "User")
 public class AuthenticationEndpoint {
@@ -23,7 +24,7 @@ public class AuthenticationEndpoint {
     SecurityIdentity keycloakSecurityContext;
 
     @Inject
-    UserLoginRemoteService userLoginRemoteService;
+    UserAuthenticationRemoteService userAuthenticationRemoteService;
 
     @GET
     @Path("/me")
@@ -38,8 +39,16 @@ public class AuthenticationEndpoint {
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @NoCache
     public AccessTokenDto login(@FormParam("username") final String username,
-                      @FormParam("password") final String password) throws UsernameOrPasswordInvalidException {
-        return new AccessTokenDto(userLoginRemoteService.login(username, password));
+                                @FormParam("password") final String password) throws UsernameOrPasswordInvalidException {
+        return new AccessTokenDto(userAuthenticationRemoteService.login(username, password));
+    }
+
+    @POST
+    @Path("/refresh-token")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @NoCache
+    public AccessTokenDto renewToken(@FormParam("refreshToken") final String refreshToken) throws RefreshTokenInvalidException {
+        return new AccessTokenDto(userAuthenticationRemoteService.refreshToken(refreshToken));
     }
 
     public static final class AccessTokenDto {

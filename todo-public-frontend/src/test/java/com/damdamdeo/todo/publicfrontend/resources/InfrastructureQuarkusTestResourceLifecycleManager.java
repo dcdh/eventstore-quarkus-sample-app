@@ -201,6 +201,8 @@ public class InfrastructureQuarkusTestResourceLifecycleManager implements Quarku
 
         System.setProperty("todo-write-api/mp-rest/url", "http://localhost:" + todoWriteAppContainer.getMappedPort(8080));
         System.setProperty("todo-query-api/mp-rest/url", "http://localhost:" + todoQueryAppContainer.getMappedPort(8080));
+        System.setProperty("keycloak-api/mp-rest/url",
+                String.format("http://localhost:%d/auth/realms/todos", keycloakContainer.getMappedPort(8080)));
 
         System.setProperty("quarkus.oidc.auth-server-url",
                 String.format("http://localhost:%d/auth/realms/todos", keycloakContainer.getMappedPort(8080)));
