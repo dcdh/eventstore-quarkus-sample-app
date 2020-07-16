@@ -1,6 +1,7 @@
 package com.damdamdeo.todo.publicfrontend.infrastructure.user;
 
 import com.damdamdeo.todo.publicfrontend.domain.user.UnexpectedException;
+import com.damdamdeo.todo.publicfrontend.domain.user.UnknownUserException;
 import com.damdamdeo.todo.publicfrontend.domain.user.UsernameOrEmailAlreadyUsedException;
 import com.damdamdeo.todo.publicfrontend.domain.user.UserRegistrationRemoteService;
 
@@ -106,6 +107,26 @@ public class KeycloakUserRegistrationRemoteService implements UserRegistrationRe
                 // TODO enrich but first I have to find a case ... if there are ...
                 throw new UnexpectedException(response.getStatus());
         }
+    }
+
+    @Override
+    public void resetPassword(final String email, final String newPassword) throws UnknownUserException {
+        final String userId = keycloak.realm(userRealm)
+                .users()
+                .search(email, null, null)
+                .stream()
+                .filter(userRepresentation -> email.equals(userRepresentation.getEmail()))
+                .map(UserRepresentation::getId)
+                .findFirst()
+                .orElseThrow(() -> new UnknownUserException(email));
+        final CredentialRepresentation credentialRepresentation = new CredentialRepresentation();
+        credentialRepresentation.setTemporary(false);
+        credentialRepresentation.setType(CredentialRepresentation.PASSWORD);
+        credentialRepresentation.setValue(newPassword);
+        Failsafe.with(retryPolicy).run(() -> keycloak.realm(userRealm)
+                .users()
+                .get(userId)
+                .resetPassword(credentialRepresentation));
     }
 
 }

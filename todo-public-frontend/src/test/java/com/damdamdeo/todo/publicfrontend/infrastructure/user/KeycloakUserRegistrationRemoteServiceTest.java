@@ -1,7 +1,7 @@
 package com.damdamdeo.todo.publicfrontend.infrastructure.user;
 
+import com.damdamdeo.todo.publicfrontend.domain.user.UnknownUserException;
 import com.damdamdeo.todo.publicfrontend.domain.user.UsernameOrEmailAlreadyUsedException;
-import com.damdamdeo.todo.publicfrontend.infrastructure.user.KeycloakUserRegistrationRemoteService;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
 import org.apache.commons.lang3.Validate;
@@ -99,6 +99,41 @@ public class KeycloakUserRegistrationRemoteServiceTest {
         });
         assertEquals(secondUsername, usernameOrEmailAlreadyUsedException.username());
         assertEquals(sameEmail, usernameOrEmailAlreadyUsedException.email());
+    }
+
+    @Test
+    public void should_reset_password() throws Exception {
+        // Given
+        final String generatedUser = UUID.randomUUID().toString();
+        final String email = String.format("%s@test", generatedUser);
+        keycloakUserAuthenticationRemoteService.register(generatedUser, "password", email);
+
+        // When
+        keycloakUserAuthenticationRemoteService.resetPassword(email, "newPassword");
+
+        // Then
+        RestAssured
+                .given()
+                .param("grant_type", "password")
+                .param("username", generatedUser)
+                .param("password", "newPassword")
+                .param("client_id", "todo-public-frontend-service")
+                .param("client_secret", "secret")
+                .when()
+                .post(keyCloakServerAuthUrl + "/protocol/openid-connect/token")
+                .then()
+                .statusCode(200);
+    }
+
+    @Test
+    public void should_throw_exception_when_resetting_unknown_user() {
+        // Given
+
+        // When && Then
+        final UnknownUserException unknownUserException = assertThrows(UnknownUserException.class, () -> {
+            keycloakUserAuthenticationRemoteService.resetPassword("unknownEmail", "newPassword");
+        });
+        assertEquals("unknownEmail", unknownUserException.email());
     }
 
 }
