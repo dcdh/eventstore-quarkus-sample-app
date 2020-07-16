@@ -11,6 +11,7 @@ import com.damdamdeo.todo.domain.api.TodoAlreadyExistentException;
 import com.damdamdeo.todo.domain.api.TodoAlreadyMarkedAsCompletedException;
 import com.damdamdeo.todo.domain.api.TodoStatus;
 import com.jayway.restassured.module.jsv.JsonSchemaValidator;
+import io.quarkus.security.identity.SecurityIdentity;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
 import org.hamcrest.Matchers;
@@ -32,9 +33,13 @@ public class TodoEndpointTest {
     @InjectMock
     MarkTodoAsCompletedCommandHandler markTodoAsCompletedCommandHandler;
 
+    @InjectMock
+    SecurityIdentity securityIdentity;
+
     @Test
     public void should_api_creates_new_todo() throws Throwable {
         // Given
+        doReturn(Boolean.TRUE).when(securityIdentity).hasRole("frontend-user");
         final TodoAggregateRoot todoAggregateRoot = mock(TodoAggregateRoot.class);
         doReturn("todoId").when(todoAggregateRoot).todoId();
         doReturn("lorem ipsum").when(todoAggregateRoot).description();
@@ -59,18 +64,38 @@ public class TodoEndpointTest {
                 .body("canMarkTodoAsCompleted", equalTo(true))
         ;
 
+        verify(securityIdentity, times(1)).hasRole(anyString());
         verify(createNewTodoCommandHandler, times(1)).execute(any(CreateNewTodoCommand.class));
         verify(todoAggregateRoot, times(1)).todoId();
         verify(todoAggregateRoot, times(1)).description();
         verify(todoAggregateRoot, times(2)).todoStatus();
         verify(todoAggregateRoot, times(1)).version();
         verify(todoAggregateRoot, times(1)).canMarkTodoAsCompletedSpecification();
-        verifyNoMoreInteractions(createNewTodoCommandHandler, markTodoAsCompletedCommandHandler, todoAggregateRoot);
+        verifyNoMoreInteractions(createNewTodoCommandHandler, markTodoAsCompletedCommandHandler, todoAggregateRoot, securityIdentity);
+    }
+
+    @Test
+    public void should_not_be_authorized_to_create_new_todo_when_user_is_not_authenticated() {
+        // Given
+        doReturn(Boolean.TRUE).when(securityIdentity).isAnonymous();
+
+        // When && Then
+        given()
+                .param("description", "lorem ipsum")
+                .when()
+                .post("/todos/createNewTodo")
+                .then()
+                .statusCode(401);
+
+        verify(securityIdentity, times(1)).hasRole(anyString());
+        verify(securityIdentity, times(1)).isAnonymous();
+        verifyNoMoreInteractions(securityIdentity);
     }
 
     @Test
     public void should_api_fails_when_creating_an_already_existent_todo() throws Throwable {
         // Given
+        doReturn(Boolean.TRUE).when(securityIdentity).hasRole("frontend-user");
         final Todo todo = mock(Todo.class);
         doReturn("todoId").when(todo).todoId();
         doThrow(new TodoAlreadyExistentException(todo))
@@ -86,14 +111,16 @@ public class TodoEndpointTest {
                 .statusCode(409)
                 .contentType(MediaType.TEXT_PLAIN)
                 .body(Matchers.equalTo("Le todoId 'todoId' est déjà existant."));
+        verify(securityIdentity, times(1)).hasRole(anyString());
         verify(createNewTodoCommandHandler, times(1)).execute(any(CreateNewTodoCommand.class));
         verify(todo, times(1)).todoId();
-        verifyNoMoreInteractions(createNewTodoCommandHandler, markTodoAsCompletedCommandHandler, todo);
+        verifyNoMoreInteractions(createNewTodoCommandHandler, markTodoAsCompletedCommandHandler, todo, securityIdentity);
     }
 
     @Test
     public void should_api_mark_todo_as_completed() throws Throwable {
         // Given
+        doReturn(Boolean.TRUE).when(securityIdentity).hasRole("frontend-user");
         final TodoAggregateRoot todoAggregateRoot = mock(TodoAggregateRoot.class);
         doReturn("todoId").when(todoAggregateRoot).todoId();
         doReturn("lorem ipsum").when(todoAggregateRoot).description();
@@ -118,18 +145,38 @@ public class TodoEndpointTest {
                 .body("canMarkTodoAsCompleted", equalTo(false))
         ;
 
+        verify(securityIdentity, times(1)).hasRole(anyString());
         verify(markTodoAsCompletedCommandHandler, times(1)).execute(any(MarkTodoAsCompletedCommand.class));
         verify(todoAggregateRoot, times(1)).todoId();
         verify(todoAggregateRoot, times(1)).description();
         verify(todoAggregateRoot, times(2)).todoStatus();
         verify(todoAggregateRoot, times(1)).version();
         verify(todoAggregateRoot, times(1)).canMarkTodoAsCompletedSpecification();
-        verifyNoMoreInteractions(createNewTodoCommandHandler, markTodoAsCompletedCommandHandler, todoAggregateRoot);
+        verifyNoMoreInteractions(createNewTodoCommandHandler, markTodoAsCompletedCommandHandler, todoAggregateRoot, securityIdentity);
+    }
+
+    @Test
+    public void should_not_be_authorized_to_mark_todo_as_completed_when_user_has_not_the_role_frontend_user() {
+        // Given
+        doReturn(Boolean.FALSE).when(securityIdentity).hasRole("frontend-user");
+
+        // When && Then
+        given()
+                .param("todoId", "todoId")
+                .when()
+                .post("/todos/markTodoAsCompleted")
+                .then()
+                .statusCode(403);
+
+        verify(securityIdentity, times(1)).hasRole(anyString());
+        verify(securityIdentity, times(1)).isAnonymous();
+        verifyNoMoreInteractions(securityIdentity);
     }
 
     @Test
     public void should_api_fails_when_marking_as_completed_an_unknown_todo() throws Throwable {
         // Given
+        doReturn(Boolean.TRUE).when(securityIdentity).hasRole("frontend-user");
         doThrow(new UnknownAggregateRootException("todoId"))
                 .when(markTodoAsCompletedCommandHandler)
                 .execute(any(MarkTodoAsCompletedCommand.class));
@@ -143,13 +190,15 @@ public class TodoEndpointTest {
                 .statusCode(404)
                 .contentType(MediaType.TEXT_PLAIN)
                 .body(Matchers.equalTo("Le todoId 'todoId' est inconnu."));
+        verify(securityIdentity, times(1)).hasRole(anyString());
         verify(markTodoAsCompletedCommandHandler, times(1)).execute(any(MarkTodoAsCompletedCommand.class));
-        verifyNoMoreInteractions(createNewTodoCommandHandler, markTodoAsCompletedCommandHandler);
+        verifyNoMoreInteractions(createNewTodoCommandHandler, markTodoAsCompletedCommandHandler, securityIdentity);
     }
 
     @Test
     public void should_api_fails_when_mark_todo_already_completed_as_completed() throws Throwable {
         // Given
+        doReturn(Boolean.TRUE).when(securityIdentity).hasRole("frontend-user");
         final Todo todo = mock(Todo.class);
         doReturn("todoId").when(todo).todoId();
         doThrow(new TodoAlreadyMarkedAsCompletedException(todo))
@@ -165,9 +214,10 @@ public class TodoEndpointTest {
                 .statusCode(409)
                 .contentType(MediaType.TEXT_PLAIN)
                 .body(Matchers.equalTo("Le todo 'todoId' est déjà complété."));
+        verify(securityIdentity, times(1)).hasRole(anyString());
         verify(markTodoAsCompletedCommandHandler, times(1)).execute(any(MarkTodoAsCompletedCommand.class));
         verify(todo, times(1)).todoId();
-        verifyNoMoreInteractions(createNewTodoCommandHandler, todo, markTodoAsCompletedCommandHandler);
+        verifyNoMoreInteractions(createNewTodoCommandHandler, todo, markTodoAsCompletedCommandHandler, securityIdentity);
     }
 
 }

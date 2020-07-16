@@ -234,7 +234,7 @@
       } ],
       "security-admin-console" : [ ],
       "admin-cli" : [ ],
-      "todo-public-frontend-service" : [ ],
+      "todo-platform" : [ ],
       "account-console" : [ ],
       "broker" : [ {
         "id" : "da0d80c8-d60c-4691-a387-0eb60b38c620",
@@ -589,7 +589,7 @@
     "optionalClientScopes" : [ "address", "phone", "offline_access", "microprofile-jwt" ]
   }, {
     "id" : "c1d9f81b-faee-4ce3-aa4e-24f3ffced0cc",
-    "clientId" : "todo-public-frontend-service",
+    "clientId" : "todo-platform",
     "surrogateAuthRequired" : false,
     "enabled" : true,
     "alwaysDisplayInConsole" : false,

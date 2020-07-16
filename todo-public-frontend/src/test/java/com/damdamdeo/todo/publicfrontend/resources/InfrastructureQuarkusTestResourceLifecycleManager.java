@@ -66,6 +66,7 @@ public class InfrastructureQuarkusTestResourceLifecycleManager implements Quarku
                 .withEnv("DB_USER", "keycloak")
                 .withEnv("DB_PASSWORD", "keycloak")
                 .withNetwork(network)
+                .withNetworkAliases("keycloak")
                 .dependsOn(postgresKeycloakContainer)
                 .waitingFor(
                         Wait.forLogMessage(".*Started authorizationRevisions.*\\n", 1)
@@ -114,7 +115,7 @@ public class InfrastructureQuarkusTestResourceLifecycleManager implements Quarku
                 .withNetwork(network)
                 .withNetworkAliases("kafka");
         kafkaContainer.start();
-        kafkaContainer.followOutput(logConsumer);
+//        kafkaContainer.followOutput(logConsumer);
 
         debeziumContainer = new DebeziumContainer("debezium/connect:1.2.0.Final")
                 .withNetwork(network)
@@ -122,7 +123,7 @@ public class InfrastructureQuarkusTestResourceLifecycleManager implements Quarku
                 .withKafka(kafkaContainer)
                 .dependsOn(kafkaContainer);
         debeziumContainer.start();
-        debeziumContainer.followOutput(logConsumer);
+//        debeziumContainer.followOutput(logConsumer);
 
         todoQueryAppContainer = new GenericContainer("damdamdeo/todo-query-app:latest")
                 .withExposedPorts(8080)
@@ -136,7 +137,8 @@ public class InfrastructureQuarkusTestResourceLifecycleManager implements Quarku
                         "-Dquarkus.datasource.secret-store.password=" + postgresSecretStoreContainer.getPassword(),
                         "-Dquarkus.datasource.consumed-events.jdbc.url=jdbc:postgresql://todo-query:5432/todo-query",
                         "-Dquarkus.datasource.consumed-events.username=" + postgresQueryContainer.getUsername(),
-                        "-Dquarkus.datasource.consumed-events.password=" + postgresQueryContainer.getPassword()
+                        "-Dquarkus.datasource.consumed-events.password=" + postgresQueryContainer.getPassword(),
+                        "-Dquarkus.oidc.auth-server-url=http://keycloak:8080/auth/realms/todos"
                 ).collect(Collectors.joining(" ")))
                 .withNetwork(network)
                 .dependsOn(kafkaContainer, debeziumContainer, postgresSecretStoreContainer, postgresQueryContainer)
@@ -168,7 +170,8 @@ public class InfrastructureQuarkusTestResourceLifecycleManager implements Quarku
                         "-Dconnector.mutable.database.password=" + postgresMutableContainer.getPassword(),
                         "-Dconnector.mutable.database.port=5432",
                         "-Dconnector.mutable.database.dbname=mutable",
-                        "-Dslot.drop.on.stop=true"
+                        "-Dslot.drop.on.stop=true",
+                        "-Dquarkus.oidc.auth-server-url=http://keycloak:8080/auth/realms/todos"
                 ).collect(Collectors.joining(" ")))
                 .withNetwork(network)
                 .dependsOn(kafkaContainer, debeziumContainer, postgresSecretStoreContainer, postgresMutableContainer)

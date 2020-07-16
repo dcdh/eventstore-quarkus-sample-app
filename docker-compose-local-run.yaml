@@ -106,12 +106,14 @@ services:
         -Dconnector.mutable.database.password=postgrespassword
         -Dconnector.mutable.database.port=5432
         -Dconnector.mutable.database.dbname=mutable
+        -Dquarkus.oidc.auth-server-url=http://keycloak:8080/auth/realms/todos
     links:
       - zookeeper
       - kafka
       - connect
       - mutable
       - secret-store
+      - keycloak
 
   todo-query-app:
     image: damdamdeo/todo-query-app:latest
@@ -129,12 +131,14 @@ services:
         -Dquarkus.datasource.consumed-events.jdbc.url=jdbc:postgresql://todo-query:5432/todo-query
         -Dquarkus.datasource.consumed-events.username=postgres
         -Dquarkus.datasource.consumed-events.password=postgres
+        -Dquarkus.oidc.auth-server-url=http://keycloak:8080/auth/realms/todos
     links:
       - zookeeper
       - kafka
       - connect
       - todo-query
       - secret-store
+      - keycloak
 
   todo-email-notifier-app:
     image: damdamdeo/todo-email-notifier-app:latest

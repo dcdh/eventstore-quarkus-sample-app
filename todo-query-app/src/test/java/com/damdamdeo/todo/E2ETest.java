@@ -7,10 +7,13 @@ import com.jayway.restassured.module.jsv.JsonSchemaValidator;
 import io.agroal.api.AgroalDataSource;
 import io.quarkus.agroal.DataSource;
 import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.RestAssured;
 import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.query.AuditEntity;
 import org.junit.jupiter.api.*;
+import org.keycloak.representations.AccessTokenResponse;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -47,6 +50,12 @@ public class E2ETest {
     @DataSource("consumed-events")
     AgroalDataSource consumedEventsDataSource;
 
+    private static final String USERNAME_TO_CONNECT_WITH = "damdamdeo";
+    private static final String USERNAME_PASSWORD = "damdamdeo";
+
+    @ConfigProperty(name = "quarkus.oidc.auth-server-url")
+    String keyCloakServerAuthUrl;
+
     @BeforeEach
     @Transactional
     public void setup() {
@@ -79,6 +88,7 @@ public class E2ETest {
         kafkaDebeziumProducer.produce("TodoCreatedEvent.json");
         await().atMost(2, TimeUnit.SECONDS).until(() ->
                 given()
+                    .auth().oauth2(getAccessToken())
                     .get("/todos/todoId")
                     .then().log().all()
                     .extract()
@@ -87,6 +97,7 @@ public class E2ETest {
 
         // Then
         given()
+                .auth().oauth2(getAccessToken())
                 .get("/todos/todoId")
                 .then()
                 .statusCode(200)
@@ -101,6 +112,7 @@ public class E2ETest {
         kafkaDebeziumProducer.produce("TodoMarkedAsCompletedEvent.json");
         await().atMost(2, TimeUnit.SECONDS).until(() ->
                 given()
+                        .auth().oauth2(getAccessToken())
                         .get("/todos/todoId")
                         .then().log().all()
                         .extract()
@@ -109,6 +121,7 @@ public class E2ETest {
 
         // Then
         given()
+                .auth().oauth2(getAccessToken())
                 .get("/todos/todoId")
                 .then()
                 .statusCode(200)
@@ -120,6 +133,7 @@ public class E2ETest {
                 .body("version", equalTo(1));
 
         given()
+                .auth().oauth2(getAccessToken())
                 .get("/todos")
                 .then()
                 .log().all()
@@ -140,6 +154,19 @@ public class E2ETest {
 
         assertTrue(EqualsBuilder.reflectionEquals(new TodoEntity("todoId", "lorem ipsum", TodoStatus.IN_PROGRESS, 0l), todos.get(0)));
         assertTrue(EqualsBuilder.reflectionEquals(new TodoEntity("todoId", "lorem ipsum", TodoStatus.COMPLETED, 1l), todos.get(1)));
+    }
+
+    private String getAccessToken() {
+        return RestAssured
+                .given()
+                .param("grant_type", "password")
+                .param("username", USERNAME_TO_CONNECT_WITH)
+                .param("password", USERNAME_PASSWORD)
+                .param("client_id", "todo-platform")
+                .param("client_secret", "secret")
+                .when()
+                .post(keyCloakServerAuthUrl + "/protocol/openid-connect/token")
+                .as(AccessTokenResponse.class).getToken();
     }
 
 }

@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -21,11 +22,11 @@ public interface TodoQueryRemoteService {
     @GET
     @Path("/todos")
     @Produces(MediaType.APPLICATION_JSON)
-    List<TodoDTO> getAllTodos();
+    List<TodoDTO> getAllTodos(@HeaderParam("Authorization") String bearer);
 
     @GET
     @Path("/todos/{todoId}")
     @Produces(MediaType.APPLICATION_JSON)
-    TodoDTO getTodoByTodoId(@PathParam("todoId") String todoId);
+    TodoDTO getTodoByTodoId(@HeaderParam("Authorization") String bearer, @PathParam("todoId") String todoId);
 
 }

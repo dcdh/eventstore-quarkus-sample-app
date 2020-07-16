@@ -3,6 +3,7 @@ package com.damdamdeo.todo.interfaces;
 import com.damdamdeo.todo.domain.TodoRepository;
 import com.damdamdeo.todo.domain.api.UnknownTodoException;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -22,6 +23,7 @@ public class TodoEndpoint {
         this.todoRepository = todoRepository;
     }
 
+    @RolesAllowed("frontend-user")
     @GET
     @Path("/{todoId}")
     public TodoDTO getTodo(@PathParam("todoId") final String todoId) {
@@ -30,6 +32,7 @@ public class TodoEndpoint {
                 .orElseThrow(() -> new UnknownTodoException(todoId));
     }
 
+    @RolesAllowed("frontend-user")
     @GET
     public List<TodoDTO> listAllTodos() {
         return todoRepository.fetchAll()

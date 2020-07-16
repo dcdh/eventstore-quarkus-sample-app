@@ -36,7 +36,7 @@ public class E2ETest extends AbstractTodoTest {
                 .log().all()
                 .post("/todos/createNewTodo")
                 .then().log().all()
-                .statusCode(401);
+                .statusCode(403);
     }
 
     @Test
@@ -46,7 +46,7 @@ public class E2ETest extends AbstractTodoTest {
                 .when()
                 .post("/todos/markTodoAsCompleted")
                 .then().log().all()
-                .statusCode(401);
+                .statusCode(403);
     }
 
     @Test
@@ -55,7 +55,7 @@ public class E2ETest extends AbstractTodoTest {
                 .when()
                 .get(String.format("/todos/osef"))
                 .then().log().all()
-                .statusCode(401);
+                .statusCode(403);
     }
 
     @Test
@@ -64,7 +64,7 @@ public class E2ETest extends AbstractTodoTest {
                 .get("/todos")
                 .then()
                 .log().all()
-                .statusCode(401);
+                .statusCode(403);
     }
 
     @Test
@@ -162,7 +162,7 @@ public class E2ETest extends AbstractTodoTest {
                 .param("grant_type", "password")
                 .param("username", USERNAME_TO_CONNECT_WITH)
                 .param("password", USERNAME_PASSWORD)
-                .param("client_id", "todo-public-frontend-service")
+                .param("client_id", "todo-platform")
                 .param("client_secret", "secret")
                 .when()
                 .post(keyCloakServerAuthUrl + "/protocol/openid-connect/token")

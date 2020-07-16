@@ -8,6 +8,9 @@ docker volume prune -f
 docker network prune -f
 export TESTCONTAINERS_RYUK_DISABLED=true
 
+### build custom version of keycloak having specific realm and users
+docker build -f todo-keycloak/Dockerfile -t damdamdeo/todo-keycloak:latest todo-keycloak
+
 ### build todo-write-app
 mvn -f pom.xml clean install -pl todo-domain-api,todo-write-app || { echo 'build todo-write-app failed' ; exit 1; }
 docker build -f todo-write-app/src/main/docker/Dockerfile.jvm -t damdamdeo/todo-write-app:latest todo-write-app
@@ -19,9 +22,6 @@ docker build -f todo-query-app/src/main/docker/Dockerfile.jvm -t damdamdeo/todo-
 ### build todo-email-notifier-app
 mvn -f pom.xml clean install -pl todo-domain-api,todo-email-notifier-app || { echo 'build todo-email-notifier-app failed' ; exit 1; }
 docker build -f todo-email-notifier-app/src/main/docker/Dockerfile.jvm -t damdamdeo/todo-email-notifier-app:latest todo-email-notifier-app
-
-### build custom version of keycloak having specific realm and users
-docker build -f todo-keycloak/Dockerfile -t damdamdeo/todo-keycloak:latest todo-keycloak
 
 ### build todo-public-frontend-app
 mvn -f pom.xml clean install -pl todo-public-frontend || { echo 'build failed' ; exit 1; }

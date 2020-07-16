@@ -5,6 +5,7 @@ import com.damdamdeo.todo.command.MarkTodoAsCompletedCommand;
 import com.damdamdeo.todo.command.handler.CreateNewTodoCommandHandler;
 import com.damdamdeo.todo.command.handler.MarkTodoAsCompletedCommandHandler;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.Objects;
@@ -23,6 +24,7 @@ public class TodoEndpoint {
         this.markTodoAsCompletedCommandHandler = Objects.requireNonNull(markTodoAsCompletedCommandHandler);
     }
 
+    @RolesAllowed("frontend-user")
     @POST
     @Path("/createNewTodo")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -31,6 +33,7 @@ public class TodoEndpoint {
         return new TodoDTO(createNewTodoCommandHandler.execute(new CreateNewTodoCommand(description)));
     }
 
+    @RolesAllowed("frontend-user")
     @POST
     @Path("/markTodoAsCompleted")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)

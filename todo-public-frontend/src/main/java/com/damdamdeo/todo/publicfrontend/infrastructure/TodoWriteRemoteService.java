@@ -16,12 +16,14 @@ public interface TodoWriteRemoteService {
     @Path("/todos/createNewTodo")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
-    TodoDTO createNewTodo(@FormParam("description") String description);
+    TodoDTO createNewTodo(@HeaderParam("Authorization") String bearer,
+                          @FormParam("description") String description);
 
     @POST
     @Path("/todos/markTodoAsCompleted")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
-    TodoDTO markTodoAsCompleted(@FormParam("todoId") String todoId);
+    TodoDTO markTodoAsCompleted(@HeaderParam("Authorization") String bearer,
+                                @FormParam("todoId") String todoId);
 
 }

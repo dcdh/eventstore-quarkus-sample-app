@@ -2,10 +2,10 @@ package com.damdamdeo.todo.publicfrontend.interfaces;
 
 import com.damdamdeo.todo.publicfrontend.infrastructure.TodoQueryRemoteService;
 import com.damdamdeo.todo.publicfrontend.infrastructure.TodoWriteRemoteService;
+import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
-import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -21,6 +21,9 @@ public class TodoEndpoint {
     // But we could also define message error from remote services. And to do that remote services should provide context variables as json in response.
 
     @Inject
+    JsonWebToken jwt;
+
+    @Inject
     @RestClient
     TodoWriteRemoteService todoWriteRemoteService;
 
@@ -28,35 +31,31 @@ public class TodoEndpoint {
     @RestClient
     TodoQueryRemoteService todoQueryRemoteService;
 
-    @RolesAllowed("frontend-user")
     @POST
     @Path("/createNewTodo")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public TodoDTO createNewTodo(@FormParam("description") final String description) throws Throwable {
-        return todoWriteRemoteService.createNewTodo(description);
+        return todoWriteRemoteService.createNewTodo("bearer " + jwt.getRawToken(), description);
     }
 
-    @RolesAllowed("frontend-user")
     @POST
     @Path("/markTodoAsCompleted")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public TodoDTO markTodoAsCompletedCommand(@FormParam("todoId") final String todoId) throws Throwable {
-        return todoWriteRemoteService.markTodoAsCompleted(todoId);
+        return todoWriteRemoteService.markTodoAsCompleted("bearer " + jwt.getRawToken(), todoId);
     }
 
-    @RolesAllowed("frontend-user")
     @GET
     @Path("/{todoId}")
     public TodoDTO getTodo(@PathParam("todoId") final String todoId) {
-        return todoQueryRemoteService.getTodoByTodoId(todoId);
+        return todoQueryRemoteService.getTodoByTodoId("bearer " + jwt.getRawToken(), todoId);
     }
 
-    @RolesAllowed("frontend-user")
     @GET
     public List<TodoDTO> listAllTodos() {
-        return todoQueryRemoteService.getAllTodos();
+        return todoQueryRemoteService.getAllTodos("bearer " + jwt.getRawToken());
     }
 
 }
