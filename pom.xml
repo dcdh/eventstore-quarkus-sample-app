@@ -16,7 +16,6 @@
     </properties>
 
     <modules>
-        <module>e2e</module>
         <module>todo-write-app</module>
         <module>todo-query-app</module>
         <module>todo-email-notifier-app</module>
