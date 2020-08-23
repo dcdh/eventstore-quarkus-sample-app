@@ -5,7 +5,7 @@ import { HttpClientTestingModule, HttpTestingController } from "@angular/common/
 
 import { TokenInterceptorService } from './token-interceptor.service';
 import { AuthService } from "./auth.service";
-import { UserService, TodoService } from 'src/generated';
+import { AuthenticationService, TodoService } from 'src/generated';
 
 // https://medium.com/@dev.s4522/how-to-write-unit-test-cases-for-angular-http-interceptor-7595cb3a8843
 describe('TokenInterceptorService', () => {
@@ -17,7 +17,7 @@ describe('TokenInterceptorService', () => {
     TestBed.configureTestingModule({
       imports: [ HttpClientTestingModule ],
       providers: [
-        UserService,
+        AuthenticationService,
         TodoService,
         { provide: AuthService, useValue: authServiceSpy },
         { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptorService, multi: true }
@@ -35,17 +35,17 @@ describe('TokenInterceptorService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should add authorization bearer token when calling user service', inject([UserService], (userService: UserService) => {
+  it('should add authorization bearer token when calling authentication service', inject([AuthenticationService], (authenticationService: AuthenticationService) => {
     // Given
     authServiceSpy.accessToken.and.returnValue({ 'accessToken': 'accessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'refreshToken' });
 
     // When
-    userService.usersMeGet().subscribe(res => {
+    authenticationService.authenticationMeGet().subscribe(res => {
       expect(res).toBeTruthy();
     });
 
     // Then
-    const httpReq = httpMock.expectOne('https://localhost/users/me');
+    const httpReq = httpMock.expectOne('https://localhost/authentication/me');
     expect(httpReq.request.headers.get('Authorization')).toEqual('Bearer accessToken');
     expect(authServiceSpy.accessToken).toHaveBeenCalled();
   }));
@@ -80,17 +80,17 @@ describe('TokenInterceptorService', () => {
     expect(authServiceSpy.accessToken).toHaveBeenCalled();
   }));
 
-  it('should not add authorization bearer token when call login service', inject([UserService], (userService: UserService) => {
+  it('should not add authorization bearer token when call login service', inject([AuthenticationService], (authenticationService: AuthenticationService) => {
     // Given
     authServiceSpy.accessToken.and.returnValue({ 'accessToken': 'accessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'refreshToken' });
 
     // When
-    userService.usersLoginPost('username', 'password').subscribe(res => {
+    authenticationService.authenticationLoginPost('username', 'password').subscribe(res => {
       expect(res).toBeTruthy();
     });
 
     // Then
-    const httpReq = httpMock.expectOne('https://localhost/users/login');
+    const httpReq = httpMock.expectOne('https://localhost/authentication/login');
     expect(httpReq.request.headers.has('Authorization')).toEqual(false);
     expect(authServiceSpy.accessToken).toHaveBeenCalled();
   }));

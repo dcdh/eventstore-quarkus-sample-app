@@ -5,7 +5,7 @@ import { Router } from "@angular/router";
 import { HttpClient, HttpHandler } from "@angular/common/http";
 
 import { routes } from "./app-routing.module";
-import { UserService } from 'src/generated';
+import { AuthenticationService } from 'src/generated';
 import { AuthGuard } from "./auth.guard";
 import { AuthService } from "./auth.service";
 
@@ -19,7 +19,7 @@ describe("Router: App", () => {
     TestBed.configureTestingModule({
       imports: [ RouterTestingModule.withRoutes(routes) ],
       providers: [
-        UserService,
+        AuthenticationService,
         HttpClient,
         HttpHandler,
         AuthGuard,

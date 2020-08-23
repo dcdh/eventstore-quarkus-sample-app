@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { UserService, AccessTokenDto } from 'src/generated';
+import { AuthenticationService, AccessTokenDto } from 'src/generated';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  constructor(private userService: UserService, private router: Router) { }
+  constructor(private authenticationService: AuthenticationService, private router: Router) { }
 
   isLoggedIn(): boolean {
     const accessToken = JSON.parse(localStorage.getItem('accessToken'));
@@ -21,7 +21,7 @@ export class AuthService {
   }
 
   login(username: string, password: string): void {
-    this.userService.usersLoginPost(username, password)
+    this.authenticationService.authenticationLoginPost(username, password)
       .subscribe({
         next: accessToken => {
           localStorage.setItem('accessToken', JSON.stringify(accessToken));

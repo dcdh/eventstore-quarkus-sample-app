@@ -31,7 +31,7 @@ export class TokenInterceptorService implements HttpInterceptor {
   }
 
   shouldAddToken(url: string): boolean {
-    const excludedUrls: string[] = ["/users/login"];
+    const excludedUrls: string[] = ["/authentication/login"];
     for (const excludedUrl of excludedUrls) {
       if (url.endsWith(excludedUrl)) {
         return false;

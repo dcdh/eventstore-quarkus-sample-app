@@ -2,18 +2,19 @@ import { NgModule, ModuleWithProviders, SkipSelf, Optional } from '@angular/core
 import { Configuration } from './configuration';
 import { HttpClient } from '@angular/common/http';
 
+
+import { AuthenticationService } from './api/authentication.service';
 import { RegistrationService } from './api/registration.service';
 import { TodoService } from './api/todo.service';
-import { UserService } from './api/user.service';
 
 @NgModule({
   imports:      [],
   declarations: [],
   exports:      [],
   providers: [
+    AuthenticationService,
     RegistrationService,
-    TodoService,
-    UserService ]
+    TodoService ]
 })
 export class ApiModule {
     public static forRoot(configurationFactory: () => Configuration): ModuleWithProviders {

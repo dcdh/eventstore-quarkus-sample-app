@@ -17,7 +17,7 @@ import java.util.Set;
 
 @Path("/authentication")
 @Produces(MediaType.APPLICATION_JSON)
-@Tag(name = "User")
+@Tag(name = "Authentication")
 public class AuthenticationEndpoint {
 
     @Inject

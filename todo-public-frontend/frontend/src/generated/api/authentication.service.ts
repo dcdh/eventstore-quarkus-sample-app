@@ -26,7 +26,7 @@ import { Configuration }                                     from '../configurat
 
 
 @Injectable()
-export class UserService {
+export class AuthenticationService {
 
     protected basePath = 'https://localhost';
     public defaultHeaders = new HttpHeaders();
@@ -65,10 +65,10 @@ export class UserService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public usersLoginPost(username?: string, password?: string, observe?: 'body', reportProgress?: boolean): Observable<AccessTokenDto>;
-    public usersLoginPost(username?: string, password?: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<AccessTokenDto>>;
-    public usersLoginPost(username?: string, password?: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<AccessTokenDto>>;
-    public usersLoginPost(username?: string, password?: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public authenticationLoginPost(username?: string, password?: string, observe?: 'body', reportProgress?: boolean): Observable<AccessTokenDto>;
+    public authenticationLoginPost(username?: string, password?: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<AccessTokenDto>>;
+    public authenticationLoginPost(username?: string, password?: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<AccessTokenDto>>;
+    public authenticationLoginPost(username?: string, password?: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
 
 
@@ -106,7 +106,7 @@ export class UserService {
             formParams = formParams.append('password', <any>password) || formParams;
         }
 
-        return this.httpClient.post<AccessTokenDto>(`${this.basePath}/users/login`,
+        return this.httpClient.post<AccessTokenDto>(`${this.basePath}/authentication/login`,
             convertFormParamsToString ? formParams.toString() : formParams,
             {
                 withCredentials: this.configuration.withCredentials,
@@ -123,10 +123,10 @@ export class UserService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public usersMeGet(observe?: 'body', reportProgress?: boolean): Observable<UserDTO>;
-    public usersMeGet(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<UserDTO>>;
-    public usersMeGet(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<UserDTO>>;
-    public usersMeGet(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public authenticationMeGet(observe?: 'body', reportProgress?: boolean): Observable<UserDTO>;
+    public authenticationMeGet(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<UserDTO>>;
+    public authenticationMeGet(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<UserDTO>>;
+    public authenticationMeGet(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         let headers = this.defaultHeaders;
 
@@ -143,7 +143,62 @@ export class UserService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.get<UserDTO>(`${this.basePath}/users/me`,
+        return this.httpClient.get<UserDTO>(`${this.basePath}/authentication/me`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
+     * 
+     * @param refreshToken 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public authenticationRefreshTokenPost(refreshToken?: string, observe?: 'body', reportProgress?: boolean): Observable<AccessTokenDto>;
+    public authenticationRefreshTokenPost(refreshToken?: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<AccessTokenDto>>;
+    public authenticationRefreshTokenPost(refreshToken?: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<AccessTokenDto>>;
+    public authenticationRefreshTokenPost(refreshToken?: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+
+        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'application/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/x-www-form-urlencoded'
+        ];
+
+        const canConsumeForm = this.canConsumeForm(consumes);
+
+        let formParams: { append(param: string, value: any): void | HttpParams; };
+        let useForm = false;
+        let convertFormParamsToString = false;
+        if (useForm) {
+            formParams = new FormData();
+        } else {
+            formParams = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        }
+
+        if (refreshToken !== undefined) {
+            formParams = formParams.append('refreshToken', <any>refreshToken) || formParams;
+        }
+
+        return this.httpClient.post<AccessTokenDto>(`${this.basePath}/authentication/refresh-token`,
+            convertFormParamsToString ? formParams.toString() : formParams,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,

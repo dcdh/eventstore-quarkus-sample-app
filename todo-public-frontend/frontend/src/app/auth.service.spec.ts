@@ -1,20 +1,20 @@
 import { async, TestBed } from '@angular/core/testing';
 
 import { AuthService } from './auth.service';
-import { UserService, AccessTokenDto } from 'src/generated';
+import { AuthenticationService, AccessTokenDto } from 'src/generated';
 import { Router } from '@angular/router';
 import { defer } from 'rxjs';
 
 describe('AuthService', () => {
   let service: AuthService;
 
-  const userServiceSpy = jasmine.createSpyObj('UserService', ['usersLoginPost']);
+  const authenticationServiceSpy = jasmine.createSpyObj('AuthenticationService', ['authenticationLoginPost']);
   const routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
-        { provide: UserService, useValue: userServiceSpy },
+        { provide: AuthenticationService, useValue: authenticationServiceSpy },
         { provide: Router, useValue: routerSpy }
       ]
     });
@@ -49,7 +49,7 @@ describe('AuthService', () => {
   it('should store accessToken into local storage when logging in', (async() => {
     // Given
     localStorage.removeItem('accessToken');
-    userServiceSpy.usersLoginPost.and.callFake(function() {
+    authenticationServiceSpy.authenticationLoginPost.and.callFake(function() {
       return defer(() => Promise.resolve({ 'accessToken': 'accessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'refreshToken' }));
     });
 
@@ -58,12 +58,12 @@ describe('AuthService', () => {
 
     // Then
     expect(localStorage.getItem('accessToken')).toEqual(JSON.stringify({ 'accessToken': 'accessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'refreshToken' }));
-    expect(userServiceSpy.usersLoginPost).toHaveBeenCalledWith('username', 'password');
+    expect(authenticationServiceSpy.authenticationLoginPost).toHaveBeenCalledWith('username', 'password');
   }));
 
   it('should redirect to the list of todo when logging in', (async() => {
     // Given
-    userServiceSpy.usersLoginPost.and.callFake(function() {
+    authenticationServiceSpy.authenticationLoginPost.and.callFake(function() {
       return defer(() => Promise.resolve({ 'accessToken': 'accessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'refreshToken' }));
     });
 
@@ -72,7 +72,7 @@ describe('AuthService', () => {
 
     // Then
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/todos']);
-    expect(userServiceSpy.usersLoginPost).toHaveBeenCalled();
+    expect(authenticationServiceSpy.authenticationLoginPost).toHaveBeenCalled();
   }));
 
   it('should return access token from local storage', () => {

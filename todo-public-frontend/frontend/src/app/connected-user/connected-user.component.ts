@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { UserService, UserDTO } from 'src/generated';
+import { AuthenticationService, UserDTO } from 'src/generated';
 
 @Component({
   selector: 'app-connected-user',
@@ -10,10 +10,10 @@ export class ConnectedUserComponent implements OnInit {
 
   user: UserDTO;
 
-  constructor(private userService: UserService) { }
+  constructor(private authenticationService: AuthenticationService) { }
 
   ngOnInit(): void {
-    this.userService.usersMeGet()
+    this.authenticationService.authenticationMeGet()
       .subscribe({
         next: user => {
           console.info(user);
