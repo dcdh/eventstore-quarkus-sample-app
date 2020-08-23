@@ -36,7 +36,7 @@ public class E2ETest extends AbstractTodoTest {
                 .log().all()
                 .post("/todos/createNewTodo")
                 .then().log().all()
-                .statusCode(403);
+                .statusCode(401);
     }
 
     @Test
@@ -46,7 +46,7 @@ public class E2ETest extends AbstractTodoTest {
                 .when()
                 .post("/todos/markTodoAsCompleted")
                 .then().log().all()
-                .statusCode(403);
+                .statusCode(401);
     }
 
     @Test
@@ -55,7 +55,7 @@ public class E2ETest extends AbstractTodoTest {
                 .when()
                 .get(String.format("/todos/osef"))
                 .then().log().all()
-                .statusCode(403);
+                .statusCode(401);
     }
 
     @Test
@@ -64,7 +64,7 @@ public class E2ETest extends AbstractTodoTest {
                 .get("/todos")
                 .then()
                 .log().all()
-                .statusCode(403);
+                .statusCode(401);
     }
 
     @Test
