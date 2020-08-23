@@ -15,37 +15,27 @@ public class TodoAggregateRoot extends AggregateRoot implements Todo {
 
     private TodoStatus todoStatus;
 
-    public TodoAggregateRoot() {}
-
-    // needed to be able to well serialized using custom serializer de-serializer.
-    public TodoAggregateRoot(final String aggregateRootId,
-                             final String aggregateRootType,
-                             final Long version,
-                             final String description,
-                             final TodoStatus todoStatus) {
-        super(aggregateRootId, aggregateRootType, version);
-        this.description = description;
-        this.todoStatus = todoStatus;
+    public TodoAggregateRoot(final String aggregateRootId) {
+        super(aggregateRootId);
     }
 
     public void handle(final CreateNewTodoCommand createNewTodoCommand, final String todoId) {
         this.apply("TodoCreatedEvent",
-                new TodoAggregateTodoCreatedEventPayload(todoId,
-                createNewTodoCommand.description()), new DefaultEventMetadata());
+                new TodoCreatedEventPayload(todoId,
+                createNewTodoCommand.description()));
     }
 
     public void handle(final MarkTodoAsCompletedCommand markTodoAsCompletedCommand) {
         this.apply("TodoMarkedAsCompletedEvent",
-                new TodoAggregateTodoMarkedAsCompletedEventPayload(markTodoAsCompletedCommand.todoId()),
-                new DefaultEventMetadata());
+                new TodoMarkedAsCompletedEventPayload(markTodoAsCompletedCommand.todoId()));
     }
 
-    public void on(final TodoAggregateTodoCreatedEventPayload todoAggregateTodoCreatedEventPayload) {
-        this.description = todoAggregateTodoCreatedEventPayload.description();
+    public void on(final TodoCreatedEventPayload todoCreatedEventPayload) {
+        this.description = todoCreatedEventPayload.description();
         this.todoStatus = TodoStatus.IN_PROGRESS;
     }
 
-    public void on(final TodoAggregateTodoMarkedAsCompletedEventPayload todoAggregateTodoMarkedAsCompletedEventPayload) {
+    public void on(final TodoMarkedAsCompletedEventPayload todoMarkedAsCompletedEventPayload) {
         this.todoStatus = TodoStatus.COMPLETED;
     }
 

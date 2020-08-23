@@ -1,0 +1,10 @@
+{
+  "description": {
+    "encrypted": "vuGjl0wtNE8P5kdf1W3/Ww==",
+    "aggregateRootType": "TodoAggregateRoot",
+    "aggregateRootId": "todoId",
+    "type": "string"
+  },
+  "todoId": "todoId",
+  "todoStatus": "IN_PROGRESS"
+}

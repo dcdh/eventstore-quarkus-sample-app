@@ -13,9 +13,9 @@
       "version": 0,
       "creationdate": 1562890044742000,
       "eventtype": "TodoCreatedEvent",
-      "eventmetadata": "{\"@type\": \"DefaultEventMetadata\"}",
-      "eventpayload": "{\"@type\":\"TodoAggregateTodoCreatedEventPayload\",\"todoId\":\"todoId\",\"description\":\"uWtQHOtmgpaw22nCiexwpg==\"}",
-      "materializedstate": "{\"@type\": \"TodoAggregateRoot\", \"aggregateRootId\": \"todoId\", \"version\":0, \"aggregateRootType\": \"TodoAggregateRoot\", \"description\": \"uWtQHOtmgpaw22nCiexwpg==\", \"todoStatus\": \"IN_PROGRESS\"}"
+      "eventmetadata": "{\"user.anonymous\":false,\"user.name\":\"damdamdeo\"}",
+      "eventpayload": "{\"todoId\":\"todoId\",\"description\":{\"encrypted\":\"vuGjl0wtNE8P5kdf1W3/Ww==\",\"aggregateRootType\":\"TodoAggregateRoot\",\"aggregateRootId\":\"todoId\",\"type\":\"string\"}}",
+      "materializedstate": "{\"description\":{\"encrypted\":\"vuGjl0wtNE8P5kdf1W3/Ww==\",\"aggregateRootType\":\"TodoAggregateRoot\",\"aggregateRootId\":\"todoId\",\"type\":\"string\"},\"todoId\":\"todoId\",\"todoStatus\":\"IN_PROGRESS\"}"
     },
     "source": {
       "version": "0.10.0.Beta2",

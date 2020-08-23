@@ -1,6 +1,8 @@
 package com.damdamdeo.todo;
 
 import com.damdamdeo.eventsourced.encryption.api.SecretStore;
+import com.damdamdeo.eventsourced.encryption.infra.jackson.JacksonAggregateRootId;
+import com.damdamdeo.eventsourced.model.api.AggregateRootId;
 import com.damdamdeo.todo.domain.api.TodoStatus;
 import com.damdamdeo.todo.infrastructure.TodoEntity;
 import com.jayway.restassured.module.jsv.JsonSchemaValidator;
@@ -84,8 +86,9 @@ public class E2ETest {
     @Test
     public void should_consume_todo_created_event_and_todo_marked_as_completed_event() throws Exception {
         // When
-        secretStore.store("TodoAggregateRoot", "todoId", "AAlwSnNqyIRebwRqBfHufaCTXoRFRllg");
-        kafkaDebeziumProducer.produce("TodoCreatedEvent.json");
+        final AggregateRootId aggregateRootId = new JacksonAggregateRootId("todoId", "TodoAggregateRoot");
+        secretStore.store(aggregateRootId, "IbXcNPlTEnoPzWVPNwASmPepRVWBHhPN");
+        kafkaDebeziumProducer.produce("todoCreatedEvent.json");
         await().atMost(2, TimeUnit.SECONDS).until(() ->
                 given()
                     .auth().oauth2(getAccessToken())
@@ -109,7 +112,7 @@ public class E2ETest {
                 .body("version", equalTo(0));
 
         // When
-        kafkaDebeziumProducer.produce("TodoMarkedAsCompletedEvent.json");
+        kafkaDebeziumProducer.produce("todoMarkedAsCompletedEvent.json");
         await().atMost(2, TimeUnit.SECONDS).until(() ->
                 given()
                         .auth().oauth2(getAccessToken())

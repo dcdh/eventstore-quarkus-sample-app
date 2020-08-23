@@ -2,9 +2,10 @@ package com.damdamdeo.todo.consumer;
 
 import com.damdamdeo.eventsourced.consumer.api.eventsourcing.AggregateRootEventConsumable;
 import com.damdamdeo.eventsourced.model.api.AggregateRootEventId;
-import com.damdamdeo.todo.consumer.event.TodoAggregateTodoMarkedAsCompletedEventPayloadConsumer;
 import com.damdamdeo.todo.infrastructure.JpaTodoRepository;
 import com.damdamdeo.todo.infrastructure.TodoEntity;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
 import org.junit.jupiter.api.Test;
@@ -30,12 +31,12 @@ public class TodoMarkedAsCompletedEventConsumerTest {
     @Test
     public void should_consume_todo_marked_as_completed_event() throws Exception {
         // Given
-        final AggregateRootEventConsumable mockAggregateRootEventConsumable = mock(AggregateRootEventConsumable.class);
+        final ObjectMapper objectMapper = new ObjectMapper();
+        final AggregateRootEventConsumable mockAggregateRootEventConsumable = mock(AggregateRootEventConsumable.class, RETURNS_DEEP_STUBS);
         final AggregateRootEventId mockAggregateRootEventId = mock(AggregateRootEventId.class);
         doReturn(mockAggregateRootEventId).when(mockAggregateRootEventConsumable).eventId();
-        final TodoAggregateTodoMarkedAsCompletedEventPayloadConsumer mockTodoAggregateTodoMarkedAsCompletedEventPayloadConsumer = mock(TodoAggregateTodoMarkedAsCompletedEventPayloadConsumer.class);
-        doReturn("todoId").when(mockTodoAggregateTodoMarkedAsCompletedEventPayloadConsumer).todoId();
-        doReturn(mockTodoAggregateTodoMarkedAsCompletedEventPayloadConsumer).when(mockAggregateRootEventConsumable).eventPayload();
+        final JsonNode eventPayload = objectMapper.readTree("{\"todoId\":\"todoId\"}");
+        doReturn(eventPayload).when(mockAggregateRootEventConsumable).eventPayload();
         final TodoEntity mockTodoEntity = mock(TodoEntity.class);
         doReturn(mockTodoEntity).when(mockJpaTodoRepository).find("todoId");
 
@@ -44,14 +45,10 @@ public class TodoMarkedAsCompletedEventConsumerTest {
 
         // Then
         verify(mockTodoEntity, times(1)).markAsCompleted(mockAggregateRootEventId);
-        verify(mockJpaTodoRepository, times(1)).find(any());
+        verify(mockJpaTodoRepository, times(1)).find("todoId");
         verify(mockJpaTodoRepository, times(1)).merge(mockTodoEntity);
-
-        verify(mockAggregateRootEventConsumable, times(2)).eventId();
-        verify(mockTodoAggregateTodoMarkedAsCompletedEventPayloadConsumer, times(1)).todoId();
+        verify(mockAggregateRootEventConsumable, atLeastOnce()).eventId();
         verify(mockAggregateRootEventConsumable, times(1)).eventPayload();
-        verifyNoMoreInteractions(mockAggregateRootEventConsumable, mockAggregateRootEventId, mockTodoAggregateTodoMarkedAsCompletedEventPayloadConsumer, mockTodoEntity, mockJpaTodoRepository);
-
     }
 
     @Test

@@ -35,6 +35,23 @@ public class CreateNewTodoCommandHandlerTest {
     CommandExecutor spyCommandExecutor;
 
     @Test
+    public void should_create_new_todo() throws Throwable {
+        // Given
+        doReturn("todoId").when(mockTodoIdGenerator).generateTodoId();
+        final CreateNewTodoCommand createNewTodoCommand = new CreateNewTodoCommand("lorem ipsum");
+        final TodoAggregateRoot todoAggregateRoot = mock(TodoAggregateRoot.class);
+        doReturn(todoAggregateRoot).when(mockNewTodoAggregateRootProvider).create("todoId");
+
+        // When
+        createNewTodoCommandHandler.execute(createNewTodoCommand);
+
+        // Then
+        verify(todoAggregateRoot, times(1)).handle(createNewTodoCommand, "todoId");
+        verify(mockTodoIdGenerator, times(1)).generateTodoId();
+        verify(mockNewTodoAggregateRootProvider, times(1)).create(any());
+    }
+
+    @Test
     public void should_consume_create_new_todo_command_throws_todo_already_existent_exception_when_todo_exists() {
         // Given
         doReturn("todoId").when(mockTodoIdGenerator).generateTodoId();
@@ -60,7 +77,7 @@ public class CreateNewTodoCommandHandlerTest {
         doReturn("todoId").when(mockTodoIdGenerator).generateTodoId();
         doReturn(Boolean.FALSE).when(mockTodoAggregateRootRepository).isTodoExistent("todoId");
         final TodoAggregateRoot todoAggregateRoot = mock(TodoAggregateRoot.class);
-        doReturn(todoAggregateRoot).when(mockNewTodoAggregateRootProvider).create();
+        doReturn(todoAggregateRoot).when(mockNewTodoAggregateRootProvider).create("todoId");
         doReturn(todoAggregateRoot).when(mockTodoAggregateRootRepository).save(todoAggregateRoot);
         final CreateNewTodoCommand createNewTodoCommand = new CreateNewTodoCommand("lorem ipsum");
 
@@ -73,7 +90,7 @@ public class CreateNewTodoCommandHandlerTest {
         verify(mockTodoAggregateRootRepository, times(1)).save(any(TodoAggregateRoot.class));
         verify(mockTodoIdGenerator, times(1)).generateTodoId();
         verify(mockTodoAggregateRootRepository, times(1)).isTodoExistent(any());
-        verify(mockNewTodoAggregateRootProvider, times(1)).create();
+        verify(mockNewTodoAggregateRootProvider, times(1)).create(any());
         verifyNoMoreInteractions(mockTodoAggregateRootRepository, mockTodoIdGenerator, mockNewTodoAggregateRootProvider,
                 todoAggregateRoot);
     }
@@ -82,14 +99,14 @@ public class CreateNewTodoCommandHandlerTest {
     public void should_use_executor_to_execute_command() throws Throwable {
         // Given
         final CreateNewTodoCommand createNewTodoCommand = new CreateNewTodoCommand("lorem ipsum");
-        doReturn(mock(TodoAggregateRoot.class)).when(mockNewTodoAggregateRootProvider).create();
+        doReturn(mock(TodoAggregateRoot.class)).when(mockNewTodoAggregateRootProvider).create(any());
 
         // When
         createNewTodoCommandHandler.execute(createNewTodoCommand);
 
         // Then
         verify(spyCommandExecutor, times(1)).execute(any());
-        verify(mockNewTodoAggregateRootProvider, times(1)).create();
+        verify(mockNewTodoAggregateRootProvider, times(1)).create(any());
     }
 
 }

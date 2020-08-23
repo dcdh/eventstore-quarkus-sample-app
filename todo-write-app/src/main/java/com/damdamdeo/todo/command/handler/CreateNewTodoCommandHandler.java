@@ -40,7 +40,7 @@ public class CreateNewTodoCommandHandler implements CommandHandler<TodoAggregate
             // Should never happened !!
             throw new TodoAlreadyExistentException(todoExistent);
         }
-        final TodoAggregateRoot todoAggregateRoot = newTodoAggregateRootProvider.create();
+        final TodoAggregateRoot todoAggregateRoot = newTodoAggregateRootProvider.create(generatedTodoId);
         todoAggregateRoot.handle(createNewTodoCommand, generatedTodoId);
         return todoAggregateRootRepository.save(todoAggregateRoot);
     }

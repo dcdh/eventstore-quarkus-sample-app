@@ -30,7 +30,7 @@ public class EnrichedTodoAggregateRootRepository implements TodoAggregateRootRep
         try (final Connection con = mutableDataSource.getConnection();
              // I could use the aggregaterootid column directly however I wanted to do a request using serializedaggregateroot jsonb feature.
              // In an other application the data can be only present in serializedaggregateroot like email for example.
-             final PreparedStatement stmt = con.prepareStatement("SELECT EXISTS (SELECT * FROM AGGREGATE_ROOT_MATERIALIZED_STATE WHERE aggregateroottype = 'TodoAggregateRoot' AND serializedmaterializedstate->>'aggregateRootId' = ?)")) {
+             final PreparedStatement stmt = con.prepareStatement("SELECT EXISTS (SELECT * FROM AGGREGATE_ROOT_MATERIALIZED_STATE WHERE aggregateroottype = 'TodoAggregateRoot' AND serializedmaterializedstate->>'todoId' = ?)")) {
             stmt.setString(1, todoIdToCheck);
             try (final ResultSet resultSet = stmt.executeQuery()) {
                 resultSet.next();

@@ -8,8 +8,8 @@ import javax.enterprise.context.ApplicationScoped;
 public class InstanceNewTodoAggregateRootProvider implements NewTodoAggregateRootProvider {
 
     @Override
-    public TodoAggregateRoot create() {
-        return new TodoAggregateRoot();
+    public TodoAggregateRoot create(final String todoId) {
+        return new TodoAggregateRoot(todoId);
     }
 
 }

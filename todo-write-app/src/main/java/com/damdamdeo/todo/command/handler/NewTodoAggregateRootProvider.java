@@ -4,6 +4,6 @@ import com.damdamdeo.todo.aggregate.TodoAggregateRoot;
 
 public interface NewTodoAggregateRootProvider {
 
-    TodoAggregateRoot create();
+    TodoAggregateRoot create(String todoId);
 
 }

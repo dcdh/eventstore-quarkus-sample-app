@@ -13,9 +13,9 @@
       "version": 1,
       "creationdate": 1562890044922000,
       "eventtype": "TodoMarkedAsCompletedEvent",
-      "eventmetadata": "{\"@type\": \"DefaultEventMetadata\"}",
-      "eventpayload": "{\"@type\":\"TodoAggregateTodoMarkedAsCompletedEventPayload\",\"todoId\":\"todoId\"}",
-      "materializedstate": "{\"@type\": \"TodoAggregateRoot\", \"aggregateRootId\": \"todoId\", \"version\":1, \"aggregateRootType\": \"TodoAggregateRoot\", \"description\": \"uWtQHOtmgpaw22nCiexwpg==\", \"todoStatus\": \"COMPLETED\"}"
+      "eventmetadata": "{\"user.anonymous\":false,\"user.name\":\"damdamdeo\"}",
+      "eventpayload": "{\"todoId\":\"todoId\"}",
+      "materializedstate": "{\"description\":{\"encrypted\":\"vuGjl0wtNE8P5kdf1W3/Ww==\",\"aggregateRootType\":\"TodoAggregateRoot\",\"aggregateRootId\":\"todoId\",\"type\":\"string\"},\"todoId\":\"todoId\",\"todoStatus\":\"COMPLETED\"}"
     },
     "source": {
       "version": "0.10.0.Beta2",

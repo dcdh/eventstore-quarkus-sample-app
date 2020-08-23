@@ -71,7 +71,6 @@ public class TodoEndpointTest {
         verify(todoAggregateRoot, times(2)).todoStatus();
         verify(todoAggregateRoot, times(1)).version();
         verify(todoAggregateRoot, times(1)).canMarkTodoAsCompletedSpecification();
-        verifyNoMoreInteractions(createNewTodoCommandHandler, markTodoAsCompletedCommandHandler, todoAggregateRoot, securityIdentity);
     }
 
     @Test
@@ -88,8 +87,7 @@ public class TodoEndpointTest {
                 .statusCode(401);
 
         verify(securityIdentity, times(1)).hasRole(anyString());
-        verify(securityIdentity, times(1)).isAnonymous();
-        verifyNoMoreInteractions(securityIdentity);
+        verify(securityIdentity, atLeastOnce()).isAnonymous();
     }
 
     @Test
@@ -114,7 +112,6 @@ public class TodoEndpointTest {
         verify(securityIdentity, times(1)).hasRole(anyString());
         verify(createNewTodoCommandHandler, times(1)).execute(any(CreateNewTodoCommand.class));
         verify(todo, times(1)).todoId();
-        verifyNoMoreInteractions(createNewTodoCommandHandler, markTodoAsCompletedCommandHandler, todo, securityIdentity);
     }
 
     @Test
@@ -152,7 +149,6 @@ public class TodoEndpointTest {
         verify(todoAggregateRoot, times(2)).todoStatus();
         verify(todoAggregateRoot, times(1)).version();
         verify(todoAggregateRoot, times(1)).canMarkTodoAsCompletedSpecification();
-        verifyNoMoreInteractions(createNewTodoCommandHandler, markTodoAsCompletedCommandHandler, todoAggregateRoot, securityIdentity);
     }
 
     @Test
@@ -169,8 +165,7 @@ public class TodoEndpointTest {
                 .statusCode(403);
 
         verify(securityIdentity, times(1)).hasRole(anyString());
-        verify(securityIdentity, times(1)).isAnonymous();
-        verifyNoMoreInteractions(securityIdentity);
+        verify(securityIdentity, atLeastOnce()).isAnonymous();
     }
 
     @Test
@@ -192,7 +187,6 @@ public class TodoEndpointTest {
                 .body(Matchers.equalTo("Le todoId 'todoId' est inconnu."));
         verify(securityIdentity, times(1)).hasRole(anyString());
         verify(markTodoAsCompletedCommandHandler, times(1)).execute(any(MarkTodoAsCompletedCommand.class));
-        verifyNoMoreInteractions(createNewTodoCommandHandler, markTodoAsCompletedCommandHandler, securityIdentity);
     }
 
     @Test
@@ -217,7 +211,6 @@ public class TodoEndpointTest {
         verify(securityIdentity, times(1)).hasRole(anyString());
         verify(markTodoAsCompletedCommandHandler, times(1)).execute(any(MarkTodoAsCompletedCommand.class));
         verify(todo, times(1)).todoId();
-        verifyNoMoreInteractions(createNewTodoCommandHandler, todo, markTodoAsCompletedCommandHandler, securityIdentity);
     }
 
 }

@@ -1,8 +1,8 @@
 package com.damdamdeo.todo.aggregate;
 
 import com.damdamdeo.eventsourced.mutable.api.eventsourcing.AggregateRootEvent;
-import com.damdamdeo.todo.aggregate.event.TodoAggregateTodoCreatedEventPayload;
-import com.damdamdeo.todo.aggregate.event.TodoAggregateTodoMarkedAsCompletedEventPayload;
+import com.damdamdeo.todo.aggregate.event.TodoCreatedEventPayload;
+import com.damdamdeo.todo.aggregate.event.TodoMarkedAsCompletedEventPayload;
 import com.damdamdeo.todo.command.CreateNewTodoCommand;
 import com.damdamdeo.todo.command.MarkTodoAsCompletedCommand;
 import com.damdamdeo.todo.domain.api.TodoStatus;
@@ -17,7 +17,7 @@ public class TodoAggregateRootTest {
     @Test
     public void should_create_todo() {
         // Given
-        final TodoAggregateRoot todoAggregateRoot = new TodoAggregateRoot();
+        final TodoAggregateRoot todoAggregateRoot = new TodoAggregateRoot("todoId");
 
         // When
         todoAggregateRoot.handle(new CreateNewTodoCommand("lorem ipsum"), "todoId");
@@ -31,14 +31,14 @@ public class TodoAggregateRootTest {
 
         final List<AggregateRootEvent> unsavedEvents = todoAggregateRoot.unsavedEvents();
         assertEquals(1, unsavedEvents.size());
-        assertEquals(new TodoAggregateTodoCreatedEventPayload("todoId", "lorem ipsum"),
+        assertEquals(new TodoCreatedEventPayload("todoId", "lorem ipsum"),
                 unsavedEvents.get(0).eventPayload());
     }
 
     @Test
     public void should_mark_todo_as_completed() {
         // Given
-        final TodoAggregateRoot todoAggregateRoot = new TodoAggregateRoot();
+        final TodoAggregateRoot todoAggregateRoot = new TodoAggregateRoot("todoId");
         todoAggregateRoot.handle(new CreateNewTodoCommand("lorem ipsum"), "todoId");
 
         // When
@@ -50,7 +50,7 @@ public class TodoAggregateRootTest {
 
         final List<AggregateRootEvent> unsavedEvents = todoAggregateRoot.unsavedEvents();
         assertEquals(2, unsavedEvents.size());
-        assertEquals(new TodoAggregateTodoMarkedAsCompletedEventPayload("todoId"), unsavedEvents.get(1).eventPayload());
+        assertEquals(new TodoMarkedAsCompletedEventPayload("todoId"), unsavedEvents.get(1).eventPayload());
     }
 
 }

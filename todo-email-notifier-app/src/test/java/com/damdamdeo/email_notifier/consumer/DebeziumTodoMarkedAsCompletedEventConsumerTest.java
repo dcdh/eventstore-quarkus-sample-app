@@ -1,16 +1,18 @@
 package com.damdamdeo.email_notifier.consumer;
 
 import com.damdamdeo.email_notifier.KafkaDebeziumProducer;
-import com.damdamdeo.email_notifier.domain.TodoStatus;
-import com.damdamdeo.eventsourced.consumer.api.eventsourcing.UnsupportedAggregateRootEventPayloadConsumer;
 import com.damdamdeo.eventsourced.consumer.infra.eventsourcing.DebeziumAggregateRootEventId;
 import com.damdamdeo.eventsourced.consumer.infra.eventsourcing.DecryptedAggregateRootEventConsumable;
 import com.damdamdeo.eventsourced.encryption.api.PresentSecret;
 import com.damdamdeo.eventsourced.encryption.api.SecretStore;
+import com.damdamdeo.eventsourced.encryption.infra.jackson.JacksonAggregateRootId;
+import com.damdamdeo.eventsourced.model.api.AggregateRootId;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.agroal.api.AgroalDataSource;
 import io.quarkus.agroal.DataSource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -56,16 +58,27 @@ public class DebeziumTodoMarkedAsCompletedEventConsumerTest {
         }
     }
 
+    @BeforeEach
+    public void setupSecretStore() {
+        final AggregateRootId aggregateRootId = new JacksonAggregateRootId("todoId", "TodoAggregateRoot");
+        doReturn(new PresentSecret("IbXcNPlTEnoPzWVPNwASmPepRVWBHhPN"))
+                .when(secretStore).read(aggregateRootId);
+    }
+
+    @AfterEach
+    public void verifySecretStore() {
+        verify(secretStore, atLeastOnce()).read(any());
+    }
+
     @Test
     public void should_consume_event() throws Exception {
         // Given
+        final ObjectMapper objectMapper = new ObjectMapper();
         doCallRealMethod().when(todoMarkedAsCompletedEventConsumer).aggregateRootType();
         doCallRealMethod().when(todoMarkedAsCompletedEventConsumer).eventType();
-        doReturn(new PresentSecret("AAlwSnNqyIRebwRqBfHufaCTXoRFRllg"))
-                .when(secretStore).read("TodoAggregateRoot", "todoId");
 
         // When
-        kafkaDebeziumProducer.produce("TodoMarkedAsCompletedEvent.json");
+        kafkaDebeziumProducer.produce("todoMarkedAsCompletedEvent.json");
         waitForEventToBeConsumed();
 
         // Then
@@ -73,15 +86,13 @@ public class DebeziumTodoMarkedAsCompletedEventConsumerTest {
                 new DebeziumAggregateRootEventId("todoId", "TodoAggregateRoot", 1l),
                 "TodoMarkedAsCompletedEvent",
                 LocalDateTime.of(2019, Month.JULY, 12, 0, 7, 24, 922000000),
-                new UnsupportedAggregateRootEventPayloadConsumer(),
-                new DefaultEventMetadataConsumer(),
-                new TodoAggregateRootMaterializedStateConsumer("todoId", "TodoAggregateRoot", 1L, "lorem ipsum", TodoStatus.COMPLETED)
+                objectMapper.readTree("{\"todoId\":\"todoId\"}"),
+                objectMapper.readTree("{\"user.anonymous\":false,\"user.name\":\"damdamdeo\"}"),
+                objectMapper.readTree("{\"description\":\"lorem ipsum\",\"todoId\":\"todoId\",\"todoStatus\":\"COMPLETED\"}")
         ));
 
         verify(todoMarkedAsCompletedEventConsumer, times(1)).aggregateRootType();
         verify(todoMarkedAsCompletedEventConsumer, times(1)).eventType();
-        verify(secretStore, times(1)).read(any(), any());
-        verifyNoMoreInteractions(todoMarkedAsCompletedEventConsumer, secretStore);
     }
 
     @Test
@@ -89,13 +100,11 @@ public class DebeziumTodoMarkedAsCompletedEventConsumerTest {
         // Given
         doCallRealMethod().when(todoMarkedAsCompletedEventConsumer).aggregateRootType();
         doCallRealMethod().when(todoMarkedAsCompletedEventConsumer).eventType();
-        doReturn(new PresentSecret("AAlwSnNqyIRebwRqBfHufaCTXoRFRllg"))
-                .when(secretStore).read("TodoAggregateRoot", "todoId");
-        kafkaDebeziumProducer.produce("TodoMarkedAsCompletedEvent.json");
+        kafkaDebeziumProducer.produce("todoMarkedAsCompletedEvent.json");
         waitForEventToBeConsumed();
 
         // When
-        kafkaDebeziumProducer.produce("TodoMarkedAsCompletedEvent.json");
+        kafkaDebeziumProducer.produce("todoMarkedAsCompletedEvent.json");
         TimeUnit.SECONDS.sleep(2);// je n'ai pas de marqueur de fin d'execution...
 
         // Then
@@ -103,8 +112,6 @@ public class DebeziumTodoMarkedAsCompletedEventConsumerTest {
 
         verify(todoMarkedAsCompletedEventConsumer, times(1)).aggregateRootType();
         verify(todoMarkedAsCompletedEventConsumer, times(1)).eventType();
-        verify(secretStore, times(2)).read("TodoAggregateRoot", "todoId");
-        verifyNoMoreInteractions(todoMarkedAsCompletedEventConsumer, secretStore);
     }
 
     private void waitForEventToBeConsumed() {

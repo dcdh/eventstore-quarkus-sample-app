@@ -1,17 +1,22 @@
 package com.damdamdeo.todo.aggregate;
 
-import com.damdamdeo.eventsourced.encryption.api.Encryption;
-import com.damdamdeo.eventsourced.encryption.api.Secret;
+import com.damdamdeo.eventsourced.encryption.api.PresentSecret;
+import com.damdamdeo.eventsourced.encryption.api.SecretStore;
 import com.damdamdeo.eventsourced.mutable.infra.eventsourcing.serialization.JacksonAggregateRootMaterializedStateSerializer;
 import com.damdamdeo.todo.command.CreateNewTodoCommand;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.junit.mockito.InjectMock;
 import org.junit.jupiter.api.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 import javax.inject.Inject;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.Scanner;
+
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.times;
 
 @QuarkusTest
 public class TodoAggregateRootMaterializedStateTest {
@@ -19,23 +24,39 @@ public class TodoAggregateRootMaterializedStateTest {
     @Inject
     JacksonAggregateRootMaterializedStateSerializer jacksonAggregateRootMaterializedStateSerializer;
 
-    @Inject
-    Encryption encryption;
+    @InjectMock
+    SecretStore secretStore;
 
     @Test
-    public void should_serialize() {
+    public void should_serialize_encoded() throws Exception {
         // Given
-        final Secret secret = mock(Secret.class);
-        doReturn("uWtQHOtmgpaw22nCiexwpg==").when(secret).encrypt("lorem ipsum", encryption);
-        final TodoAggregateRoot todoAggregateRoot = new TodoAggregateRoot();
+        final ObjectMapper objectMapper = new ObjectMapper();
+        final TodoAggregateRoot todoAggregateRoot = new TodoAggregateRoot("todoId");
+        todoAggregateRoot.handle(new CreateNewTodoCommand("lorem ipsum"), "todoId");
+        doReturn(new PresentSecret("IbXcNPlTEnoPzWVPNwASmPepRVWBHhPN")).when(secretStore).read(any());
+
+        // When
+        final JsonNode serialized = jacksonAggregateRootMaterializedStateSerializer.encode(todoAggregateRoot,
+                true, objectMapper);
+        final String expectedJsonMaterializedState = new Scanner(this.getClass().getResourceAsStream("/expected/todoAggregateRootMaterializedStateEncoded.json"), "UTF-8")
+                .useDelimiter("\\A").next();
+        JSONAssert.assertEquals(expectedJsonMaterializedState, serialized.toString(), true);
+        verify(secretStore, times(1)).read(any());
+    }
+
+    @Test
+    public void should_serialize_not_encoded() throws Exception {
+        // Given
+        final ObjectMapper objectMapper = new ObjectMapper();
+        final TodoAggregateRoot todoAggregateRoot = new TodoAggregateRoot("todoId");
         todoAggregateRoot.handle(new CreateNewTodoCommand("lorem ipsum"), "todoId");
 
         // When
-        final String serialized = jacksonAggregateRootMaterializedStateSerializer.serialize(secret, todoAggregateRoot);
-
-        // Then
-        assertEquals("{\"@type\":\"TodoAggregateRoot\",\"aggregateRootId\":\"todoId\",\"aggregateRootType\":\"TodoAggregateRoot\",\"version\":0,\"description\":\"uWtQHOtmgpaw22nCiexwpg==\",\"todoStatus\":\"IN_PROGRESS\"}", serialized);
-        verify(secret, times(1)).encrypt(any(), any());
+        final JsonNode serialized = jacksonAggregateRootMaterializedStateSerializer.encode(todoAggregateRoot,
+                false, objectMapper);
+        final String expectedJsonMaterializedState = new Scanner(this.getClass().getResourceAsStream("/expected/todoAggregateRootMaterializedStateNotEncoded.json"), "UTF-8")
+                .useDelimiter("\\A").next();
+        JSONAssert.assertEquals(expectedJsonMaterializedState, serialized.toString(), true);
     }
 
 }

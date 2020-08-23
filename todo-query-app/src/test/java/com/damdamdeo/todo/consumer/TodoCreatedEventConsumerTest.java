@@ -1,10 +1,11 @@
 package com.damdamdeo.todo.consumer;
 
 import com.damdamdeo.eventsourced.consumer.api.eventsourcing.AggregateRootEventConsumable;
-import com.damdamdeo.todo.consumer.event.TodoAggregateTodoCreatedEventPayloadConsumer;
 import com.damdamdeo.todo.domain.api.TodoStatus;
 import com.damdamdeo.todo.infrastructure.JpaTodoRepository;
 import com.damdamdeo.todo.infrastructure.TodoEntity;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
 import org.junit.jupiter.api.Test;
@@ -30,12 +31,11 @@ public class TodoCreatedEventConsumerTest {
     @Test
     public void should_consume_todo_created_event() throws Exception {
         // Given
+        final ObjectMapper objectMapper = new ObjectMapper();
         final AggregateRootEventConsumable mockAggregateRootEventConsumable = mock(AggregateRootEventConsumable.class, RETURNS_DEEP_STUBS);
         when(mockAggregateRootEventConsumable.eventId().version()).thenReturn(0l);
-        final TodoAggregateTodoCreatedEventPayloadConsumer mockTodoAggregateTodoCreatedEventPayloadConsumer = mock(TodoAggregateTodoCreatedEventPayloadConsumer.class);
-        doReturn("todoId").when(mockTodoAggregateTodoCreatedEventPayloadConsumer).todoId();
-        doReturn("description").when(mockTodoAggregateTodoCreatedEventPayloadConsumer).description();
-        doReturn(mockTodoAggregateTodoCreatedEventPayloadConsumer).when(mockAggregateRootEventConsumable).eventPayload();
+        final JsonNode eventPayload = objectMapper.readTree("{\"todoId\":\"todoId\",\"description\":\"lorem ipsum\"}");
+        doReturn(eventPayload).when(mockAggregateRootEventConsumable).eventPayload();
 
         // When
         todoCreatedEventConsumer.consume(mockAggregateRootEventConsumable);
@@ -44,16 +44,12 @@ public class TodoCreatedEventConsumerTest {
         final ArgumentCaptor<TodoEntity> todoEntityCaptor = ArgumentCaptor.forClass(TodoEntity.class);
         verify(mockJpaTodoRepository, times(1)).persist(todoEntityCaptor.capture());
         assertEquals("todoId", todoEntityCaptor.getValue().todoId());
-        assertEquals("description", todoEntityCaptor.getValue().description());
+        assertEquals("lorem ipsum", todoEntityCaptor.getValue().description());
         assertEquals(TodoStatus.IN_PROGRESS, todoEntityCaptor.getValue().todoStatus());
         assertEquals(0l, todoEntityCaptor.getValue().version());
 
         verify(mockAggregateRootEventConsumable.eventId(), times(1)).version();
-        verify(mockAggregateRootEventConsumable, atLeastOnce()).eventId();
-        verify(mockTodoAggregateTodoCreatedEventPayloadConsumer, times(1)).todoId();
-        verify(mockTodoAggregateTodoCreatedEventPayloadConsumer, times(1)).description();
-        verify(mockAggregateRootEventConsumable, times(1)).eventPayload();
-        verifyNoMoreInteractions(mockAggregateRootEventConsumable, mockTodoAggregateTodoCreatedEventPayloadConsumer, mockJpaTodoRepository);
+        verify(mockAggregateRootEventConsumable, atLeastOnce()).eventPayload();
     }
 
     @Test

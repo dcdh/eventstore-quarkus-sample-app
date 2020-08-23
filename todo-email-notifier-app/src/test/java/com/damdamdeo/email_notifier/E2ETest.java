@@ -1,7 +1,9 @@
 package com.damdamdeo.email_notifier;
 
 import com.damdamdeo.email_notifier.domain.EmailNotifier;
+import com.damdamdeo.eventsourced.consumer.infra.eventsourcing.DebeziumAggregateRootEventId;
 import com.damdamdeo.eventsourced.encryption.api.SecretStore;
+import com.damdamdeo.eventsourced.model.api.AggregateRootId;
 import io.agroal.api.AgroalDataSource;
 import io.quarkus.agroal.DataSource;
 import io.quarkus.test.junit.QuarkusTest;
@@ -90,8 +92,9 @@ public class E2ETest {
     @Test
     public void should_consume_todo_created_event_and_todo_marked_as_completed_event() throws Exception {
         // When
-        secretStore.store("TodoAggregateRoot", "todoId", "AAlwSnNqyIRebwRqBfHufaCTXoRFRllg");
-        kafkaDebeziumProducer.produce("TodoCreatedEvent.json");
+        final AggregateRootId aggregateRootId = new DebeziumAggregateRootEventId.DebeziumAggregateRootId("todoId", "TodoAggregateRoot");
+        secretStore.store(aggregateRootId, "IbXcNPlTEnoPzWVPNwASmPepRVWBHhPN");
+        kafkaDebeziumProducer.produce("todoCreatedEvent.json");
         await().atMost(2, TimeUnit.SECONDS).until(() ->
                 given()
                         .when()
@@ -114,7 +117,7 @@ public class E2ETest {
                 .body("[0].MIME.Parts[0].MIME.Parts[0].Body", containsString("lorem ipsum"));
 
         // When
-        kafkaDebeziumProducer.produce("TodoMarkedAsCompletedEvent.json");
+        kafkaDebeziumProducer.produce("todoMarkedAsCompletedEvent.json");
         await().atMost(2, TimeUnit.SECONDS).until(() ->
                 given()
                         .when()

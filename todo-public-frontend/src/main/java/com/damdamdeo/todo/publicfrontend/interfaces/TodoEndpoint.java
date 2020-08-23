@@ -2,6 +2,7 @@ package com.damdamdeo.todo.publicfrontend.interfaces;
 
 import com.damdamdeo.todo.publicfrontend.infrastructure.TodoQueryRemoteService;
 import com.damdamdeo.todo.publicfrontend.infrastructure.TodoWriteRemoteService;
+import io.quarkus.security.identity.SecurityIdentity;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -22,6 +23,9 @@ public class TodoEndpoint {
 
     @Inject
     JsonWebToken jwt;
+
+    @Inject
+    SecurityIdentity securityIdentity;
 
     @Inject
     @RestClient

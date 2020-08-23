@@ -44,6 +44,7 @@ public class MarkTodoAsCompletedCommandHandlerTest {
         markTodoAsCompletedCommandHandler.execute(markTodoAsCompletedCommand);
 
         // Then
+        verify(todoAggregateRoot, times(1)).handle(markTodoAsCompletedCommand);
         verify(mockTodoAggregateRootRepository, times(1)).load(any());
         verify(todoAggregateRoot, times(1)).handle(any(MarkTodoAsCompletedCommand.class));
         verify(todoAggregateRoot, times(1)).canMarkTodoAsCompletedSpecification();

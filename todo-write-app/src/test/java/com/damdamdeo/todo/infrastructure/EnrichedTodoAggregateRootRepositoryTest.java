@@ -64,7 +64,7 @@ public class EnrichedTodoAggregateRootRepositoryTest {
     @Test
     public void should_is_todo_existent_return_true_when_the_todo_is_present() {
         // Given
-        final TodoAggregateRoot todoAggregateRoot = new TodoAggregateRoot();
+        final TodoAggregateRoot todoAggregateRoot = new TodoAggregateRoot("todoId");
         todoAggregateRoot.handle(new CreateNewTodoCommand("description"), "todoId");
         todoAggregateRootRepository.save(todoAggregateRoot);
 

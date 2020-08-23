@@ -2,8 +2,10 @@ package com.damdamdeo.email_notifier.consumer;
 
 import com.damdamdeo.email_notifier.domain.EmailNotifier;
 import com.damdamdeo.email_notifier.domain.TemplateGenerator;
+import com.damdamdeo.email_notifier.domain.Todo;
 import com.damdamdeo.eventsourced.consumer.api.eventsourcing.AggregateRootEventConsumable;
-import com.damdamdeo.eventsourced.consumer.api.eventsourcing.AggregateRootEventConsumer;
+import com.damdamdeo.eventsourced.consumer.infra.eventsourcing.JsonNodeAggregateRootEventConsumer;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,7 +13,7 @@ import javax.enterprise.context.ApplicationScoped;
 import java.util.Objects;
 
 @ApplicationScoped
-public class TodoMarkedAsCompletedEventConsumer implements AggregateRootEventConsumer {
+public class TodoMarkedAsCompletedEventConsumer implements JsonNodeAggregateRootEventConsumer {
 
     private final Logger logger = LoggerFactory.getLogger(TodoMarkedAsCompletedEventConsumer.class);
 
@@ -25,11 +27,11 @@ public class TodoMarkedAsCompletedEventConsumer implements AggregateRootEventCon
     }
 
     @Override
-    public void consume(final AggregateRootEventConsumable aggregateRootEventConsumable) {
+    public void consume(final AggregateRootEventConsumable<JsonNode> aggregateRootEventConsumable) {
         logger.info(String.format("Consuming '%s' for '%s'", eventType(), aggregateRootEventConsumable.eventId()));
-        final TodoAggregateRootMaterializedStateConsumer todoAggregateRootMaterializedStateConsumer = (TodoAggregateRootMaterializedStateConsumer) aggregateRootEventConsumable.materializedState();
+        final Todo todo = new JsonNodeTodo(aggregateRootEventConsumable.materializedState(), aggregateRootEventConsumable.eventId());
         try {
-            final String content = templateGenerator.generateTodoMarkedAsCompleted(todoAggregateRootMaterializedStateConsumer.toDomain());
+            final String content = templateGenerator.generateTodoMarkedAsCompleted(todo);
             emailNotifier.notify("Todo marked as completed", content);
         } catch (Exception e) {
             // TODO log

@@ -1,0 +1,9 @@
+{
+  "todoId": "todoId",
+  "description": {
+    "encrypted": "encryptedDescription",
+    "aggregateRootType": "TodoAggregateRoot",
+    "aggregateRootId": "todoId",
+    "type": "string"
+  }
+}

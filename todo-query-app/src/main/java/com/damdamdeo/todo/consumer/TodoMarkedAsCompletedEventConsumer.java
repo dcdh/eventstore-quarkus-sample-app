@@ -1,10 +1,10 @@
 package com.damdamdeo.todo.consumer;
 
 import com.damdamdeo.eventsourced.consumer.api.eventsourcing.AggregateRootEventConsumable;
-import com.damdamdeo.eventsourced.consumer.api.eventsourcing.AggregateRootEventConsumer;
-import com.damdamdeo.todo.consumer.event.TodoAggregateTodoMarkedAsCompletedEventPayloadConsumer;
+import com.damdamdeo.eventsourced.consumer.infra.eventsourcing.JsonNodeAggregateRootEventConsumer;
 import com.damdamdeo.todo.infrastructure.JpaTodoRepository;
 import com.damdamdeo.todo.infrastructure.TodoEntity;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,7 +12,7 @@ import javax.enterprise.context.ApplicationScoped;
 import java.util.Objects;
 
 @ApplicationScoped
-public class TodoMarkedAsCompletedEventConsumer implements AggregateRootEventConsumer {
+public class TodoMarkedAsCompletedEventConsumer implements JsonNodeAggregateRootEventConsumer {
 
     private final Logger logger = LoggerFactory.getLogger(TodoMarkedAsCompletedEventConsumer.class);
 
@@ -23,11 +23,10 @@ public class TodoMarkedAsCompletedEventConsumer implements AggregateRootEventCon
     }
 
     @Override
-    public void consume(final AggregateRootEventConsumable aggregateRootEventConsumable) {
+    public void consume(final AggregateRootEventConsumable<JsonNode> aggregateRootEventConsumable) {
         logger.info(String.format("Consuming '%s' for '%s'", eventType(), aggregateRootEventConsumable.eventId()));
-        final TodoAggregateTodoMarkedAsCompletedEventPayloadConsumer todoAggregateTodoMarkedAsCompletedEventPayloadConsumer = (TodoAggregateTodoMarkedAsCompletedEventPayloadConsumer) aggregateRootEventConsumable.eventPayload();
         final TodoEntity todoToMarkAsCompleted = jpaTodoRepository.find(
-                todoAggregateTodoMarkedAsCompletedEventPayloadConsumer.todoId());
+                aggregateRootEventConsumable.eventPayload().get("todoId").asText());
         todoToMarkAsCompleted.markAsCompleted(aggregateRootEventConsumable.eventId());
         jpaTodoRepository.merge(todoToMarkAsCompleted);
     }
