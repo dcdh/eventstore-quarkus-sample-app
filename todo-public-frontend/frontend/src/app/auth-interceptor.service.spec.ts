@@ -3,13 +3,13 @@ import { HttpClient, HTTP_INTERCEPTORS, HttpErrorResponse, HttpResponse } from "
 
 import { HttpClientTestingModule, HttpTestingController } from "@angular/common/http/testing";
 
-import { TokenInterceptorService } from './token-interceptor.service';
+import { AuthInterceptorService } from './auth-interceptor.service';
 import { AuthService } from "./auth.service";
 import { AuthenticationService, TodoService } from 'src/generated';
 
 // https://medium.com/@dev.s4522/how-to-write-unit-test-cases-for-angular-http-interceptor-7595cb3a8843
-describe('TokenInterceptorService', () => {
-  let service: TokenInterceptorService;
+describe('AuthInterceptorService', () => {
+  let service: AuthInterceptorService;
   let httpMock: HttpTestingController;
   const authServiceSpy = jasmine.createSpyObj('AuthService', ['accessToken', 'logout']);
 
@@ -20,10 +20,10 @@ describe('TokenInterceptorService', () => {
         AuthenticationService,
         TodoService,
         { provide: AuthService, useValue: authServiceSpy },
-        { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptorService, multi: true }
+        { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptorService, multi: true }
       ]
     });
-    service = TestBed.inject(TokenInterceptorService);
+    service = TestBed.inject(AuthInterceptorService);
     httpMock = TestBed.inject(HttpTestingController);
   });
 
