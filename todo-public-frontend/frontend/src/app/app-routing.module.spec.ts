@@ -32,7 +32,7 @@ describe("Router: App", () => {
     location = TestBed.get(Location);
   });
 
-  it('should navigate to "" redirect to /todos when user is authenticated', async(() => {
+  it('should navigate to "" redirect to /todos when user is authenticated', () => {
     // Given
     authServiceSpy.isLoggedIn.and.returnValue(true);
 
@@ -41,9 +41,9 @@ describe("Router: App", () => {
       expect(location.path()).toBe('/todos');
       expect(authServiceSpy.isLoggedIn).toHaveBeenCalled();
     });
-  }));
+  });
 
-  it('should navigate to "" redirect to /login when user is not authenticated', async(() => {
+  it('should navigate to "" redirect to /login when user is not authenticated', () => {
     // Given
     authServiceSpy.isLoggedIn.and.returnValue(false);
 
@@ -52,9 +52,9 @@ describe("Router: App", () => {
       expect(location.path()).toBe('/login');
       expect(authServiceSpy.isLoggedIn).toHaveBeenCalled();
     });
-  }));
+  });
 
-  it('should navigate to "todos" redirect to /todos when user is authenticated', async(() => {
+  it('should navigate to "todos" redirect to /todos when user is authenticated', () => {
     // Given
     authServiceSpy.isLoggedIn.and.returnValue(true);
 
@@ -63,9 +63,9 @@ describe("Router: App", () => {
       expect(location.path()).toBe('/todos');
       expect(authServiceSpy.isLoggedIn).toHaveBeenCalled();
     });
-  }));
+  });
 
-  it('should navigate to "todos" redirect to /login when user is not authenticated', async(() => {
+  it('should navigate to "todos" redirect to /login when user is not authenticated', () => {
     // Given
     authServiceSpy.isLoggedIn.and.returnValue(false);
 
@@ -74,9 +74,9 @@ describe("Router: App", () => {
       expect(location.path()).toBe('/login');
       expect(authServiceSpy.isLoggedIn).toHaveBeenCalled();
     });
-  }));
+  });
 
-  it('should navigate to "login" redirect to /login when user is authenticated', async(() => {
+  it('should navigate to "login" redirect to /login when user is authenticated', () => {
     // Given
     authServiceSpy.isLoggedIn.and.returnValue(true);
 
@@ -85,9 +85,9 @@ describe("Router: App", () => {
       expect(location.path()).toBe('/login');
       expect(authServiceSpy.isLoggedIn).toHaveBeenCalled();
     });
-  }));
+  });
 
-  it('should navigate to "login" redirect to /login when user is not authenticated', async(() => {
+  it('should navigate to "login" redirect to /login when user is not authenticated', () => {
     // Given
     authServiceSpy.isLoggedIn.and.returnValue(false);
 
@@ -96,6 +96,6 @@ describe("Router: App", () => {
       expect(location.path()).toBe('/login');
       expect(authServiceSpy.isLoggedIn).toHaveBeenCalled();
     });
-  }));
+  });
 
 });
