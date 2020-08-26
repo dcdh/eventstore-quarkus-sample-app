@@ -4,11 +4,12 @@ import { AuthService } from './auth.service';
 import { AuthenticationService, AccessTokenDto } from 'src/generated';
 import { Router } from '@angular/router';
 import { defer } from 'rxjs';
+import { throwError, Observable } from "rxjs";
 
 describe('AuthService', () => {
   let service: AuthService;
 
-  const authenticationServiceSpy = jasmine.createSpyObj('AuthenticationService', ['authenticationLoginPost']);
+  const authenticationServiceSpy = jasmine.createSpyObj('AuthenticationService', ['authenticationLoginPost', 'authenticationRefreshTokenPost']);
   const routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
   beforeEach(() => {
@@ -105,6 +106,89 @@ describe('AuthService', () => {
 
       // Then
       expect(accessToken).toBeNull();
+    });
+
+  });
+
+  describe('renewToken', () => {
+
+    beforeEach(() => {
+      localStorage.setItem('accessToken', JSON.stringify({ 'accessToken': 'accessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'refreshToken' }));
+    });
+
+    it('should call authenticationRefreshTokenPost using refresh token', () => {
+      // Given
+      authenticationServiceSpy.authenticationRefreshTokenPost.and.callFake(function() {
+        return defer(() => Promise.resolve());
+      });
+
+      // When
+      service.renewToken();
+
+      // Then
+      expect(authenticationServiceSpy.authenticationRefreshTokenPost).toHaveBeenCalledWith('refreshToken');
+    });
+
+    it('should store new access token after successfully renew it', done => {
+      // Given
+      authenticationServiceSpy.authenticationRefreshTokenPost.and.callFake(function() {
+        return defer(() => Promise.resolve({ 'accessToken': 'newAccessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'newRefreshToken' }));
+      });
+
+      // When && Then
+      service.renewToken().subscribe(() => {
+        expect(localStorage.getItem('accessToken')).toEqual(JSON.stringify({ 'accessToken': 'newAccessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'newRefreshToken' }));
+        expect(authenticationServiceSpy.authenticationRefreshTokenPost).toHaveBeenCalled();
+        done();
+      });
+    });
+
+    it('should return new access token after successfully renew it', done => {
+      // Given
+      authenticationServiceSpy.authenticationRefreshTokenPost.and.callFake(function() {
+        return defer(() => Promise.resolve({ 'accessToken': 'newAccessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'newRefreshToken' }));
+      });
+
+      // When && Then
+      service.renewToken().subscribe((accessToken: AccessTokenDto) => {
+        expect(accessToken).toEqual({ 'accessToken': 'newAccessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'newRefreshToken' });
+        expect(authenticationServiceSpy.authenticationRefreshTokenPost).toHaveBeenCalled();
+        done();
+      });
+    });
+
+    it('should throw an exception when renewing token is unsuccessful', done => {
+      // Given
+      authenticationServiceSpy.authenticationRefreshTokenPost.and.returnValue(throwError({ error: { message: 'test-error' }}));
+
+      // When && Then
+      service.renewToken().subscribe(
+        null,
+        error => {
+          expect(error).toEqual({ error: { message: 'test-error' }});
+          expect(authenticationServiceSpy.authenticationRefreshTokenPost).toHaveBeenCalled();
+          done();
+        },
+        () => {
+          fail('Error, the Observable is expected to error and not complete');
+        });
+    });
+
+    it('should remove access token from local storage when renewing token is unsuccessful', done => {
+      // Given
+      authenticationServiceSpy.authenticationRefreshTokenPost.and.returnValue(throwError({}));
+
+      // When && Then
+      service.renewToken().subscribe(
+        null,
+        error => {
+          expect(localStorage.getItem('accessToken')).toBeNull();
+          expect(authenticationServiceSpy.authenticationRefreshTokenPost).toHaveBeenCalled();
+          done();
+        },
+        () => {
+          fail('Error, the Observable is expected to error and not complete');
+        });
     });
 
   });

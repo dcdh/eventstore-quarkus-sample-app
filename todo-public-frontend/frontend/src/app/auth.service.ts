@@ -2,6 +2,9 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { AuthenticationService, AccessTokenDto } from 'src/generated';
+import { throwError, Observable } from "rxjs";
+import { HttpResponse, HttpErrorResponse } from "@angular/common/http";
+import { map, catchError } from "rxjs/operators";
 
 @Injectable({
   providedIn: 'root'
@@ -36,6 +39,21 @@ export class AuthService {
   accessToken(): AccessTokenDto | null {
     const accessToken: AccessTokenDto = JSON.parse(localStorage.getItem('accessToken'));
     return (accessToken !== null) ? accessToken : null;
+  }
+
+  renewToken(): Observable<AccessTokenDto> {
+    const accessToken: AccessTokenDto = JSON.parse(localStorage.getItem('accessToken'));
+    return this.authenticationService.authenticationRefreshTokenPost(accessToken.refreshToken)
+      .pipe(
+        map((accessToken: AccessTokenDto) => {
+          localStorage.setItem('accessToken', JSON.stringify(accessToken));
+          return accessToken;
+        }),
+        catchError((error: HttpErrorResponse) => {
+          localStorage.removeItem('accessToken');
+          return throwError(error);
+        })
+      );
   }
 
 }
