@@ -34,7 +34,7 @@ export class AuthService {
   }
 
   accessToken(): AccessTokenDto | null {
-    const accessToken = JSON.parse(localStorage.getItem('accessToken'));
+    const accessToken: AccessTokenDto = JSON.parse(localStorage.getItem('accessToken'));
     return (accessToken !== null) ? accessToken : null;
   }
 
