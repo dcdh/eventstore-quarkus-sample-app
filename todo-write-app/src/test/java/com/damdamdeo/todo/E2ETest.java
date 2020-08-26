@@ -47,7 +47,19 @@ public class E2ETest extends AbstractTodoTest {
                 .body("version", equalTo(0))
                 .body("canMarkTodoAsCompleted", equalTo(true))
         ;
-        // TODO checker que l'event est présent et le contenu !
+
+        given()
+                .auth().oauth2(getAccessToken())
+                .when()
+                .get("/todos/todoId")
+                .then()
+                .statusCode(200)
+                .body(JsonSchemaValidator.matchesJsonSchemaInClasspath("expected/todo.json"))
+                .body("todoId", equalTo("todoId"))
+                .body("description", equalTo("lorem ipsum"))
+                .body("todoStatus", equalTo("IN_PROGRESS"))
+                .body("version", equalTo(0))
+                .body("canMarkTodoAsCompleted", equalTo(true));
     }
 
     @Test
@@ -73,8 +85,21 @@ public class E2ETest extends AbstractTodoTest {
                 .body("todoStatus", equalTo("COMPLETED"))
                 .body("version", equalTo(1))
                 .body("canMarkTodoAsCompleted", equalTo(false))
-        // TODO checker que l'event est présent et le contenu !
         ;
+        given()
+                .auth().oauth2(getAccessToken())
+                .when()
+                .get("/todos/todoId")
+                .then()
+                .statusCode(200)
+                .body(JsonSchemaValidator.matchesJsonSchemaInClasspath("expected/todo.json"))
+                .body("todoId", equalTo("todoId"))
+                .body("description", equalTo("lorem ipsum"))
+                .body("todoStatus", equalTo("COMPLETED"))
+                .body("version", equalTo(1))
+                .body("canMarkTodoAsCompleted", equalTo(false));
+
+        // TODO checker que l'event est présent et le contenu !
     }
 
     private String getAccessToken() {

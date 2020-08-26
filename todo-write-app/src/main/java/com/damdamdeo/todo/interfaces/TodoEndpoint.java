@@ -1,5 +1,7 @@
 package com.damdamdeo.todo.interfaces;
 
+import com.damdamdeo.eventsourced.mutable.api.eventsourcing.AggregateRootRepository;
+import com.damdamdeo.todo.aggregate.TodoAggregateRoot;
 import com.damdamdeo.todo.command.CreateNewTodoCommand;
 import com.damdamdeo.todo.command.MarkTodoAsCompletedCommand;
 import com.damdamdeo.todo.command.handler.CreateNewTodoCommandHandler;
@@ -9,6 +11,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.Objects;
+import java.util.Optional;
 
 @Path("/todos")
 @Produces(MediaType.APPLICATION_JSON)
@@ -18,10 +21,14 @@ public class TodoEndpoint {
 
     final MarkTodoAsCompletedCommandHandler markTodoAsCompletedCommandHandler;
 
+    final AggregateRootRepository aggregateRootRepository;
+
     public TodoEndpoint(final CreateNewTodoCommandHandler createNewTodoCommandHandler,
-                        final MarkTodoAsCompletedCommandHandler markTodoAsCompletedCommandHandler) {
+                        final MarkTodoAsCompletedCommandHandler markTodoAsCompletedCommandHandler,
+                        final AggregateRootRepository aggregateRootRepository) {
         this.createNewTodoCommandHandler = Objects.requireNonNull(createNewTodoCommandHandler);
         this.markTodoAsCompletedCommandHandler = Objects.requireNonNull(markTodoAsCompletedCommandHandler);
+        this.aggregateRootRepository = Objects.requireNonNull(aggregateRootRepository);
     }
 
     @RolesAllowed("frontend-user")
@@ -40,6 +47,15 @@ public class TodoEndpoint {
     @Produces(MediaType.APPLICATION_JSON)
     public TodoDTO markTodoAsCompletedCommand(@FormParam("todoId") final String todoId) throws Throwable {
         return new TodoDTO(markTodoAsCompletedCommandHandler.execute(new MarkTodoAsCompletedCommand(todoId)));
+    }
+
+    @RolesAllowed("frontend-user")
+    @GET
+    @Path("/{todoId}")
+    public TodoDTO getTodo(@PathParam("todoId") final String todoId) throws Throwable {
+        return Optional.of(aggregateRootRepository.findMaterializedState(todoId, TodoAggregateRoot.class))
+                .map(TodoDTO::new)
+                .get();
     }
 
 }

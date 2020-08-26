@@ -1,5 +1,7 @@
 package com.damdamdeo.todo.interfaces;
 
+import com.damdamdeo.eventsourced.model.api.AggregateRootId;
+import com.damdamdeo.eventsourced.mutable.api.eventsourcing.AggregateRootRepository;
 import com.damdamdeo.eventsourced.mutable.api.eventsourcing.UnknownAggregateRootException;
 import com.damdamdeo.todo.aggregate.TodoAggregateRoot;
 import com.damdamdeo.todo.command.CreateNewTodoCommand;
@@ -35,6 +37,9 @@ public class TodoEndpointTest {
 
     @InjectMock
     SecurityIdentity securityIdentity;
+
+    @InjectMock
+    AggregateRootRepository aggregateRootRepository;
 
     @Test
     public void should_api_creates_new_todo() throws Throwable {
@@ -171,8 +176,10 @@ public class TodoEndpointTest {
     @Test
     public void should_api_fails_when_marking_as_completed_an_unknown_todo() throws Throwable {
         // Given
+        final AggregateRootId aggregateRootId = mock(AggregateRootId.class);
+        doReturn("todoId").when(aggregateRootId).aggregateRootId();
         doReturn(Boolean.TRUE).when(securityIdentity).hasRole("frontend-user");
-        doThrow(new UnknownAggregateRootException("todoId"))
+        doThrow(new UnknownAggregateRootException(aggregateRootId))
                 .when(markTodoAsCompletedCommandHandler)
                 .execute(any(MarkTodoAsCompletedCommand.class));
 
@@ -186,6 +193,7 @@ public class TodoEndpointTest {
                 .contentType(MediaType.TEXT_PLAIN)
                 .body(Matchers.equalTo("Le todoId 'todoId' est inconnu."));
         verify(securityIdentity, times(1)).hasRole(anyString());
+        verify(aggregateRootId, times(1)).aggregateRootId();
         verify(markTodoAsCompletedCommandHandler, times(1)).execute(any(MarkTodoAsCompletedCommand.class));
     }
 
@@ -211,6 +219,78 @@ public class TodoEndpointTest {
         verify(securityIdentity, times(1)).hasRole(anyString());
         verify(markTodoAsCompletedCommandHandler, times(1)).execute(any(MarkTodoAsCompletedCommand.class));
         verify(todo, times(1)).todoId();
+    }
+
+    @Test
+    public void should_api_get_the_materialized_state() {
+        // Given
+        doReturn(Boolean.TRUE).when(securityIdentity).hasRole("frontend-user");
+        final TodoAggregateRoot todoAggregateRoot = mock(TodoAggregateRoot.class);
+        doReturn("todoId").when(todoAggregateRoot).todoId();
+        doReturn("lorem ipsum").when(todoAggregateRoot).description();
+        doReturn(TodoStatus.COMPLETED).when(todoAggregateRoot).todoStatus();
+        doReturn(1l).when(todoAggregateRoot).version();
+        doCallRealMethod().when(todoAggregateRoot).canMarkTodoAsCompletedSpecification();
+        doReturn(todoAggregateRoot).when(aggregateRootRepository).findMaterializedState("todoId", TodoAggregateRoot.class);
+
+        // When && Then
+        given()
+                .when()
+                .get("/todos/todoId")
+                .then()
+                .statusCode(200)
+                .body(JsonSchemaValidator.matchesJsonSchemaInClasspath("expected/todo.json"))
+                .body("todoId", equalTo("todoId"))
+                .body("description", equalTo("lorem ipsum"))
+                .body("todoStatus", equalTo("COMPLETED"))
+                .body("version", equalTo(1))
+                .body("canMarkTodoAsCompleted", equalTo(false));
+
+        verify(aggregateRootRepository, times(1)).findMaterializedState(any(), any());
+        verify(securityIdentity, times(1)).hasRole(anyString());
+        verify(todoAggregateRoot, times(1)).todoId();
+        verify(todoAggregateRoot, times(1)).description();
+        verify(todoAggregateRoot, times(2)).todoStatus();
+        verify(todoAggregateRoot, times(1)).version();
+        verify(todoAggregateRoot, times(1)).canMarkTodoAsCompletedSpecification();
+    }
+
+    @Test
+    public void should_api_fails_when_getting_the_materialized_state_for_an_unknown_todo() {
+        // Given
+        doReturn(Boolean.TRUE).when(securityIdentity).hasRole("frontend-user");
+        final AggregateRootId unknownAggregateId = mock(AggregateRootId.class);
+        doReturn("todoId").when(unknownAggregateId).aggregateRootId();
+        doThrow(new UnknownAggregateRootException(unknownAggregateId)).when(aggregateRootRepository)
+                .findMaterializedState(any(), any());
+
+        // When && Then
+        given()
+                .when()
+                .get("/todos/todoId")
+                .then()
+                .statusCode(404)
+                .contentType(MediaType.TEXT_PLAIN)
+                .body(Matchers.equalTo("Le todoId 'todoId' est inconnu."));
+
+        verify(aggregateRootRepository, times(1)).findMaterializedState(any(), any());
+        verify(securityIdentity, times(1)).hasRole(anyString());
+    }
+
+    @Test
+    public void should_not_be_authorized_to_get_the_materialized_state_when_user_is_not_authenticated() {
+        // Given
+        doReturn(Boolean.FALSE).when(securityIdentity).hasRole("frontend-user");
+
+        // When && Then
+        given()
+                .when()
+                .get("/todos/todoId")
+                .then()
+                .statusCode(403);
+
+        verify(securityIdentity, times(1)).hasRole(anyString());
+        verify(securityIdentity, atLeastOnce()).isAnonymous();
     }
 
 }

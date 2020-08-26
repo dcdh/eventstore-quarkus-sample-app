@@ -1,5 +1,6 @@
 package com.damdamdeo.todo.command.handler;
 
+import com.damdamdeo.eventsourced.model.api.AggregateRootId;
 import com.damdamdeo.eventsourced.mutable.api.eventsourcing.UnknownAggregateRootException;
 import com.damdamdeo.eventsourced.mutable.infra.eventsourcing.command.CommandExecutor;
 import com.damdamdeo.todo.aggregate.TodoAggregateRoot;
@@ -58,7 +59,8 @@ public class MarkTodoAsCompletedCommandHandlerTest {
     @Test
     public void should_throw_UnknownAggregateRootException_when_marking_as_completed_an_unknown_aggregate() throws Throwable {
         // Given
-        doThrow(new UnknownAggregateRootException("todoId")).when(mockTodoAggregateRootRepository).load("todoId");
+        final AggregateRootId aggregateRootId = mock(AggregateRootId.class);
+        doThrow(new UnknownAggregateRootException(aggregateRootId)).when(mockTodoAggregateRootRepository).load("todoId");
         final MarkTodoAsCompletedCommand markTodoAsCompletedCommand = new MarkTodoAsCompletedCommand("todoId");
 
         // When && Then

@@ -14,7 +14,7 @@ public class UnknownAggregateRootExceptionMapper implements ExceptionMapper<Unkn
     public Response toResponse(final UnknownAggregateRootException exception) {
         return Response.status(Response.Status.NOT_FOUND)
                 .type(MediaType.TEXT_PLAIN)
-                .entity(String.format("Le todoId '%s' est inconnu.", exception.unknownAggregateId())).build();
+                .entity(String.format("Le todoId '%s' est inconnu.", exception.unknownAggregateId().aggregateRootId())).build();
     }
 
 }

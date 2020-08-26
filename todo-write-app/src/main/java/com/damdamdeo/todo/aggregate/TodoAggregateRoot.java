@@ -19,6 +19,12 @@ public class TodoAggregateRoot extends AggregateRoot implements Todo {
         super(aggregateRootId);
     }
 
+    private TodoAggregateRoot(final Builder builder) {
+        super(builder.aggregateRootId, builder.version);
+        this.description = builder.description;
+        this.todoStatus = builder.todoStatus;
+    }
+
     public void handle(final CreateNewTodoCommand createNewTodoCommand, final String todoId) {
         this.apply("TodoCreatedEvent",
                 new TodoCreatedEventPayload(todoId,
@@ -37,6 +43,48 @@ public class TodoAggregateRoot extends AggregateRoot implements Todo {
 
     public void on(final TodoMarkedAsCompletedEventPayload todoMarkedAsCompletedEventPayload) {
         this.todoStatus = TodoStatus.COMPLETED;
+    }
+
+    public static Builder newBuilder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+
+        private String aggregateRootId;
+
+        private Long version;
+
+        private String description;
+
+        private TodoStatus todoStatus;
+
+        private Builder() {};
+
+        public Builder withAggregateRootId(final String aggregateRootId) {
+            this.aggregateRootId = aggregateRootId;
+            return this;
+        }
+
+        public Builder withVersion(final Long version) {
+            this.version = version;
+            return this;
+        }
+
+        public Builder withDescription(final String description) {
+            this.description = description;
+            return this;
+        }
+
+        public Builder withTodoStatus(final TodoStatus todoStatus) {
+            this.todoStatus = todoStatus;
+            return this;
+        }
+
+        public TodoAggregateRoot build() {
+            return new TodoAggregateRoot(this);
+        }
+
     }
 
     @Override
