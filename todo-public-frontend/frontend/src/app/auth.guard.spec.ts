@@ -24,31 +24,35 @@ describe('AuthGuard', () => {
     expect(guard).toBeTruthy();
   });
 
-  it('should redirect to login page when user is not authenticated', () => {
-    // Given
-    authServiceSpy.isLoggedIn.and.returnValue(false);
-    const urlTree: UrlTree = new UrlTree();
-    routerSpy.parseUrl.and.returnValue(urlTree);
+  describe('canActivate', () => {
 
-    // When
-    const canActivate = guard.canActivate(null, null);
+    it('should redirect to login page when user is not authenticated', () => {
+      // Given
+      authServiceSpy.isLoggedIn.and.returnValue(false);
+      const urlTree: UrlTree = new UrlTree();
+      routerSpy.parseUrl.and.returnValue(urlTree);
 
-    // Then
-    expect(canActivate).toEqual(urlTree);
-    expect(routerSpy.parseUrl).toHaveBeenCalledWith('/login');
-    expect(authServiceSpy.isLoggedIn).toHaveBeenCalled();
-  });
+      // When
+      const canActivate = guard.canActivate(null, null);
 
-  it('should not redirect to login page when user is authenticated', () => {
-    // Given
-    authServiceSpy.isLoggedIn.and.returnValue(true);
+      // Then
+      expect(canActivate).toEqual(urlTree);
+      expect(routerSpy.parseUrl).toHaveBeenCalledWith('/login');
+      expect(authServiceSpy.isLoggedIn).toHaveBeenCalled();
+    });
 
-    // When
-    const canActivate = guard.canActivate(null, null);
+    it('should not redirect to login page when user is authenticated', () => {
+      // Given
+      authServiceSpy.isLoggedIn.and.returnValue(true);
 
-    // Then
-    expect(canActivate).toEqual(true);
-    expect(authServiceSpy.isLoggedIn).toHaveBeenCalled();
+      // When
+      const canActivate = guard.canActivate(null, null);
+
+      // Then
+      expect(canActivate).toEqual(true);
+      expect(authServiceSpy.isLoggedIn).toHaveBeenCalled();
+    });
+
   });
 
 });

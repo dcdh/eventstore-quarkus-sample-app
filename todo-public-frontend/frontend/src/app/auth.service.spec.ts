@@ -25,76 +25,88 @@ describe('AuthService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should purge accessToken from local storage when logout', () => {
-    // Given
-    localStorage.setItem('accessToken', '{}');
+  describe('logout', () => {
 
-    // When
-    service.logout();
+    it('should purge accessToken from local storage when logout', () => {
+      // Given
+      localStorage.setItem('accessToken', '{}');
 
-    // Then
-    expect(localStorage.getItem('accessToken')).toBeNull();
-  });
+      // When
+      service.logout();
 
-  it('should redirect to the login page when logout', () => {
-    // Given
-
-    // When
-    service.logout();
-
-    // Then
-    expect(routerSpy.navigate).toHaveBeenCalledWith(['/login']);
-  });
-
-  it('should store accessToken into local storage when logging in', (async() => {
-    // Given
-    localStorage.removeItem('accessToken');
-    authenticationServiceSpy.authenticationLoginPost.and.callFake(function() {
-      return defer(() => Promise.resolve({ 'accessToken': 'accessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'refreshToken' }));
+      // Then
+      expect(localStorage.getItem('accessToken')).toBeNull();
     });
 
-    // When
-    await service.login('username', 'password');
+    it('should redirect to the login page when logout', () => {
+      // Given
 
-    // Then
-    expect(localStorage.getItem('accessToken')).toEqual(JSON.stringify({ 'accessToken': 'accessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'refreshToken' }));
-    expect(authenticationServiceSpy.authenticationLoginPost).toHaveBeenCalledWith('username', 'password');
-  }));
+      // When
+      service.logout();
 
-  it('should redirect to the list of todo when logging in', (async() => {
-    // Given
-    authenticationServiceSpy.authenticationLoginPost.and.callFake(function() {
-      return defer(() => Promise.resolve({ 'accessToken': 'accessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'refreshToken' }));
+      // Then
+      expect(routerSpy.navigate).toHaveBeenCalledWith(['/login']);
     });
 
-    // When
-    await service.login('username', 'password');
-
-    // Then
-    expect(routerSpy.navigate).toHaveBeenCalledWith(['/todos']);
-    expect(authenticationServiceSpy.authenticationLoginPost).toHaveBeenCalled();
-  }));
-
-  it('should return access token from local storage', () => {
-    // Given
-    localStorage.setItem('accessToken', JSON.stringify({ 'accessToken': 'accessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'refreshToken' }));
-
-    // When
-    const accessToken: AccessTokenDto = service.accessToken();
-
-    // Then
-    expect(accessToken).toEqual({ 'accessToken': 'accessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'refreshToken' });
   });
 
-  it('should return null when accessToken not present in local storage', () => {
-    // Given
-    localStorage.removeItem('accessToken');
+  describe('login', () => {
 
-    // When
-    const accessToken: AccessTokenDto = service.accessToken();
+    it('should store accessToken into local storage when logging in', (async() => {
+      // Given
+      localStorage.removeItem('accessToken');
+      authenticationServiceSpy.authenticationLoginPost.and.callFake(function() {
+        return defer(() => Promise.resolve({ 'accessToken': 'accessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'refreshToken' }));
+      });
 
-    // Then
-    expect(accessToken).toBeNull();
+      // When
+      await service.login('username', 'password');
+
+      // Then
+      expect(localStorage.getItem('accessToken')).toEqual(JSON.stringify({ 'accessToken': 'accessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'refreshToken' }));
+      expect(authenticationServiceSpy.authenticationLoginPost).toHaveBeenCalledWith('username', 'password');
+    }));
+
+    it('should redirect to the list of todo when logging in', (async() => {
+      // Given
+      authenticationServiceSpy.authenticationLoginPost.and.callFake(function() {
+        return defer(() => Promise.resolve({ 'accessToken': 'accessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'refreshToken' }));
+      });
+
+      // When
+      await service.login('username', 'password');
+
+      // Then
+      expect(routerSpy.navigate).toHaveBeenCalledWith(['/todos']);
+      expect(authenticationServiceSpy.authenticationLoginPost).toHaveBeenCalled();
+    }));
+
+  });
+
+  describe('accessToken', () => {
+
+    it('should return access token from local storage', () => {
+      // Given
+      localStorage.setItem('accessToken', JSON.stringify({ 'accessToken': 'accessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'refreshToken' }));
+
+      // When
+      const accessToken: AccessTokenDto = service.accessToken();
+
+      // Then
+      expect(accessToken).toEqual({ 'accessToken': 'accessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'refreshToken' });
+    });
+
+    it('should return null when accessToken not present in local storage', () => {
+      // Given
+      localStorage.removeItem('accessToken');
+
+      // When
+      const accessToken: AccessTokenDto = service.accessToken();
+
+      // Then
+      expect(accessToken).toBeNull();
+    });
+
   });
 
 });
