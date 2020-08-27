@@ -30,9 +30,10 @@ describe("Router: App", () => {
 
     router = TestBed.get(Router);
     location = TestBed.get(Location);
+    authServiceSpy.isLoggedIn.calls.reset();
   });
 
-  it('should navigate to "" redirect to /todos when user is authenticated', () => {
+  it('should navigate to "" redirect to /todos when user is authenticated', done => {
     // Given
     authServiceSpy.isLoggedIn.and.returnValue(true);
 
@@ -40,10 +41,11 @@ describe("Router: App", () => {
     router.navigate(['']).then(() => {
       expect(location.path()).toBe('/todos');
       expect(authServiceSpy.isLoggedIn).toHaveBeenCalled();
+      done();
     });
   });
 
-  it('should navigate to "" redirect to /login when user is not authenticated', () => {
+  it('should navigate to "" redirect to /login when user is not authenticated', done => {
     // Given
     authServiceSpy.isLoggedIn.and.returnValue(false);
 
@@ -51,10 +53,11 @@ describe("Router: App", () => {
     router.navigate(['']).then(() => {
       expect(location.path()).toBe('/login');
       expect(authServiceSpy.isLoggedIn).toHaveBeenCalled();
+      done();
     });
   });
 
-  it('should navigate to "todos" redirect to /todos when user is authenticated', () => {
+  it('should navigate to "todos" redirect to /todos when user is authenticated', done => {
     // Given
     authServiceSpy.isLoggedIn.and.returnValue(true);
 
@@ -62,10 +65,11 @@ describe("Router: App", () => {
     router.navigate(['todos']).then(() => {
       expect(location.path()).toBe('/todos');
       expect(authServiceSpy.isLoggedIn).toHaveBeenCalled();
+      done();
     });
   });
 
-  it('should navigate to "todos" redirect to /login when user is not authenticated', () => {
+  it('should navigate to "todos" redirect to /login when user is not authenticated', done => {
     // Given
     authServiceSpy.isLoggedIn.and.returnValue(false);
 
@@ -73,28 +77,29 @@ describe("Router: App", () => {
     router.navigate(['todos']).then(() => {
       expect(location.path()).toBe('/login');
       expect(authServiceSpy.isLoggedIn).toHaveBeenCalled();
+      done();
     });
   });
 
-  it('should navigate to "login" redirect to /login when user is authenticated', () => {
+  it('should navigate to "login" redirect to /login when user is authenticated', done => {
     // Given
-    authServiceSpy.isLoggedIn.and.returnValue(true);
 
     // When && Then
     router.navigate(['login']).then(() => {
       expect(location.path()).toBe('/login');
-      expect(authServiceSpy.isLoggedIn).toHaveBeenCalled();
+      expect(authServiceSpy.isLoggedIn).not.toHaveBeenCalled();
+      done();
     });
   });
 
-  it('should navigate to "login" redirect to /login when user is not authenticated', () => {
+  it('should navigate to "login" redirect to /login when user is not authenticated', done => {
     // Given
-    authServiceSpy.isLoggedIn.and.returnValue(false);
 
     // When && Then
     router.navigate(['login']).then(() => {
       expect(location.path()).toBe('/login');
-      expect(authServiceSpy.isLoggedIn).toHaveBeenCalled();
+      expect(authServiceSpy.isLoggedIn).not.toHaveBeenCalled();
+      done();
     });
   });
 
