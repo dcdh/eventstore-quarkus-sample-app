@@ -29,6 +29,8 @@ describe('AuthInterceptorService', () => {
 
   afterEach(() => {
     httpMock.verify();
+    authServiceSpy.accessToken.calls.reset();
+    authServiceSpy.logout.calls.reset();
   });
 
   it('should be created', () => {

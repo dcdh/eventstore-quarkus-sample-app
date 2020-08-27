@@ -35,6 +35,10 @@ describe('TodoComponent', () => {
     buttonEl = fixture.debugElement.query(By.css('button'));
   });
 
+  afterEach(() => {
+    todoServiceSpy.todosMarkTodoAsCompletedPost.calls.reset();
+  });
+
   it('should create', () => {
     expect(component).toBeTruthy();
   });

@@ -22,6 +22,12 @@ describe('AuthService', () => {
     service = TestBed.inject(AuthService);
   });
 
+  afterEach(() => {
+    authenticationServiceSpy.authenticationLoginPost.calls.reset();
+    authenticationServiceSpy.authenticationRefreshTokenPost.calls.reset();
+    routerSpy.navigate.calls.reset();
+  });
+
   it('should be created', () => {
     expect(service).toBeTruthy();
   });

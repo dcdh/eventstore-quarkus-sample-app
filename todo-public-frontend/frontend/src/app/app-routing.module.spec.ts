@@ -30,6 +30,9 @@ describe("Router: App", () => {
 
     router = TestBed.get(Router);
     location = TestBed.get(Location);
+  });
+
+  afterEach(() => {
     authServiceSpy.isLoggedIn.calls.reset();
   });
 

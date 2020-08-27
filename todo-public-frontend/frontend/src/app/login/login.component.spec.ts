@@ -26,6 +26,10 @@ describe('LoginComponent', () => {
     fixture.detectChanges();
   });
 
+  afterEach(() => {
+    authServiceSpy.login.calls.reset();
+  });
+
   it('should create', () => {
     expect(component).toBeTruthy();
   });

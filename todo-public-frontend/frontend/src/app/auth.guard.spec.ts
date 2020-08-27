@@ -20,6 +20,11 @@ describe('AuthGuard', () => {
     guard = TestBed.inject(AuthGuard);
   });
 
+  afterEach(() => {
+    authServiceSpy.isLoggedIn.calls.reset();
+    routerSpy.parseUrl.calls.reset();
+  });
+
   it('should be created', () => {
     expect(guard).toBeTruthy();
   });

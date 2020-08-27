@@ -30,6 +30,10 @@ describe('ConnectedUserComponent', () => {
     fixture.detectChanges();
   });
 
+  afterEach(() => {
+    authenticationServiceSpy.authenticationMeGet.calls.reset();
+  });
+
   it('should create', () => {
     expect(component).toBeTruthy();
   });

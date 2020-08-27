@@ -30,6 +30,11 @@ describe('TodoListComponent', () => {
     fixture.detectChanges();
   });
 
+  afterEach(() => {
+    todoServiceSpy.todosGet.calls.reset();
+    todoServiceSpy.todosCreateNewTodoPost.calls.reset();
+  });
+
   it('should create and get all todos at component initialization', async(() => {
     fixture.whenStable().then(() => {
       expect(component).toBeTruthy();
