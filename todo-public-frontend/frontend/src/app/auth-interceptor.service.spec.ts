@@ -37,7 +37,7 @@ describe('AuthInterceptorService', () => {
     expect(service).toBeTruthy();
   });
 
-  describe('authentication bearer', () => {
+  describe('authentication bearer behaviors', () => {
 
     it('should add authorization bearer token when calling authentication service', inject([AuthenticationService], (authenticationService: AuthenticationService) => {
       // Given
@@ -127,7 +127,7 @@ describe('AuthInterceptorService', () => {
 
   });
 
-  describe('logout', () => {
+  describe('logout behaviors', () => {
 
     it('should logout when user request execution is forbidden', inject([HttpClient], (http: HttpClient) => {
       // Given

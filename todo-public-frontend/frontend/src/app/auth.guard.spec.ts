@@ -29,7 +29,7 @@ describe('AuthGuard', () => {
     expect(guard).toBeTruthy();
   });
 
-  describe('canActivate', () => {
+  describe('canActivate behaviors', () => {
 
     it('should redirect to login page when user is not authenticated', () => {
       // Given

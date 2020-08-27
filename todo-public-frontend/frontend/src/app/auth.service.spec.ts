@@ -32,7 +32,7 @@ describe('AuthService', () => {
     expect(service).toBeTruthy();
   });
 
-  describe('logout', () => {
+  describe('logout behaviors', () => {
 
     it('should purge accessToken from local storage when logout', () => {
       // Given
@@ -57,7 +57,7 @@ describe('AuthService', () => {
 
   });
 
-  describe('login', () => {
+  describe('login behaviors', () => {
 
     it('should store accessToken into local storage when logging in', (async() => {
       // Given
@@ -90,7 +90,7 @@ describe('AuthService', () => {
 
   });
 
-  describe('accessToken', () => {
+  describe('accessToken behaviors', () => {
 
     it('should return access token from local storage', () => {
       // Given
@@ -116,7 +116,7 @@ describe('AuthService', () => {
 
   });
 
-  describe('renewToken', () => {
+  describe('renewToken behaviors', () => {
 
     beforeEach(() => {
       localStorage.setItem('accessToken', JSON.stringify({ 'accessToken': 'accessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'refreshToken' }));
