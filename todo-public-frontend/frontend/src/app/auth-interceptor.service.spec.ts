@@ -9,7 +9,7 @@ import { AuthenticationService, TodoService } from 'src/generated';
 
 // https://medium.com/@dev.s4522/how-to-write-unit-test-cases-for-angular-http-interceptor-7595cb3a8843
 describe('AuthInterceptorService', () => {
-  let service: AuthInterceptorService;
+  let authInterceptorService: AuthInterceptorService;
   let httpMock: HttpTestingController;
   const authServiceSpy = jasmine.createSpyObj('AuthService', ['accessToken', 'logout']);
 
@@ -23,7 +23,7 @@ describe('AuthInterceptorService', () => {
         { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptorService, multi: true }
       ]
     });
-    service = TestBed.inject(AuthInterceptorService);
+    authInterceptorService = TestBed.inject(AuthInterceptorService);
     httpMock = TestBed.inject(HttpTestingController);
   });
 
@@ -34,7 +34,7 @@ describe('AuthInterceptorService', () => {
   });
 
   it('should be created', () => {
-    expect(service).toBeTruthy();
+    expect(authInterceptorService).toBeTruthy();
   });
 
   describe('authentication bearer behaviors', () => {
