@@ -10,6 +10,9 @@ import { AuthenticationService, TodoService } from 'src/generated';
 // https://medium.com/@dev.s4522/how-to-write-unit-test-cases-for-angular-http-interceptor-7595cb3a8843
 describe('AuthInterceptorService', () => {
   let authInterceptorService: AuthInterceptorService;
+  let authenticationService: AuthenticationService;
+  let todoService: TodoService;
+  let http: HttpClient;
   let httpMock: HttpTestingController;
   const authServiceSpy = jasmine.createSpyObj('AuthService', ['accessToken', 'logout']);
 
@@ -24,6 +27,9 @@ describe('AuthInterceptorService', () => {
       ]
     });
     authInterceptorService = TestBed.inject(AuthInterceptorService);
+    authenticationService = TestBed.inject(AuthenticationService);
+    todoService = TestBed.inject(TodoService);
+    http = TestBed.inject(HttpClient);
     httpMock = TestBed.inject(HttpTestingController);
   });
 
@@ -39,7 +45,7 @@ describe('AuthInterceptorService', () => {
 
   describe('authentication bearer behaviors', () => {
 
-    it('should add authorization bearer token when calling authentication service', inject([AuthenticationService], (authenticationService: AuthenticationService) => {
+    it('should add authorization bearer token when calling authentication service', () => {
       // Given
       authServiceSpy.accessToken.and.returnValue({ 'accessToken': 'accessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'refreshToken' });
 
@@ -52,9 +58,9 @@ describe('AuthInterceptorService', () => {
       const httpReq = httpMock.expectOne('https://localhost/authentication/me');
       expect(httpReq.request.headers.get('Authorization')).toEqual('Bearer accessToken');
       expect(authServiceSpy.accessToken).toHaveBeenCalled();
-    }));
+    });
 
-    it('should add authorization bearer token when retrieving list of todo', inject([TodoService], (todoService: TodoService) => {
+    it('should add authorization bearer token when retrieving list of todo', () => {
       // Given
       authServiceSpy.accessToken.and.returnValue({ 'accessToken': 'accessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'refreshToken' });
 
@@ -67,9 +73,9 @@ describe('AuthInterceptorService', () => {
       const httpReq = httpMock.expectOne('https://localhost/todos');
       expect(httpReq.request.headers.get('Authorization')).toEqual('Bearer accessToken');
       expect(authServiceSpy.accessToken).toHaveBeenCalled();
-    }));
+    });
 
-    it('should add authorization bearer token when creating a new todo', inject([TodoService], (todoService: TodoService) => {
+    it('should add authorization bearer token when creating a new todo', () => {
       // Given
       authServiceSpy.accessToken.and.returnValue({ 'accessToken': 'accessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'refreshToken' });
 
@@ -82,9 +88,9 @@ describe('AuthInterceptorService', () => {
       const httpReq = httpMock.expectOne('https://localhost/todos/createNewTodo');
       expect(httpReq.request.headers.get('Authorization')).toEqual('Bearer accessToken');
       expect(authServiceSpy.accessToken).toHaveBeenCalled();
-    }));
+    });
 
-    it('should not add authorization bearer token when call login service', inject([AuthenticationService], (authenticationService: AuthenticationService) => {
+    it('should not add authorization bearer token when call login service', () => {
       // Given
       authServiceSpy.accessToken.and.returnValue({ 'accessToken': 'accessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'refreshToken' });
 
@@ -97,9 +103,9 @@ describe('AuthInterceptorService', () => {
       const httpReq = httpMock.expectOne('https://localhost/authentication/login');
       expect(httpReq.request.headers.has('Authorization')).toEqual(false);
       expect(authServiceSpy.accessToken).toHaveBeenCalled();
-    }));
+    });
 
-    it('should add authorization bearer token when access token is present', inject([HttpClient], (http: HttpClient) => {
+    it('should add authorization bearer token when access token is present', () => {
       // Given
       authServiceSpy.accessToken.and.returnValue({ 'accessToken': 'accessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'refreshToken' });
 
@@ -110,9 +116,9 @@ describe('AuthInterceptorService', () => {
       const httpReq = httpMock.expectOne('/fake');
       expect(httpReq.request.headers.get('Authorization')).toEqual('Bearer accessToken');
       expect(authServiceSpy.accessToken).toHaveBeenCalled();
-    }));
+    });
 
-    it('should not add authorization bearer token when access token is not available', inject([HttpClient], (http: HttpClient) => {
+    it('should not add authorization bearer token when access token is not available', () => {
       // Given
       authServiceSpy.accessToken.and.returnValue(null);
 
@@ -123,13 +129,13 @@ describe('AuthInterceptorService', () => {
       const httpReq = httpMock.expectOne('/fake');
       expect(httpReq.request.headers.has('Authorization')).toEqual(false);
       expect(authServiceSpy.accessToken).toHaveBeenCalled();
-    }));
+    });
 
   });
 
   describe('logout behaviors', () => {
 
-    it('should logout when user request execution is forbidden', inject([HttpClient], (http: HttpClient) => {
+    it('should logout when user request execution is forbidden', () => {
       // Given
       authServiceSpy.accessToken.and.returnValue({ 'accessToken': 'accessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'refreshToken' });
 
@@ -142,7 +148,7 @@ describe('AuthInterceptorService', () => {
       expect(httpReq.request.headers.get('Authorization')).toEqual('Bearer accessToken');
       expect(authServiceSpy.accessToken).toHaveBeenCalled();
       expect(authServiceSpy.logout).toHaveBeenCalled();
-    }));
+    });
 
   });
 
