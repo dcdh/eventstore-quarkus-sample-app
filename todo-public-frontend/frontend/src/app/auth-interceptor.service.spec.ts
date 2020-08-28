@@ -12,7 +12,7 @@ describe('AuthInterceptorService', () => {
   let authInterceptorService: AuthInterceptorService;
   let authenticationService: AuthenticationService;
   let todoService: TodoService;
-  let http: HttpClient;
+  let httpClient: HttpClient;
   let httpMock: HttpTestingController;
   const authServiceSpy = jasmine.createSpyObj('AuthService', ['accessToken', 'logout']);
 
@@ -29,7 +29,7 @@ describe('AuthInterceptorService', () => {
     authInterceptorService = TestBed.inject(AuthInterceptorService);
     authenticationService = TestBed.inject(AuthenticationService);
     todoService = TestBed.inject(TodoService);
-    http = TestBed.inject(HttpClient);
+    httpClient = TestBed.inject(HttpClient);
     httpMock = TestBed.inject(HttpTestingController);
   });
 
@@ -110,7 +110,7 @@ describe('AuthInterceptorService', () => {
       authServiceSpy.accessToken.and.returnValue({ 'accessToken': 'accessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'refreshToken' });
 
       // When
-      http.get('/fake').subscribe(res => { expect(res).toBeTruthy() });
+      httpClient.get('/fake').subscribe(res => { expect(res).toBeTruthy() });
 
       // Then
       const httpReq = httpMock.expectOne('/fake');
@@ -123,7 +123,7 @@ describe('AuthInterceptorService', () => {
       authServiceSpy.accessToken.and.returnValue(null);
 
       // When
-      http.get('/fake').subscribe(res => { expect(res).toBeTruthy() });
+      httpClient.get('/fake').subscribe(res => { expect(res).toBeTruthy() });
 
       // Then
       const httpReq = httpMock.expectOne('/fake');
@@ -140,7 +140,7 @@ describe('AuthInterceptorService', () => {
       authServiceSpy.accessToken.and.returnValue({ 'accessToken': 'accessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'refreshToken' });
 
       // When
-      http.get('/fake').subscribe(res => res, err => err);
+      httpClient.get('/fake').subscribe(res => res, err => err);
 
       // Then
       const httpReq = httpMock.expectOne('/fake');
