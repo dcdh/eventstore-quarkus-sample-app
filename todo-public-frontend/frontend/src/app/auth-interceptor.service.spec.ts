@@ -13,7 +13,7 @@ describe('AuthInterceptorService', () => {
   let authenticationService: AuthenticationService;
   let todoService: TodoService;
   let httpClient: HttpClient;
-  let httpMock: HttpTestingController;
+  let httpTestingController: HttpTestingController;
   const authServiceSpy = jasmine.createSpyObj('AuthService', ['accessToken', 'logout']);
 
   beforeEach(() => {
@@ -30,11 +30,11 @@ describe('AuthInterceptorService', () => {
     authenticationService = TestBed.inject(AuthenticationService);
     todoService = TestBed.inject(TodoService);
     httpClient = TestBed.inject(HttpClient);
-    httpMock = TestBed.inject(HttpTestingController);
+    httpTestingController = TestBed.inject(HttpTestingController);
   });
 
   afterEach(() => {
-    httpMock.verify();
+    httpTestingController.verify();
     authServiceSpy.accessToken.calls.reset();
     authServiceSpy.logout.calls.reset();
   });
@@ -55,7 +55,7 @@ describe('AuthInterceptorService', () => {
       });
 
       // Then
-      const httpReq = httpMock.expectOne('https://localhost/authentication/me');
+      const httpReq = httpTestingController.expectOne('https://localhost/authentication/me');
       expect(httpReq.request.headers.get('Authorization')).toEqual('Bearer accessToken');
       expect(authServiceSpy.accessToken).toHaveBeenCalled();
     });
@@ -70,7 +70,7 @@ describe('AuthInterceptorService', () => {
       });
 
       // Then
-      const httpReq = httpMock.expectOne('https://localhost/todos');
+      const httpReq = httpTestingController.expectOne('https://localhost/todos');
       expect(httpReq.request.headers.get('Authorization')).toEqual('Bearer accessToken');
       expect(authServiceSpy.accessToken).toHaveBeenCalled();
     });
@@ -85,7 +85,7 @@ describe('AuthInterceptorService', () => {
       });
 
       // Then
-      const httpReq = httpMock.expectOne('https://localhost/todos/createNewTodo');
+      const httpReq = httpTestingController.expectOne('https://localhost/todos/createNewTodo');
       expect(httpReq.request.headers.get('Authorization')).toEqual('Bearer accessToken');
       expect(authServiceSpy.accessToken).toHaveBeenCalled();
     });
@@ -100,7 +100,7 @@ describe('AuthInterceptorService', () => {
       });
 
       // Then
-      const httpReq = httpMock.expectOne('https://localhost/authentication/login');
+      const httpReq = httpTestingController.expectOne('https://localhost/authentication/login');
       expect(httpReq.request.headers.has('Authorization')).toEqual(false);
       expect(authServiceSpy.accessToken).toHaveBeenCalled();
     });
@@ -113,7 +113,7 @@ describe('AuthInterceptorService', () => {
       httpClient.get('/fake').subscribe(res => { expect(res).toBeTruthy() });
 
       // Then
-      const httpReq = httpMock.expectOne('/fake');
+      const httpReq = httpTestingController.expectOne('/fake');
       expect(httpReq.request.headers.get('Authorization')).toEqual('Bearer accessToken');
       expect(authServiceSpy.accessToken).toHaveBeenCalled();
     });
@@ -126,7 +126,7 @@ describe('AuthInterceptorService', () => {
       httpClient.get('/fake').subscribe(res => { expect(res).toBeTruthy() });
 
       // Then
-      const httpReq = httpMock.expectOne('/fake');
+      const httpReq = httpTestingController.expectOne('/fake');
       expect(httpReq.request.headers.has('Authorization')).toEqual(false);
       expect(authServiceSpy.accessToken).toHaveBeenCalled();
     });
@@ -143,7 +143,7 @@ describe('AuthInterceptorService', () => {
       httpClient.get('/fake').subscribe(res => res, err => err);
 
       // Then
-      const httpReq = httpMock.expectOne('/fake');
+      const httpReq = httpTestingController.expectOne('/fake');
       httpReq.flush('forbidden', new HttpErrorResponse({ error: '403 error', status: 403, statusText: 'Forbidden' }));
       expect(httpReq.request.headers.get('Authorization')).toEqual('Bearer accessToken');
       expect(authServiceSpy.accessToken).toHaveBeenCalled();
