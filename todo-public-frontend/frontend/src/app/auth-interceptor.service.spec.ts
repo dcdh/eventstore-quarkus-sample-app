@@ -14,7 +14,7 @@ describe('AuthInterceptorService', () => {
   let todoService: TodoService;
   let httpClient: HttpClient;
   let httpTestingController: HttpTestingController;
-  const authServiceSpy = jasmine.createSpyObj('AuthService', ['accessToken', 'logout']);
+  const authServiceSpy = jasmine.createSpyObj('AuthService', ['accessToken', 'logout', 'renewToken']);
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -37,6 +37,7 @@ describe('AuthInterceptorService', () => {
     httpTestingController.verify();
     authServiceSpy.accessToken.calls.reset();
     authServiceSpy.logout.calls.reset();
+    authServiceSpy.renewToken.calls.reset();
   });
 
   it('should be created', () => {
@@ -146,7 +147,7 @@ describe('AuthInterceptorService', () => {
 
   describe('logout behaviors', () => {
 
-    it('should logout when user request execution is forbidden', fakeAsync(() => {
+    it('should call authentication service renewToken when user request execution is forbidden', fakeAsync(() => {
       // Given
       authServiceSpy.accessToken.and.returnValue({ 'accessToken': 'accessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'refreshToken' });
       httpClient.get('/fake').subscribe(
@@ -160,9 +161,9 @@ describe('AuthInterceptorService', () => {
       httpReq.flush('forbidden', new HttpErrorResponse({ error: '403 error', status: 403, statusText: 'Forbidden' }));
 
       // Then
+      expect(authServiceSpy.renewToken).toHaveBeenCalled();
       expect(httpReq.request.headers.get('Authorization')).toEqual('Bearer accessToken');
       expect(authServiceSpy.accessToken).toHaveBeenCalled();
-      expect(authServiceSpy.logout).toHaveBeenCalled();
     }));
 
   });
