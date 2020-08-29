@@ -1,3 +1,15 @@
+## How to access it
+
+### local
+
+#### swagger
+
+http://127.0.0.1:8086/swagger-ui/#/default
+
+#### frontend
+
+http://127.0.0.1:8086/index.html
+
 ## Prerequists
 
 Have nodejs install on your computer
