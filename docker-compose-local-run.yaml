@@ -107,6 +107,8 @@ services:
         -Dconnector.mutable.database.port=5432
         -Dconnector.mutable.database.dbname=mutable
         -Dquarkus.oidc.auth-server-url=http://keycloak:8080/auth/realms/todos
+        -Dquarkus.jaeger.endpoint=http://jaeger:14268/api/traces
+        -Dquarkus.jaeger.tags=env=local
     links:
       - zookeeper
       - kafka
@@ -114,6 +116,7 @@ services:
       - mutable
       - secret-store
       - keycloak
+      - jaeger
 
   todo-query-app:
     image: damdamdeo/todo-query-app:latest
@@ -132,6 +135,8 @@ services:
         -Dquarkus.datasource.consumed-events.username=postgres
         -Dquarkus.datasource.consumed-events.password=postgres
         -Dquarkus.oidc.auth-server-url=http://keycloak:8080/auth/realms/todos
+        -Dquarkus.jaeger.endpoint=http://jaeger:14268/api/traces
+        -Dquarkus.jaeger.tags=env=local
     links:
       - zookeeper
       - kafka
@@ -139,6 +144,7 @@ services:
       - todo-query
       - secret-store
       - keycloak
+      - jaeger
 
   todo-email-notifier-app:
     image: damdamdeo/todo-email-notifier-app:latest
@@ -177,10 +183,13 @@ services:
         -Dtodo-query-api/mp-rest/url=http://todo-query-app:8080
         -Dkeycloak-api/mp-rest/url=http://keycloak:8080/auth/realms/todos
         -Dquarkus.oidc.auth-server-url=http://keycloak:8080/auth/realms/todos
+        -Dquarkus.jaeger.endpoint=http://jaeger:14268/api/traces
+        -Dquarkus.jaeger.tags=env=local
     links:
       - todo-write-app
       - todo-query-app
       - keycloak
+      - jaeger
 
   keycloak-db:
     image: debezium/postgres:11-alpine
@@ -205,3 +214,13 @@ services:
       - DB_PASSWORD=keycloak
     links:
       - keycloak-db
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - 5775:5775
+      - 6831:6831
+      - 6832:6832
+      - 5778:5778
+      - 16686:16686
+      - 14268:14268

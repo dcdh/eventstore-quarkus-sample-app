@@ -38,7 +38,7 @@ docker volume prune -f
 docker network prune -f
 
 ### start infra
-docker-compose -f docker-compose-local-run.yaml up --detach zookeeper kafka connect mutable todo-query todo-email-notifier secret-store mailhog keycloak-db
+docker-compose -f docker-compose-local-run.yaml up --detach jaeger zookeeper kafka connect mutable todo-query todo-email-notifier secret-store mailhog keycloak-db
 sleep 20
 
 ### start keycloak
