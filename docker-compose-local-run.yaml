@@ -175,14 +175,11 @@ services:
       - JAVA_OPTIONS=-Dtodo-write-api/mp-rest/url=http://todo-write-app:8080
         -Dtodo-query-api/mp-rest/url=http://todo-query-app:8080
         -Dquarkus.oidc.auth-server-url=http://keycloak:8080/auth/realms/todos
+        -Dkeycloak-api/mp-rest/url=http://keycloak:8080/auth/realms/todos
         -Dkeycloak.admin.clientId=admin-cli
         -Dkeycloak.admin.username=keycloak
         -Dkeycloak.admin.password=keycloak
         -Dquarkus.http.cors=false
-        -Dtodo-write-api/mp-rest/url=http://todo-write-app:8080
-        -Dtodo-query-api/mp-rest/url=http://todo-query-app:8080
-        -Dkeycloak-api/mp-rest/url=http://keycloak:8080/auth/realms/todos
-        -Dquarkus.oidc.auth-server-url=http://keycloak:8080/auth/realms/todos
         -Dquarkus.jaeger.endpoint=http://jaeger:14268/api/traces
         -Dquarkus.jaeger.tags=env=local
     links:
