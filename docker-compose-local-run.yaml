@@ -172,7 +172,7 @@ services:
         -Dkeycloak.admin.clientId=admin-cli
         -Dkeycloak.admin.username=keycloak
         -Dkeycloak.admin.password=keycloak
-        -Dquarkus.http.cors.origins=http://localhost:4200
+        -Dquarkus.http.cors=false
     links:
       - todo-write-app
       - todo-query-app
