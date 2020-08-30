@@ -173,6 +173,10 @@ services:
         -Dkeycloak.admin.username=keycloak
         -Dkeycloak.admin.password=keycloak
         -Dquarkus.http.cors=false
+        -Dtodo-write-api/mp-rest/url=http://todo-write-app:8080
+        -Dtodo-query-api/mp-rest/url=http://todo-query-app:8080
+        -Dkeycloak-api/mp-rest/url=http://keycloak:8080/auth/realms/todos
+        -Dquarkus.oidc.auth-server-url=http://keycloak:8080/auth/realms/todos
     links:
       - todo-write-app
       - todo-query-app
