@@ -15,8 +15,6 @@ services:
     image: debezium/kafka:1.1.1.Final
     ports:
       - 9092:9092
-    links:
-      - zookeeper
     environment:
       - ZOOKEEPER_CONNECT=zookeeper:2181
       - CREATE_TOPICS=event:1:1:delete
@@ -28,9 +26,6 @@ services:
     image: debezium/connect:1.1.1.Final
     ports:
       - 8083:8083
-    links:
-      - kafka
-      - mutable
     environment:
       - BOOTSTRAP_SERVERS=kafka:9092
       - GROUP_ID=1
@@ -109,14 +104,6 @@ services:
         -Dquarkus.oidc.auth-server-url=http://keycloak:8080/auth/realms/todos
         -Dquarkus.jaeger.endpoint=http://jaeger:14268/api/traces
         -Dquarkus.jaeger.tags=env=local
-    links:
-      - zookeeper
-      - kafka
-      - connect
-      - mutable
-      - secret-store
-      - keycloak
-      - jaeger
 
   todo-query-app:
     image: damdamdeo/todo-query-app:latest
@@ -137,14 +124,6 @@ services:
         -Dquarkus.oidc.auth-server-url=http://keycloak:8080/auth/realms/todos
         -Dquarkus.jaeger.endpoint=http://jaeger:14268/api/traces
         -Dquarkus.jaeger.tags=env=local
-    links:
-      - zookeeper
-      - kafka
-      - connect
-      - todo-query
-      - secret-store
-      - keycloak
-      - jaeger
 
   todo-email-notifier-app:
     image: damdamdeo/todo-email-notifier-app:latest
@@ -159,13 +138,6 @@ services:
         -Dquarkus.mailer.host=mailhog
         -Dquarkus.mailer.username=
         -Dquarkus.mailer.password=
-    links:
-      - zookeeper
-      - kafka
-      - connect
-      - todo-email-notifier
-      - secret-store
-      - mailhog
 
   todo-public-frontend-app:
     image: damdamdeo/todo-public-frontend-app:latest
@@ -182,11 +154,6 @@ services:
         -Dquarkus.http.cors=false
         -Dquarkus.jaeger.endpoint=http://jaeger:14268/api/traces
         -Dquarkus.jaeger.tags=env=local
-    links:
-      - todo-write-app
-      - todo-query-app
-      - keycloak
-      - jaeger
 
   keycloak-db:
     image: debezium/postgres:11-alpine
@@ -209,8 +176,6 @@ services:
       - DB_DATABASE=keycloak
       - DB_USER=keycloak
       - DB_PASSWORD=keycloak
-    links:
-      - keycloak-db
 
   jaeger:
     image: jaegertracing/all-in-one:latest
