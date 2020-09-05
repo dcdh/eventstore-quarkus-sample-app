@@ -151,7 +151,8 @@ services:
         -Dkeycloak.admin.clientId=admin-cli
         -Dkeycloak.admin.username=keycloak
         -Dkeycloak.admin.password=keycloak
-        -Dquarkus.http.cors=false
+        -Dquarkus.http.cors=true
+        -Dquarkus.http.cors.origins=http://localhost:8086,http://127.0.0.1:8086,http://localhost:4200,http://127.0.0.1:4200
         -Dquarkus.jaeger.endpoint=http://jaeger:14268/api/traces
         -Dquarkus.jaeger.tags=env=local
 
