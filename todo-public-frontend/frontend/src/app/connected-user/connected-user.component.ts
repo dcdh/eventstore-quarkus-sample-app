@@ -16,7 +16,7 @@ export class ConnectedUserComponent implements OnInit {
     this.authenticationService.authenticationMeGet()
       .subscribe({
         next: user => {
-          console.info(user);
+          console.info('User connected', user);
           this.user = user;
         },
         error: error => {
