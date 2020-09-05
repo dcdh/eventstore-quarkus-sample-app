@@ -6,6 +6,7 @@ import { HttpClientTestingModule, HttpTestingController } from "@angular/common/
 import { AuthInterceptorService } from './auth-interceptor.service';
 import { AuthService } from "./auth.service";
 import { AuthenticationService, TodoService } from 'src/generated';
+import { defer } from 'rxjs';
 
 // https://medium.com/@dev.s4522/how-to-write-unit-test-cases-for-angular-http-interceptor-7595cb3a8843
 describe('AuthInterceptorService', () => {
@@ -145,7 +146,7 @@ describe('AuthInterceptorService', () => {
 
   });
 
-  describe('logout behaviors', () => {
+  describe('token renewal behaviors', () => {
 
     it('should call authentication service renewToken when user request execution is unauthorized', fakeAsync(() => {
       // Given
@@ -164,6 +165,30 @@ describe('AuthInterceptorService', () => {
       expect(authServiceSpy.renewToken).toHaveBeenCalled();
       expect(httpReq.request.headers.get('Authorization')).toEqual('Bearer accessToken');
       expect(authServiceSpy.accessToken).toHaveBeenCalled();
+    }));
+
+    it('should add renew access token authorization bearer when user request execution is unauthorized', fakeAsync(() => {
+      // Given
+      authServiceSpy.accessToken.and.returnValue({ 'accessToken': 'accessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'refreshToken' });
+      authServiceSpy.renewToken.and.callFake(function() {
+        return defer(() => Promise.resolve({ 'accessToken': 'newAccessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'newRefreshToken' }));
+      });
+      httpClient.get('/fake').subscribe(
+        res => {},
+        err => {});
+      const firstHttpReq = httpTestingController.expectOne('/fake');
+      firstHttpReq.flush('unauthorized', new HttpErrorResponse({ error: '401 error', status: 401, statusText: 'Unauthorized' }));
+
+      // When
+      tick();// execute the second http request
+
+      // Then
+      const secondHttpReq = httpTestingController.expectOne('/fake');
+
+      // Then
+      expect(secondHttpReq.request.headers.get('Authorization')).toEqual('Bearer newAccessToken');
+      expect(authServiceSpy.accessToken).toHaveBeenCalled();
+      expect(authServiceSpy.renewToken).toHaveBeenCalled();
     }));
 
   });

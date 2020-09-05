@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpEvent, HttpInterceptor, HttpHandler, HttpRequest, HttpResponse, HttpErrorResponse } from "@angular/common/http";
 import { AuthService } from "./auth.service";
 import { throwError, Observable } from "rxjs";
-import { tap, map, catchError } from "rxjs/operators";
+import { tap, catchError, flatMap } from "rxjs/operators";
 import { AccessTokenDto } from 'src/generated';
 
 @Injectable({
@@ -20,24 +20,32 @@ export class AuthInterceptorService implements HttpInterceptor {
       });
     }
     return next.handle(req).pipe(
-      tap((response: HttpResponse<any>) => console.log(response)),
+      tap((response: HttpResponse<any>) => console.info('Received response when executing request', response)),
       catchError((error: HttpErrorResponse) => {
         if (error && error.status === 401) {
-          // Forbidden means that token has expired need to renew it.
-          this.authService.renewToken().pipe(
-            map((accessToken: AccessTokenDto) => {
-              req = req.clone({
-                headers: req.headers.set('Authorization', 'Bearer ' + accessToken.accessToken)
-              });
-              return next.handle(req).pipe(
-                tap((response: HttpResponse<any>) => console.log(response)),
-                catchError((error: HttpErrorResponse) => {
-                  this.authService.logout();
-                  return throwError(error);
-                })
-              )
-            })
-          )
+          // Unauthenticated means that token has expired need to renew it.
+          return this.authService.renewToken()
+            .pipe(
+              tap((response: AccessTokenDto) => console.info('Received response after access token renewal')),
+              flatMap((renewedAccessTokenDto: AccessTokenDto) => {
+                req = req.clone({
+                  headers: req.headers.set('Authorization', 'Bearer ' + renewedAccessTokenDto.accessToken)
+                });
+                return next.handle(req).pipe(
+                  tap((response: HttpResponse<any>) => console.info('Received response when executing request using new access token', response)),
+                  catchError((error: HttpErrorResponse) => {
+                    window.alert('Unable to execute request');
+                    return throwError(error);
+                  })
+                );
+              }),
+              catchError((error: HttpErrorResponse) => {
+                window.alert('Unable to renew authentication token, redirecting to login page');
+                return throwError(error);
+              })
+            );
+        } else {
+          window.alert('Unable to execute request');
         }
         return throwError(error);
       })
@@ -45,7 +53,7 @@ export class AuthInterceptorService implements HttpInterceptor {
   }
 
   shouldAddToken(url: string): boolean {
-    const excludedUrls: string[] = ["/authentication/login"];
+    const excludedUrls: string[] = ["/authentication/login", "/authentication/refresh-token"];
     for (const excludedUrl of excludedUrls) {
       if (url.endsWith(excludedUrl)) {
         return false;
