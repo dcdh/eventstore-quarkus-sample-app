@@ -147,7 +147,7 @@ describe('AuthInterceptorService', () => {
 
   describe('logout behaviors', () => {
 
-    it('should call authentication service renewToken when user request execution is forbidden', fakeAsync(() => {
+    it('should call authentication service renewToken when user request execution is unauthorized', fakeAsync(() => {
       // Given
       authServiceSpy.accessToken.and.returnValue({ 'accessToken': 'accessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'refreshToken' });
       httpClient.get('/fake').subscribe(
@@ -158,7 +158,7 @@ describe('AuthInterceptorService', () => {
 
       // When
       const httpReq = httpTestingController.expectOne('/fake');
-      httpReq.flush('forbidden', new HttpErrorResponse({ error: '403 error', status: 403, statusText: 'Forbidden' }));
+      httpReq.flush('unauthorized', new HttpErrorResponse({ error: '401 error', status: 401, statusText: 'Unauthorized' }));
 
       // Then
       expect(authServiceSpy.renewToken).toHaveBeenCalled();

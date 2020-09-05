@@ -22,7 +22,7 @@ export class AuthInterceptorService implements HttpInterceptor {
     return next.handle(req).pipe(
       tap((response: HttpResponse<any>) => console.log(response)),
       catchError((error: HttpErrorResponse) => {
-        if (error && error.status === 403) {
+        if (error && error.status === 401) {
           // Forbidden means that token has expired need to renew it.
           this.authService.renewToken().pipe(
             map((accessToken: AccessTokenDto) => {
