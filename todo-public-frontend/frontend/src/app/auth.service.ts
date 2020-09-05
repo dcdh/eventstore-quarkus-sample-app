@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { AuthenticationService, AccessTokenDto } from 'src/generated';
 import { throwError, Observable } from "rxjs";
 import { HttpResponse, HttpErrorResponse } from "@angular/common/http";
-import { map, catchError } from "rxjs/operators";
+import { map, tap, catchError } from "rxjs/operators";
 
 @Injectable({
   providedIn: 'root'
@@ -45,6 +45,7 @@ export class AuthService {
     const accessToken: AccessTokenDto = JSON.parse(localStorage.getItem('accessToken'));
     return this.authenticationService.authenticationRefreshTokenPost(accessToken.refreshToken)
       .pipe(
+        tap((response: AccessTokenDto) => console.info('Received response when renewing token', response)),
         map((accessToken: AccessTokenDto) => {
           localStorage.setItem('accessToken', JSON.stringify(accessToken));
           return accessToken;
