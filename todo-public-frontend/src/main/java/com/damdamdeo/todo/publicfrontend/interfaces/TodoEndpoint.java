@@ -2,8 +2,6 @@ package com.damdamdeo.todo.publicfrontend.interfaces;
 
 import com.damdamdeo.todo.publicfrontend.infrastructure.TodoQueryRemoteService;
 import com.damdamdeo.todo.publicfrontend.infrastructure.TodoWriteRemoteService;
-import io.quarkus.security.identity.SecurityIdentity;
-import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
@@ -22,12 +20,6 @@ public class TodoEndpoint {
     // But we could also define message error from remote services. And to do that remote services should provide context variables as json in response.
 
     @Inject
-    JsonWebToken jwt;
-
-    @Inject
-    SecurityIdentity securityIdentity;
-
-    @Inject
     @RestClient
     TodoWriteRemoteService todoWriteRemoteService;
 
@@ -40,7 +32,7 @@ public class TodoEndpoint {
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public TodoDTO createNewTodo(@FormParam("description") final String description) throws Throwable {
-        return todoWriteRemoteService.createNewTodo("bearer " + jwt.getRawToken(), description);
+        return todoWriteRemoteService.createNewTodo(description);
     }
 
     @POST
@@ -48,18 +40,18 @@ public class TodoEndpoint {
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public TodoDTO markTodoAsCompletedCommand(@FormParam("todoId") final String todoId) throws Throwable {
-        return todoWriteRemoteService.markTodoAsCompleted("bearer " + jwt.getRawToken(), todoId);
+        return todoWriteRemoteService.markTodoAsCompleted(todoId);
     }
 
     @GET
     @Path("/{todoId}")
     public TodoDTO getTodo(@PathParam("todoId") final String todoId) {
-        return todoQueryRemoteService.getTodoByTodoId("bearer " + jwt.getRawToken(), todoId);
+        return todoQueryRemoteService.getTodoByTodoId(todoId);
     }
 
     @GET
     public List<TodoDTO> listAllTodos() {
-        return todoQueryRemoteService.getAllTodos("bearer " + jwt.getRawToken());
+        return todoQueryRemoteService.getAllTodos();
     }
 
 }

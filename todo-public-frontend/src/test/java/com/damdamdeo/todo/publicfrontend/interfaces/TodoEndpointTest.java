@@ -6,7 +6,6 @@ import com.damdamdeo.todo.publicfrontend.infrastructure.TodoWriteRemoteService;
 import com.jayway.restassured.module.jsv.JsonSchemaValidator;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
-import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.junit.jupiter.api.Test;
 
@@ -27,9 +26,6 @@ public class TodoEndpointTest {
     @RestClient
     TodoQueryRemoteService todoQueryRemoteService;
 
-    @InjectMock
-    JsonWebToken jwt;
-
     // Oauth is not provided as I have mocked the service used to check user connected.
     // Can be considered as ugly.
     // create new todo
@@ -38,8 +34,7 @@ public class TodoEndpointTest {
     public void should_create_new_todo_from_write_remote_service() {
         // Given
         final TodoDTO todoDTO = new TodoDTO("todoId", "lorem ipsum", TodoStatus.IN_PROGRESS, Boolean.TRUE, 0l);
-        doReturn("TOKEN").when(jwt).getRawToken();
-        doReturn(todoDTO).when(todoWriteRemoteService).createNewTodo("bearer TOKEN", "lorem ipsum");
+        doReturn(todoDTO).when(todoWriteRemoteService).createNewTodo("lorem ipsum");
 
         // When && Then
         given()
@@ -55,9 +50,8 @@ public class TodoEndpointTest {
                 .body("version", equalTo(0))
                 .body("canMarkTodoAsCompleted", equalTo(true));
 
-        verify(jwt, times(1)).getRawToken();
-        verify(todoWriteRemoteService, times(1)).createNewTodo(any(), any());
-        verifyNoMoreInteractions(todoWriteRemoteService, todoQueryRemoteService, jwt);
+        verify(todoWriteRemoteService, times(1)).createNewTodo(any());
+        verifyNoMoreInteractions(todoWriteRemoteService, todoQueryRemoteService);
     }
 
     // mark todo as completed
@@ -66,8 +60,7 @@ public class TodoEndpointTest {
     public void should_mark_todo_as_completed_from_write_remote_service() {
         // Given
         final TodoDTO todoDTO = new TodoDTO("todoId", "lorem ipsum", TodoStatus.COMPLETED, Boolean.FALSE, 1l);
-        doReturn("TOKEN").when(jwt).getRawToken();
-        doReturn(todoDTO).when(todoWriteRemoteService).markTodoAsCompleted("bearer TOKEN", "todoId");
+        doReturn(todoDTO).when(todoWriteRemoteService).markTodoAsCompleted("todoId");
 
         // When && Then
         given()
@@ -83,9 +76,8 @@ public class TodoEndpointTest {
                 .body("version", equalTo(1))
                 .body("canMarkTodoAsCompleted", equalTo(false));
 
-        verify(jwt, times(1)).getRawToken();
-        verify(todoWriteRemoteService, times(1)).markTodoAsCompleted(any(), any());
-        verifyNoMoreInteractions(todoWriteRemoteService, todoQueryRemoteService, jwt);
+        verify(todoWriteRemoteService, times(1)).markTodoAsCompleted(any());
+        verifyNoMoreInteractions(todoWriteRemoteService, todoQueryRemoteService);
     }
 
     // get todo
@@ -94,8 +86,7 @@ public class TodoEndpointTest {
     public void should_get_todo_from_query_remote_service() {
         // Given
         final TodoDTO todoDTO = new TodoDTO("todoId", "lorem ipsum", TodoStatus.COMPLETED, Boolean.FALSE, 1l);
-        doReturn("TOKEN").when(jwt).getRawToken();
-        doReturn(todoDTO).when(todoQueryRemoteService).getTodoByTodoId("bearer TOKEN", "todoId");
+        doReturn(todoDTO).when(todoQueryRemoteService).getTodoByTodoId("todoId");
 
         // When && Then
         given()
@@ -110,9 +101,8 @@ public class TodoEndpointTest {
                 .body("version", equalTo(1))
                 .body("canMarkTodoAsCompleted", equalTo(false));
 
-        verify(jwt, times(1)).getRawToken();
-        verify(todoQueryRemoteService, times(1)).getTodoByTodoId(any(), any());
-        verifyNoMoreInteractions(todoWriteRemoteService, todoQueryRemoteService, jwt);
+        verify(todoQueryRemoteService, times(1)).getTodoByTodoId(any());
+        verifyNoMoreInteractions(todoWriteRemoteService, todoQueryRemoteService);
     }
 
     // list all todos
@@ -121,8 +111,7 @@ public class TodoEndpointTest {
     public void should_list_all_todos_from_query_remote_service() {
         // Given
         final TodoDTO todoDTO = new TodoDTO("todoId", "lorem ipsum", TodoStatus.COMPLETED, Boolean.FALSE, 1l);
-        doReturn("TOKEN").when(jwt).getRawToken();
-        doReturn(Collections.singletonList(todoDTO)).when(todoQueryRemoteService).getAllTodos("bearer TOKEN");
+        doReturn(Collections.singletonList(todoDTO)).when(todoQueryRemoteService).getAllTodos();
 
         // When && Then
         given()
@@ -136,9 +125,8 @@ public class TodoEndpointTest {
                 .body("[0].canMarkTodoAsCompleted", equalTo(false))
                 .body("[0].version", equalTo(1));
 
-        verify(jwt, times(1)).getRawToken();
-        verify(todoQueryRemoteService, times(1)).getAllTodos(any());
-        verifyNoMoreInteractions(todoWriteRemoteService, todoQueryRemoteService, jwt);
+        verify(todoQueryRemoteService, times(1)).getAllTodos();
+        verifyNoMoreInteractions(todoWriteRemoteService, todoQueryRemoteService);
     }
 
 }
