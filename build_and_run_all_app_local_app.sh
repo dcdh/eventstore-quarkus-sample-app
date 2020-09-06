@@ -37,8 +37,24 @@ docker rm $(docker ps -aq)
 docker volume prune -f
 docker network prune -f
 
+### setup infra
+mkdir -p $HOME/pipelines
+cat << 'EOF' > $HOME/pipelines/gelf.conf
+input {
+  gelf {
+    port => 12201
+  }
+}
+output {
+  stdout {}
+  elasticsearch {
+    hosts => ["http://elasticsearch:9200"]
+  }
+}
+EOF
+
 ### start infra
-docker-compose -f docker-compose-local-run.yaml up --detach jaeger zookeeper kafka connect mutable todo-query todo-email-notifier secret-store mailhog keycloak-db
+docker-compose -f docker-compose-local-run.yaml up --detach jaeger elasticsearch logstash kibana zookeeper kafka connect mutable todo-query todo-email-notifier secret-store mailhog keycloak-db
 sleep 20
 
 ### start keycloak

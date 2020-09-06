@@ -35,3 +35,7 @@ You need to wait for services to be up (just a few seconds) before running todo-
 > connect to `connect` container
 > 
 > bin/kafka-topics.sh --list --bootstrap-server kafka:9092
+
+## ELK
+
+http://localhost:5601/

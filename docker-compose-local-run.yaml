@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 
 services:
 
@@ -10,6 +10,28 @@ services:
       - 3888:3888
     environment:
       - LOG_LEVEL=WARN
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.8.2
+    ports:
+      - 9200:9200
+      - 9300:9300
+    environment:
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash-oss:6.8.2
+    volumes:
+      - $HOME/pipelines:/usr/share/logstash/pipeline:z
+    ports:
+      - 12201:12201/udp
+      - 5000:5000
+      - 9600:9600
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana-oss:6.8.2
+    ports:
+      - 5601:5601
 
   kafka:
     image: debezium/kafka:1.1.1.Final
@@ -104,6 +126,14 @@ services:
         -Dquarkus.oidc.auth-server-url=http://keycloak:8080/auth/realms/todos
         -Dquarkus.jaeger.endpoint=http://jaeger:14268/api/traces
         -Dquarkus.jaeger.tags=env=local
+        -Dquarkus.log.handler.gelf.enabled=true
+        -Dquarkus.log.handler.gelf.host=logstash
+        -Dquarkus.log.handler.gelf.port=12201
+        -Dquarkus.log.handler.gelf.include-full-mdc=true
+        -Dquarkus.log.handler.gelf.additional-field.env.value=local
+        -Dquarkus.log.handler.gelf.additional-field.env.type=String
+        -Dquarkus.log.handler.gelf.additional-field.serviceName.value=todo-write-app
+        -Dquarkus.log.handler.gelf.additional-field.serviceName.type=String
 
   todo-query-app:
     image: damdamdeo/todo-query-app:latest
@@ -124,6 +154,14 @@ services:
         -Dquarkus.oidc.auth-server-url=http://keycloak:8080/auth/realms/todos
         -Dquarkus.jaeger.endpoint=http://jaeger:14268/api/traces
         -Dquarkus.jaeger.tags=env=local
+        -Dquarkus.log.handler.gelf.enabled=true
+        -Dquarkus.log.handler.gelf.host=logstash
+        -Dquarkus.log.handler.gelf.port=12201
+        -Dquarkus.log.handler.gelf.include-full-mdc=true
+        -Dquarkus.log.handler.gelf.additional-field.env.value=local
+        -Dquarkus.log.handler.gelf.additional-field.env.type=String
+        -Dquarkus.log.handler.gelf.additional-field.serviceName.value=todo-query-app
+        -Dquarkus.log.handler.gelf.additional-field.serviceName.type=String
 
   todo-email-notifier-app:
     image: damdamdeo/todo-email-notifier-app:latest
@@ -138,6 +176,14 @@ services:
         -Dquarkus.mailer.host=mailhog
         -Dquarkus.mailer.username=
         -Dquarkus.mailer.password=
+        -Dquarkus.log.handler.gelf.enabled=true
+        -Dquarkus.log.handler.gelf.host=logstash
+        -Dquarkus.log.handler.gelf.port=12201
+        -Dquarkus.log.handler.gelf.include-full-mdc=true
+        -Dquarkus.log.handler.gelf.additional-field.env.value=local
+        -Dquarkus.log.handler.gelf.additional-field.env.type=String
+        -Dquarkus.log.handler.gelf.additional-field.serviceName.value=todo-email-notifier-app
+        -Dquarkus.log.handler.gelf.additional-field.serviceName.type=String
 
   todo-public-frontend-app:
     image: damdamdeo/todo-public-frontend-app:latest
@@ -155,6 +201,14 @@ services:
         -Dquarkus.http.cors.origins=http://localhost:8086,http://127.0.0.1:8086,http://localhost:4200,http://127.0.0.1:4200
         -Dquarkus.jaeger.endpoint=http://jaeger:14268/api/traces
         -Dquarkus.jaeger.tags=env=local
+        -Dquarkus.log.handler.gelf.enabled=true
+        -Dquarkus.log.handler.gelf.host=logstash
+        -Dquarkus.log.handler.gelf.port=12201
+        -Dquarkus.log.handler.gelf.include-full-mdc=true
+        -Dquarkus.log.handler.gelf.additional-field.env.value=local
+        -Dquarkus.log.handler.gelf.additional-field.env.type=String
+        -Dquarkus.log.handler.gelf.additional-field.serviceName.value=todo-public-frontend-app
+        -Dquarkus.log.handler.gelf.additional-field.serviceName.type=String
 
   keycloak-db:
     image: debezium/postgres:11-alpine
