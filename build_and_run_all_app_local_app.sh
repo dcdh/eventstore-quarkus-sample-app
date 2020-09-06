@@ -43,7 +43,7 @@ sleep 20
 
 ### start keycloak
 docker-compose -f docker-compose-local-run.yaml up --detach keycloak
-sleep 5
+sleep 20
 
 ### start todo-write-app
 docker-compose -f docker-compose-local-run.yaml up --detach todo-write-app
