@@ -11,11 +11,6 @@
 
     <artifactId>todo-write-app</artifactId>
     <properties>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <surefire-plugin.version>2.22.2</surefire-plugin.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
 
     <dependencies>
@@ -162,18 +157,25 @@
                 <executions>
                     <execution>
                         <goals>
+                            <goal>generate-code</goal>
+                            <goal>generate-code-tests</goal>
                             <goal>build</goal>
                         </goals>
                     </execution>
                 </executions>
             </plugin>
             <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${compiler-plugin.version}</version>
+            </plugin>
+            <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${surefire-plugin.version}</version>
                 <configuration>
-                    <systemProperties>
+                    <systemPropertyVariables>
                         <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
-                    </systemProperties>
+                        <maven.home>${maven.home}</maven.home>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
             <plugin>
@@ -218,21 +220,6 @@
             <build>
                 <plugins>
                     <plugin>
-                        <groupId>io.quarkus</groupId>
-                        <artifactId>quarkus-maven-plugin</artifactId>
-                        <version>${quarkus.version}</version>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>native-image</goal>
-                                </goals>
-                                <configuration>
-                                    <enableHttpUrlHandler>true</enableHttpUrlHandler>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <version>${surefire-plugin.version}</version>
                         <executions>
@@ -242,17 +229,20 @@
                                     <goal>verify</goal>
                                 </goals>
                                 <configuration>
-                                    <systemProperties>
-                                        <native.image.path>
-                                            ${project.build.directory}/${project.build.finalName}-runner
-                                        </native.image.path>
-                                    </systemProperties>
+                                    <systemPropertyVariables>
+                                        <native.image.path>${project.build.directory}/${project.build.finalName}-runner</native.image.path>
+                                        <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+                                        <maven.home>${maven.home}</maven.home>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>
                     </plugin>
                 </plugins>
             </build>
+            <properties>
+                <quarkus.package.type>native</quarkus.package.type>
+            </properties>
         </profile>
     </profiles>
 </project>

@@ -9,9 +9,11 @@
     <properties>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <compiler-plugin.version>3.8.1</compiler-plugin.version>
+        <surefire-plugin.version>2.22.2</surefire-plugin.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <quarkus.version>1.7.0.Final</quarkus.version>
+        <quarkus.version>1.7.2.Final</quarkus.version>
         <event-data-spreader.version>1.0-5db63e2</event-data-spreader.version>
     </properties>
 
