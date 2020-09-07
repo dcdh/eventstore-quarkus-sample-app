@@ -17,7 +17,7 @@ import { environment } from '../environments/environment';
 import { LoginComponent } from './login/login.component';
 import { AuthService } from "./auth.service";
 import { AuthGuard } from "./auth.guard";
-import { AuthInterceptorService } from "./auth-interceptor.service";
+import { AuthInterceptor } from "./auth.interceptor";
 import { ConnectedUserComponent } from './connected-user/connected-user.component';
 
 @NgModule({
@@ -41,7 +41,7 @@ import { ConnectedUserComponent } from './connected-user/connected-user.componen
     { provide: BASE_PATH, useValue: environment.API_BASE_PATH },
     AuthService,
     AuthGuard,
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptorService, multi: true}],
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -3,14 +3,14 @@ import { HttpClient, HTTP_INTERCEPTORS, HttpErrorResponse, HttpResponse } from "
 
 import { HttpClientTestingModule, HttpTestingController } from "@angular/common/http/testing";
 
-import { AuthInterceptorService } from './auth-interceptor.service';
+import { AuthInterceptor } from './auth.interceptor';
 import { AuthService } from "./auth.service";
 import { AuthenticationService, TodoService } from 'src/generated';
 import { defer } from 'rxjs';
 
 // https://medium.com/@dev.s4522/how-to-write-unit-test-cases-for-angular-http-interceptor-7595cb3a8843
-describe('AuthInterceptorService', () => {
-  let authInterceptorService: AuthInterceptorService;
+describe('AuthInterceptor', () => {
+  let authInterceptor: AuthInterceptor;
   let authenticationService: AuthenticationService;
   let todoService: TodoService;
   let httpClient: HttpClient;
@@ -24,10 +24,10 @@ describe('AuthInterceptorService', () => {
         AuthenticationService,
         TodoService,
         { provide: AuthService, useValue: authServiceSpy },
-        { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptorService, multi: true }
+        { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
       ]
     });
-    authInterceptorService = TestBed.inject(AuthInterceptorService);
+    authInterceptor = TestBed.inject(AuthInterceptor);
     authenticationService = TestBed.inject(AuthenticationService);
     todoService = TestBed.inject(TodoService);
     httpClient = TestBed.inject(HttpClient);
@@ -42,7 +42,7 @@ describe('AuthInterceptorService', () => {
   });
 
   it('should be created', () => {
-    expect(authInterceptorService).toBeTruthy();
+    expect(authInterceptor).toBeTruthy();
   });
 
   describe('authentication bearer behaviors', () => {

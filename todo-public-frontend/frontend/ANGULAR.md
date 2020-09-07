@@ -10,7 +10,7 @@ ng g guard auth
 
 ng g service auth
 
-ng g service tokenInterceptor
+ng g interceptor auth
 
 ng g component connected-user
 

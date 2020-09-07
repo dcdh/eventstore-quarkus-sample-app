@@ -8,7 +8,7 @@ import { AccessTokenDto } from 'src/generated';
 @Injectable({
   providedIn: 'root'
 })
-export class AuthInterceptorService implements HttpInterceptor {
+export class AuthInterceptor implements HttpInterceptor {
 
   constructor(private authService: AuthService) { }
 
