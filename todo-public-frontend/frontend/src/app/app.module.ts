@@ -19,6 +19,7 @@ import { AuthService } from "./auth.service";
 import { AuthGuard } from "./auth.guard";
 import { AuthInterceptor } from "./auth.interceptor";
 import { ConnectedUserComponent } from './connected-user/connected-user.component';
+import { NotificationComponent } from './notification/notification.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { ConnectedUserComponent } from './connected-user/connected-user.componen
     TodoComponent,
     TodoListComponent,
     LoginComponent,
-    ConnectedUserComponent
+    ConnectedUserComponent,
+    NotificationComponent
   ],
   imports: [
     BrowserModule,

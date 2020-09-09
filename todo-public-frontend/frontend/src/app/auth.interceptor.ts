@@ -4,13 +4,14 @@ import { AuthService } from "./auth.service";
 import { throwError, Observable } from "rxjs";
 import { tap, catchError, flatMap } from "rxjs/operators";
 import { AccessTokenDto } from 'src/generated';
+import { NotificationService } from './notification/notification.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthInterceptor implements HttpInterceptor {
 
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService, private notificationService: NotificationService) { }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const accessToken: AccessTokenDto = this.authService.accessToken();
@@ -34,18 +35,18 @@ export class AuthInterceptor implements HttpInterceptor {
                 return next.handle(req).pipe(
                   tap((response: HttpResponse<any>) => console.info('Received response when executing request using new access token', response)),
                   catchError((error: HttpErrorResponse) => {
-                    window.alert('Unable to execute request');
+                    this.notificationService.error('Unable to execute request');
                     return throwError(error);
                   })
                 );
               }),
               catchError((error: HttpErrorResponse) => {
-                window.alert('Unable to renew authentication token, redirecting to login page');
+                this.notificationService.error('Unable to renew authentication token, redirecting to login page');
                 return throwError(error);
               })
             );
         } else {
-          window.alert('Unable to execute request');
+          this.notificationService.error('Unable to execute request');
         }
         return throwError(error);
       })

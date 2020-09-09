@@ -14,6 +14,12 @@ ng g interceptor auth
 
 ng g component connected-user
 
+ng g component notification
+
+ng g service notification/notification
+
+ng generate class notification/notification --type=model
+
 npm install --save rxjs-compat
 
 ## build production
