@@ -3,21 +3,25 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { NotificationComponent } from './notification.component';
 import { NotificationService } from './notification.service';
 import { defer } from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { NotificationType } from './notification.model';
 
 describe('NotificationComponent', () => {
   let component: NotificationComponent;
   let fixture: ComponentFixture<NotificationComponent>;
 
   const notificationServiceSpy = jasmine.createSpyObj('NotificationService', ['onNotification']);
+  const matSnackBarSpy = jasmine.createSpyObj('MatSnackBar', ['open']);
 
   beforeEach(async(() => {
     notificationServiceSpy.onNotification.and.callFake(function() {
-      return defer(() => Promise.resolve({}));
+      return defer(() => Promise.resolve({type: NotificationType.Success, message: 'it works'}));
     });
     TestBed.configureTestingModule({
       declarations: [ NotificationComponent ],
       providers: [
-        { provide: NotificationService, useValue: notificationServiceSpy }
+        { provide: NotificationService, useValue: notificationServiceSpy },
+        { provide: MatSnackBar, useValue: matSnackBarSpy }
       ]
     })
     .compileComponents();
@@ -42,7 +46,14 @@ describe('NotificationComponent', () => {
     expect(notificationServiceSpy.onNotification).toHaveBeenCalled();
   });
 
-  // TODO rajouter un test lorsque le snackbar sera implementé
-
+  it('should call snack-bar when receiving a notification', async(() => {
+    fixture.whenStable().then(() => {
+      expect(matSnackBarSpy.open).toHaveBeenCalledWith('it works', null, {
+        duration: 5000,
+        horizontalPosition: 'start',
+        verticalPosition: 'bottom',
+      });
+    })
+  }));
 
 });

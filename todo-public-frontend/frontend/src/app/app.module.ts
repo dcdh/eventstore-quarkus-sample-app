@@ -1,6 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -35,6 +36,7 @@ import { NotificationComponent } from './notification/notification.component';
     AppRoutingModule,
     BrowserAnimationsModule,
     MatToolbarModule,
+    MatSnackBarModule,
     ReactiveFormsModule,
     ApiModule,
     HttpClientModule
