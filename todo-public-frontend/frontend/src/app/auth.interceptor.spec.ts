@@ -182,6 +182,7 @@ describe('AuthInterceptor', () => {
       // When
       const httpReq = httpTestingController.expectOne('/fake');
       httpReq.flush('unauthorized', new HttpErrorResponse({ error: '401 error', status: 401, statusText: 'Unauthorized' }));
+      tick();// execute the second http request
 
       // Then
       expect(authServiceSpy.renewToken).toHaveBeenCalled();
