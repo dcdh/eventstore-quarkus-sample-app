@@ -6,6 +6,7 @@ import { HttpClientTestingModule, HttpTestingController } from "@angular/common/
 import { AuthInterceptor } from './auth.interceptor';
 import { AuthService } from "./auth.service";
 import { AuthenticationService, TodoService } from 'src/generated';
+import { Router } from '@angular/router';
 import { defer } from 'rxjs';
 import { NotificationService } from './notification/notification.service';
 
@@ -18,6 +19,7 @@ describe('AuthInterceptor', () => {
   let httpTestingController: HttpTestingController;
   const authServiceSpy = jasmine.createSpyObj('AuthService', ['accessToken', 'logout', 'renewToken']);
   const notificationServiceSpy = jasmine.createSpyObj('NotificationService', ['error']);
+  const routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -27,7 +29,8 @@ describe('AuthInterceptor', () => {
         TodoService,
         { provide: AuthService, useValue: authServiceSpy },
         { provide: NotificationService, useValue: notificationServiceSpy },
-        { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+        { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+        { provide: Router, useValue: routerSpy }
       ]
     });
     authInterceptor = TestBed.inject(AuthInterceptor);
@@ -43,6 +46,7 @@ describe('AuthInterceptor', () => {
     authServiceSpy.logout.calls.reset();
     authServiceSpy.renewToken.calls.reset();
     notificationServiceSpy.error.calls.reset();
+    routerSpy.navigate.calls.reset();
   });
 
   it('should be created', () => {
@@ -234,6 +238,27 @@ describe('AuthInterceptor', () => {
 
       // Then
       expect(notificationServiceSpy.error).toHaveBeenCalledWith('Unable to renew authentication token, redirecting to login page');
+      expect(authServiceSpy.accessToken).toHaveBeenCalled();
+      expect(authServiceSpy.renewToken).toHaveBeenCalled();
+    }));
+
+    it('should redirect to login page when token fails to be renew', fakeAsync(() => {
+      // Given
+      authServiceSpy.accessToken.and.returnValue({ 'accessToken': 'accessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'refreshToken' });
+      authServiceSpy.renewToken.and.callFake(function() {
+        return defer(() => Promise.reject({}));
+      });
+      httpClient.get('/fake').subscribe(
+        res => {},
+        err => {});
+      const firstHttpReq = httpTestingController.expectOne('/fake');
+      firstHttpReq.flush('unauthorized', new HttpErrorResponse({ error: '401 error', status: 401, statusText: 'Unauthorized' }));
+
+      // When
+      tick();// execute the second http request
+
+      // Then
+      expect(routerSpy.navigate).toHaveBeenCalledWith(['/login']);
       expect(authServiceSpy.accessToken).toHaveBeenCalled();
       expect(authServiceSpy.renewToken).toHaveBeenCalled();
     }));

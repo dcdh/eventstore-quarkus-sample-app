@@ -5,13 +5,14 @@ import { throwError, Observable, empty } from "rxjs";
 import { tap, catchError, flatMap } from "rxjs/operators";
 import { AccessTokenDto } from 'src/generated';
 import { NotificationService } from './notification/notification.service';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthInterceptor implements HttpInterceptor {
 
-  constructor(private authService: AuthService, private notificationService: NotificationService) { }
+  constructor(private authService: AuthService, private notificationService: NotificationService, private router: Router) { }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const accessToken: AccessTokenDto = this.authService.accessToken();
@@ -41,6 +42,7 @@ export class AuthInterceptor implements HttpInterceptor {
               }),
               catchError((error: HttpErrorResponse) => {
                 this.notificationService.error('Unable to renew authentication token, redirecting to login page');
+                this.router.navigate(['/login']);
                 return empty();
               })
             );
