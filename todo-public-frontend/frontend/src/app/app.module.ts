@@ -22,6 +22,7 @@ import { AuthInterceptor } from "./auth.interceptor";
 import { ConnectedUserComponent } from './connected-user/connected-user.component';
 import { NotificationComponent } from './notification/notification.component';
 import { LogoutComponent } from './logout/logout.component';
+import { NbThemeModule } from '@nebular/theme';
 
 @NgModule({
   declarations: [
@@ -41,7 +42,8 @@ import { LogoutComponent } from './logout/logout.component';
     MatSnackBarModule,
     ReactiveFormsModule,
     ApiModule,
-    HttpClientModule
+    HttpClientModule,
+    NbThemeModule.forRoot({ name: 'dark' })
   ],
   providers: [
     { provide: BASE_PATH, useValue: environment.API_BASE_PATH },

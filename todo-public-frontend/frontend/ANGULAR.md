@@ -24,9 +24,11 @@ ng g component logout
 
 npm install --save rxjs-compat
 
-ng update @angular/cli @angular/core --allow-dirty
+ng update @angular/cli @angular/core @angular/material --allow-dirty
 
-ng update @angular/material --allow-dirty
+npm install --save @nebular/theme @angular/cdk @angular/animations
+
+npm install --save @nebular/eva-icons
 
 ## build production
 
