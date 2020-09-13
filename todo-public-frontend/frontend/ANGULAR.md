@@ -20,6 +20,8 @@ ng g service notification/notification
 
 ng generate class notification/notification --type=model
 
+ng g component logout
+
 npm install --save rxjs-compat
 
 ## build production

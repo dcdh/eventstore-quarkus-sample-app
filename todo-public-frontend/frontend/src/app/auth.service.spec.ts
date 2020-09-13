@@ -2,20 +2,17 @@ import { async, TestBed } from '@angular/core/testing';
 
 import { AuthService } from './auth.service';
 import { AuthenticationService, AccessTokenDto } from 'src/generated';
-import { Router } from '@angular/router';
 import { throwError, Observable, defer } from "rxjs";
 
 describe('AuthService', () => {
   let service: AuthService;
 
   const authenticationServiceSpy = jasmine.createSpyObj('AuthenticationService', ['authenticationLoginPost', 'authenticationRefreshTokenPost']);
-  const routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
-        { provide: AuthenticationService, useValue: authenticationServiceSpy },
-        { provide: Router, useValue: routerSpy }
+        { provide: AuthenticationService, useValue: authenticationServiceSpy }
       ]
     });
     service = TestBed.inject(AuthService);
@@ -24,7 +21,6 @@ describe('AuthService', () => {
   afterEach(() => {
     authenticationServiceSpy.authenticationLoginPost.calls.reset();
     authenticationServiceSpy.authenticationRefreshTokenPost.calls.reset();
-    routerSpy.navigate.calls.reset();
   });
 
   it('should be created', () => {
@@ -42,16 +38,6 @@ describe('AuthService', () => {
 
       // Then
       expect(localStorage.getItem('accessToken')).toBeNull();
-    });
-
-    it('should redirect to the login page when logout', () => {
-      // Given
-
-      // When
-      service.logout();
-
-      // Then
-      expect(routerSpy.navigate).toHaveBeenCalledWith(['/login']);
     });
 
   });

@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 
 import { AuthenticationService, AccessTokenDto } from 'src/generated';
 import { throwError, Observable } from "rxjs";
@@ -11,7 +10,7 @@ import { map, tap, catchError } from "rxjs/operators";
 })
 export class AuthService {
 
-  constructor(private authenticationService: AuthenticationService, private router: Router) { }
+  constructor(private authenticationService: AuthenticationService) { }
 
   isLoggedIn(): boolean {
     const accessToken = JSON.parse(localStorage.getItem('accessToken'));
@@ -20,7 +19,6 @@ export class AuthService {
 
   logout(): void {
     localStorage.removeItem('accessToken');
-    this.router.navigate(['/login']);
   }
 
   login(username: string, password: string): Observable<AccessTokenDto> {
