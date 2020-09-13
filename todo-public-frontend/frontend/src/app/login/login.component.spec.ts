@@ -41,7 +41,7 @@ describe('LoginComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should call login from authService when log in', () => {
+  it('should call login from authService when log in', async(() => {
     // Given
     authServiceSpy.login.and.callFake(function() {
       return defer(() => Promise.resolve({ 'accessToken': 'accessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'refreshToken' }));
@@ -54,8 +54,10 @@ describe('LoginComponent', () => {
     component.onLogin();
 
     // Then
-    expect(authServiceSpy.login).toHaveBeenCalledWith('damdamdeo', '123456789');
-  });
+    fixture.whenStable().then(() => {
+      expect(authServiceSpy.login).toHaveBeenCalledWith('damdamdeo', '123456789');
+    });
+  }));
 
   it('should redirect to the list of todo when logging in', async(() => {
     // Given
