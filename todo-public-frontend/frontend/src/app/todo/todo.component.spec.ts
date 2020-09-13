@@ -59,7 +59,7 @@ describe('TodoComponent', () => {
     });
   }));
 
-  it('should button mark as completed be disabled if todo cannot be marked as completed', () => {
+  it('should button mark as completed be disabled if todo cannot be marked as completed', async(() => {
     // Given
     component.todo = { canMarkTodoAsCompleted: true };
 
@@ -67,10 +67,12 @@ describe('TodoComponent', () => {
     fixture.detectChanges();
 
     // Then
-    expect(buttonEl.nativeElement.disabled).toBeFalsy();
-  });
+    fixture.whenStable().then(() => {
+      expect(buttonEl.nativeElement.disabled).toBeFalsy();
+    });
+  }));
 
-  it('should button mark as completed be enabled if todo can be marked as completed', () => {
+  it('should button mark as completed be enabled if todo can be marked as completed', async(() => {
     // Given
     component.todo = { canMarkTodoAsCompleted: false };
 
@@ -78,10 +80,12 @@ describe('TodoComponent', () => {
     fixture.detectChanges();
 
     // Then
-    expect(buttonEl.nativeElement.disabled).toBeTruthy();
-  });
+    fixture.whenStable().then(() => {
+      expect(buttonEl.nativeElement.disabled).toBeTruthy();
+    });
+  }));
 
-  it('should click on button mark as completed call the mark as completed remote service', () => {
+  it('should click on button mark as completed call the mark as completed remote service', async(() => {
     // Given
     component.todo = { canMarkTodoAsCompleted: true };
     todoServiceSpy.todosMarkTodoAsCompletedPost.and.callFake(function() {
@@ -92,7 +96,9 @@ describe('TodoComponent', () => {
     buttonEl.triggerEventHandler('click', null);
 
     // Then
-    expect(todoServiceSpy.todosMarkTodoAsCompletedPost).toHaveBeenCalled();
-  });
+    fixture.whenStable().then(() => {
+      expect(todoServiceSpy.todosMarkTodoAsCompletedPost).toHaveBeenCalled();
+    });
+  }));
 
 });
