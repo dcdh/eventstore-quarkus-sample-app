@@ -24,6 +24,8 @@ ng g component logout
 
 npm install --save rxjs-compat
 
+ng update @angular/cli @angular/core --allow-dirty
+
 ## build production
 
 ng build --prod
