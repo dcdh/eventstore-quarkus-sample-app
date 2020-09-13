@@ -214,7 +214,7 @@ describe('AuthInterceptor', () => {
       expect(authServiceSpy.renewToken).toHaveBeenCalled();
     }));
 
-    it('should notify user when token fails to be renew', fakeAsync(() => {
+    it('should not throw exception when token fails to be renew', fakeAsync(() => {
       // Given
       authServiceSpy.accessToken.and.returnValue({ 'accessToken': 'accessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'refreshToken' });
       authServiceSpy.renewToken.and.callFake(function() {
@@ -222,7 +222,10 @@ describe('AuthInterceptor', () => {
       });
       httpClient.get('/fake').subscribe(
         res => {},
-        err => {});
+        err => {
+          // Then
+          fail("Callback has been called");
+        });
       const firstHttpReq = httpTestingController.expectOne('/fake');
       firstHttpReq.flush('unauthorized', new HttpErrorResponse({ error: '401 error', status: 401, statusText: 'Unauthorized' }));
 

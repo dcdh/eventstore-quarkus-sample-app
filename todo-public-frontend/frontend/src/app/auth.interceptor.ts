@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpEvent, HttpInterceptor, HttpHandler, HttpRequest, HttpResponse, HttpErrorResponse } from "@angular/common/http";
 import { AuthService } from "./auth.service";
-import { throwError, Observable } from "rxjs";
+import { throwError, Observable, empty } from "rxjs";
 import { tap, catchError, flatMap } from "rxjs/operators";
 import { AccessTokenDto } from 'src/generated';
 import { NotificationService } from './notification/notification.service';
@@ -41,7 +41,7 @@ export class AuthInterceptor implements HttpInterceptor {
               }),
               catchError((error: HttpErrorResponse) => {
                 this.notificationService.error('Unable to renew authentication token, redirecting to login page');
-                return throwError(error);
+                return empty();
               })
             );
         }
