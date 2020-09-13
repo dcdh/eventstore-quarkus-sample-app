@@ -148,7 +148,7 @@ describe('AuthInterceptor', () => {
       expect(authServiceSpy.accessToken).toHaveBeenCalled();
     }));
 
-    it('should notify user when request return an error response other than 401', fakeAsync(() => {
+    it('should throw exception when request return an error response other than 401', fakeAsync(() => {
       // Given
       authServiceSpy.accessToken.and.returnValue({ 'accessToken': 'accessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'refreshToken' });
       httpClient.get('/fake').subscribe(
@@ -162,7 +162,6 @@ describe('AuthInterceptor', () => {
       httpReq.flush('Internal Server Error ', new HttpErrorResponse({ error: 'Internal Server Error ', status: 500, statusText: 'Internal Server Error ' }));
 
       // Then
-      expect(notificationServiceSpy.error).toHaveBeenCalledWith('Unable to execute request');
       expect(authServiceSpy.accessToken).toHaveBeenCalled();
     }));
 
@@ -176,6 +175,7 @@ describe('AuthInterceptor', () => {
       httpClient.get('/fake').subscribe(
         res => {},
         err => {
+          // Then
           expect(err).toBeTruthy();
         });
 

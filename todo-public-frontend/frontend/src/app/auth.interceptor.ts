@@ -44,8 +44,6 @@ export class AuthInterceptor implements HttpInterceptor {
                 return throwError(error);
               })
             );
-        } else {
-          this.notificationService.error('Unable to execute request');
         }
         return throwError(error);
       })
