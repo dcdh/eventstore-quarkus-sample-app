@@ -104,22 +104,6 @@ describe('AuthInterceptor', () => {
       expect(authServiceSpy.accessToken).toHaveBeenCalled();
     }));
 
-    it('should not add authorization bearer token when call login service', fakeAsync(() => {
-      // Given
-      authServiceSpy.accessToken.and.returnValue({ 'accessToken': 'accessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'refreshToken' });
-      authenticationService.authenticationLoginPost('username', 'password').subscribe(res => {
-        expect(res).toBeTruthy();
-      });
-
-      // When
-      const httpReq = httpTestingController.expectOne('https://localhost/authentication/login');
-      httpReq.flush({});
-
-      // Then
-      expect(httpReq.request.headers.has('Authorization')).toEqual(false);
-      expect(authServiceSpy.accessToken).toHaveBeenCalled();
-    }));
-
     it('should add authorization bearer token when access token is present', fakeAsync(() => {
       // Given
       authServiceSpy.accessToken.and.returnValue({ 'accessToken': 'accessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'refreshToken' });
@@ -172,6 +156,48 @@ describe('AuthInterceptor', () => {
   });
 
   describe('token renewal behaviors', () => {
+
+    it('should not activate renewal token when call login service', fakeAsync(() => {
+      // Given
+      authServiceSpy.accessToken.and.returnValue({ 'accessToken': 'accessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'refreshToken' });
+      httpClient.get('https://localhost/authentication/login').subscribe(
+        res => {},
+        err => {
+          // Then
+          expect(err).toBeTruthy();
+        });
+
+      // When
+      const httpReq = httpTestingController.expectOne('https://localhost/authentication/login');
+      httpReq.flush('unauthorized', new HttpErrorResponse({ error: '401 error', status: 401, statusText: 'Unauthorized' }));
+      tick();// execute the second http request
+
+      // Then
+      expect(authServiceSpy.renewToken).not.toHaveBeenCalled();
+      expect(httpReq.request.headers.get('Authorization')).not.toBeTruthy();
+      expect(authServiceSpy.accessToken).not.toHaveBeenCalled();
+    }));
+
+    it('should not activate renewal token when call refresh token service', fakeAsync(() => {
+      // Given
+      authServiceSpy.accessToken.and.returnValue({ 'accessToken': 'accessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'refreshToken' });
+      httpClient.get('https://localhost/authentication/refresh-token').subscribe(
+        res => {},
+        err => {
+          // Then
+          expect(err).toBeTruthy();
+        });
+
+      // When
+      const httpReq = httpTestingController.expectOne('https://localhost/authentication/refresh-token');
+      httpReq.flush('unauthorized', new HttpErrorResponse({ error: '401 error', status: 401, statusText: 'Unauthorized' }));
+      tick();// execute the second http request
+
+      // Then
+      expect(authServiceSpy.renewToken).not.toHaveBeenCalled();
+      expect(httpReq.request.headers.get('Authorization')).not.toBeTruthy();
+      expect(authServiceSpy.accessToken).not.toHaveBeenCalled();
+    }));
 
     it('should call authentication service renewToken when user request execution is unauthorized', fakeAsync(() => {
       // Given
