@@ -239,7 +239,7 @@ describe('AuthInterceptor', () => {
 
   describe('request re-executed following token renewal behaviors', () => {
 
-    it('should notify user when request fails to be re-executed', fakeAsync(() => {
+    it('should throw exception when request fails to be re-executed', fakeAsync(() => {
       // Given
       authServiceSpy.accessToken.and.returnValue({ 'accessToken': 'accessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'refreshToken' });
       authServiceSpy.renewToken.and.callFake(function() {
@@ -247,7 +247,10 @@ describe('AuthInterceptor', () => {
       });
       httpClient.get('/fake').subscribe(
         res => {},
-        err => {});
+        err => {
+        // Then
+        expect(err).toBeTruthy();
+      });
       const firstHttpReq = httpTestingController.expectOne('/fake');
       firstHttpReq.flush('unauthorized', new HttpErrorResponse({ error: '401 error', status: 401, statusText: 'Unauthorized' }));
 
@@ -257,7 +260,6 @@ describe('AuthInterceptor', () => {
       secondHttpReq.flush('Internal Server Error ', new HttpErrorResponse({ error: 'Internal Server Error ', status: 500, statusText: 'Internal Server Error ' }));
 
       // Then
-      expect(notificationServiceSpy.error).toHaveBeenCalledWith('Unable to execute request');
       expect(authServiceSpy.accessToken).toHaveBeenCalled();
       expect(authServiceSpy.renewToken).toHaveBeenCalled();
     }));

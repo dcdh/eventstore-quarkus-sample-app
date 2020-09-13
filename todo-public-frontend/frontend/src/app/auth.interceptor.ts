@@ -35,7 +35,6 @@ export class AuthInterceptor implements HttpInterceptor {
                 return next.handle(req).pipe(
                   tap((response: HttpResponse<any>) => console.info('Received response when executing request using new access token', response)),
                   catchError((error: HttpErrorResponse) => {
-                    this.notificationService.error('Unable to execute request');
                     return throwError(error);
                   })
                 );
