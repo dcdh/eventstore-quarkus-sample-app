@@ -58,7 +58,7 @@ describe('AuthService', () => {
 
   describe('login behaviors', () => {
 
-    it('should store accessToken into local storage when logging in', (async() => {
+    it('should store accessToken into local storage when logging in', done => {
       // Given
       localStorage.removeItem('accessToken');
       authenticationServiceSpy.authenticationLoginPost.and.callFake(function() {
@@ -66,26 +66,14 @@ describe('AuthService', () => {
       });
 
       // When
-      await service.login('username', 'password');
-
-      // Then
-      expect(localStorage.getItem('accessToken')).toEqual(JSON.stringify({ 'accessToken': 'accessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'refreshToken' }));
-      expect(authenticationServiceSpy.authenticationLoginPost).toHaveBeenCalledWith('username', 'password');
-    }));
-
-    it('should redirect to the list of todo when logging in', (async() => {
-      // Given
-      authenticationServiceSpy.authenticationLoginPost.and.callFake(function() {
-        return defer(() => Promise.resolve({ 'accessToken': 'accessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'refreshToken' }));
+      service.login('username', 'password').subscribe(() => {
+        // Then
+        expect(localStorage.getItem('accessToken')).toEqual(JSON.stringify({ 'accessToken': 'accessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'refreshToken' }));
+        expect(authenticationServiceSpy.authenticationLoginPost).toHaveBeenCalledWith('username', 'password');
+        done();
       });
 
-      // When
-      await service.login('username', 'password');
-
-      // Then
-      expect(routerSpy.navigate).toHaveBeenCalledWith(['/todos']);
-      expect(authenticationServiceSpy.authenticationLoginPost).toHaveBeenCalled();
-    }));
+    });
 
   });
 

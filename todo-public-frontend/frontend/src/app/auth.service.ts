@@ -23,17 +23,18 @@ export class AuthService {
     this.router.navigate(['/login']);
   }
 
-  login(username: string, password: string): void {
-    this.authenticationService.authenticationLoginPost(username, password)
-      .subscribe({
-        next: accessToken => {
+  login(username: string, password: string): Observable<AccessTokenDto> {
+    return this.authenticationService.authenticationLoginPost(username, password)
+      .pipe(
+        tap((response: AccessTokenDto) => console.info('Received response when renewing token', response)),
+        map((accessToken: AccessTokenDto) => {
           localStorage.setItem('accessToken', JSON.stringify(accessToken));
-          this.router.navigate(['/todos']);
-        },
-        error: error => {
-          console.warn(error);
-        }
-      })
+          return accessToken;
+        }),
+        catchError((error: HttpErrorResponse) => {
+          return throwError(error);
+        })
+      );
   }
 
   accessToken(): AccessTokenDto | null {
