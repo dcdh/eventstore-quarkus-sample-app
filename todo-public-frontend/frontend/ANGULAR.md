@@ -26,6 +26,8 @@ npm install --save rxjs-compat
 
 ng update @angular/cli @angular/core --allow-dirty
 
+ng update @angular/material --allow-dirty
+
 ## build production
 
 ng build --prod
