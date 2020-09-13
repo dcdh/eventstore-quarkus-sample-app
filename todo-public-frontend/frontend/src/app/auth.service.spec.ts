@@ -3,8 +3,7 @@ import { async, TestBed } from '@angular/core/testing';
 import { AuthService } from './auth.service';
 import { AuthenticationService, AccessTokenDto } from 'src/generated';
 import { Router } from '@angular/router';
-import { defer } from 'rxjs';
-import { throwError, Observable } from "rxjs";
+import { throwError, Observable, defer } from "rxjs";
 
 describe('AuthService', () => {
   let service: AuthService;
