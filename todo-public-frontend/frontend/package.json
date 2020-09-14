@@ -23,6 +23,7 @@
     "@angular/router": "~10.1.1",
     "@nebular/eva-icons": "^6.0.1",
     "@nebular/theme": "^6.0.1",
+    "bootstrap": "^4.3.1",
     "rxjs": "~6.5.4",
     "rxjs-compat": "^6.5.5",
     "tslib": "^2.0.0",
