@@ -32,6 +32,10 @@ npm install --save @nebular/eva-icons
 
 npm install --save bootstrap@4.3.1
 
+### update packages
+
+npm update
+
 ## build production
 
 ng build --prod
