@@ -6,8 +6,4 @@ public interface Todo {
 
     String description();
 
-    TodoStatus todoStatus();
-
-    Long version();
-
 }
