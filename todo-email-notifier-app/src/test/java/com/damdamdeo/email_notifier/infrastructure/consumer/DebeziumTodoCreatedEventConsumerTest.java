@@ -1,4 +1,4 @@
-package com.damdamdeo.email_notifier.consumer;
+package com.damdamdeo.email_notifier.infrastructure.consumer;
 
 import com.damdamdeo.email_notifier.KafkaDebeziumProducer;
 import com.damdamdeo.eventsourced.consumer.infra.eventsourcing.DebeziumAggregateRootEventId;
@@ -12,6 +12,7 @@ import io.agroal.api.AgroalDataSource;
 import io.quarkus.agroal.DataSource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
+import io.quarkus.test.junit.mockito.InjectSpy;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,6 +30,7 @@ import java.util.concurrent.TimeUnit;
 import static org.awaitility.Awaitility.await;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
 
 @QuarkusTest
 public class DebeziumTodoCreatedEventConsumerTest {
@@ -36,7 +38,7 @@ public class DebeziumTodoCreatedEventConsumerTest {
     @Inject
     KafkaDebeziumProducer kafkaDebeziumProducer;
 
-    @InjectMock
+    @InjectSpy
     TodoCreatedEventConsumer todoCreatedEventConsumer;
 
     @InjectMock
@@ -74,8 +76,6 @@ public class DebeziumTodoCreatedEventConsumerTest {
     public void should_consume_event() throws Exception {
         // Given
         final ObjectMapper objectMapper = new ObjectMapper();
-        doCallRealMethod().when(todoCreatedEventConsumer).aggregateRootType();
-        doCallRealMethod().when(todoCreatedEventConsumer).eventType();
 
         // When
         kafkaDebeziumProducer.produce("todoCreatedEvent.json");
@@ -91,15 +91,13 @@ public class DebeziumTodoCreatedEventConsumerTest {
                 objectMapper.readTree("{\"description\":\"lorem ipsum\",\"todoId\":\"todoId\",\"todoStatus\":\"IN_PROGRESS\"}")
         ));
 
-        verify(todoCreatedEventConsumer, times(1)).aggregateRootType();
-        verify(todoCreatedEventConsumer, times(1)).eventType();
+        verify(todoCreatedEventConsumer, atLeastOnce()).aggregateRootType();
+        verify(todoCreatedEventConsumer, atLeastOnce()).eventType();
     }
 
     @Test
     public void should_consume_event_only_once() throws Exception {
         // Given
-        doCallRealMethod().when(todoCreatedEventConsumer).aggregateRootType();
-        doCallRealMethod().when(todoCreatedEventConsumer).eventType();
         kafkaDebeziumProducer.produce("todoCreatedEvent.json");
         waitForEventToBeConsumed();
 
@@ -110,8 +108,8 @@ public class DebeziumTodoCreatedEventConsumerTest {
         // Then
         verify(todoCreatedEventConsumer, times(1)).consume(any());
 
-        verify(todoCreatedEventConsumer, times(1)).aggregateRootType();
-        verify(todoCreatedEventConsumer, times(1)).eventType();
+        verify(todoCreatedEventConsumer, atLeastOnce()).aggregateRootType();
+        verify(todoCreatedEventConsumer, atLeastOnce()).eventType();
     }
 
     private void waitForEventToBeConsumed() {

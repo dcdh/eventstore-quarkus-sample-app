@@ -1,8 +1,6 @@
-package com.damdamdeo.email_notifier.consumer;
+package com.damdamdeo.email_notifier.infrastructure.consumer;
 
-import com.damdamdeo.email_notifier.domain.EmailNotifier;
-import com.damdamdeo.email_notifier.domain.TemplateGenerator;
-import com.damdamdeo.email_notifier.domain.Todo;
+import com.damdamdeo.email_notifier.domain.TodoCreatedNotifierService;
 import com.damdamdeo.eventsourced.consumer.api.eventsourcing.AggregateRootEventConsumable;
 import com.damdamdeo.eventsourced.consumer.infra.eventsourcing.JsonNodeAggregateRootEventConsumer;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -17,27 +15,18 @@ public class TodoCreatedEventConsumer implements JsonNodeAggregateRootEventConsu
 
     private final Logger logger = LoggerFactory.getLogger(TodoCreatedEventConsumer.class);
 
-    final TemplateGenerator templateGenerator;
-    final EmailNotifier emailNotifier;
+    private final TodoCreatedNotifierService todoCreatedNotifierService;
 
-    public TodoCreatedEventConsumer(final TemplateGenerator templateGenerator,
-                                    final EmailNotifier emailNotifier) {
-        this.templateGenerator = Objects.requireNonNull(templateGenerator);
-        this.emailNotifier = Objects.requireNonNull(emailNotifier);
+    public TodoCreatedEventConsumer(final TodoCreatedNotifierService todoCreatedNotifierService) {
+        this.todoCreatedNotifierService = Objects.requireNonNull(todoCreatedNotifierService);
     }
 
     @Override
     public void consume(final AggregateRootEventConsumable<JsonNode> aggregateRootEventConsumable) {
         logger.info(String.format("Consuming '%s' for '%s'", eventType(), aggregateRootEventConsumable.eventId()));
-        final Todo todo = new JsonNodeTodo(aggregateRootEventConsumable.materializedState(),
+        final JsonNodeTodo jsonNodeTodo = new JsonNodeTodo(aggregateRootEventConsumable.materializedState(),
                 aggregateRootEventConsumable.eventId());
-        try {
-            final String content = templateGenerator.generateTodoCreated(todo);
-            emailNotifier.notify("New Todo created", content);
-        } catch (Exception e) {
-            // TODO log
-            throw new RuntimeException(e);
-        }
+        todoCreatedNotifierService.notify(jsonNodeTodo.todoDomain());
     }
 
     @Override

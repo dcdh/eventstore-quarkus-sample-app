@@ -1,4 +1,4 @@
-package com.damdamdeo.email_notifier.infrastructure;
+package com.damdamdeo.email_notifier.infrastructure.email_notifier;
 
 import com.damdamdeo.email_notifier.domain.EmailNotifier;
 import io.quarkus.mailer.Mail;

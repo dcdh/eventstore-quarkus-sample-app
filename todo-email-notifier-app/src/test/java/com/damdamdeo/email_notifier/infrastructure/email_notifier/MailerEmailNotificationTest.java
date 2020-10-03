@@ -1,4 +1,4 @@
-package com.damdamdeo.email_notifier.infrastructure;
+package com.damdamdeo.email_notifier.infrastructure.email_notifier;
 
 import io.quarkus.mailer.Mailer;
 import io.quarkus.test.junit.QuarkusTest;

@@ -1,11 +1,9 @@
 package com.damdamdeo.email_notifier.domain;
 
-import java.io.IOException;
-
 public interface TemplateGenerator {
 
-    String generateTodoCreated(Todo todoCreated) throws IOException;
+    String generateTodoCreated(TodoDomain todoDomainCreated);
 
-    String generateTodoMarkedAsCompleted(Todo todoMarkedAsCompleted) throws IOException;
+    String generateTodoMarkedAsCompleted(TodoDomain todoDomainMarkedAsCompleted);
 
 }

@@ -1,12 +1,11 @@
-package com.damdamdeo.email_notifier.infrastructure;
+package com.damdamdeo.email_notifier.infrastructure.template_generator;
 
 import com.damdamdeo.email_notifier.domain.TemplateGenerator;
-import com.damdamdeo.email_notifier.domain.Todo;
+import com.damdamdeo.email_notifier.domain.TodoDomain;
 import io.quarkus.qute.Template;
 import io.quarkus.qute.api.ResourcePath;
 
 import javax.enterprise.context.ApplicationScoped;
-import java.io.IOException;
 import java.util.Objects;
 
 @ApplicationScoped
@@ -23,16 +22,16 @@ public class QuteTemplateGenerator implements TemplateGenerator {
     }
 
     @Override
-    public String generateTodoCreated(final Todo todoCreated) throws IOException {
-        return todoCreatedTemplate.data("todoId", todoCreated.todoId())
-                .data("description", todoCreated.description())
+    public String generateTodoCreated(final TodoDomain todoDomainCreated) {
+        return todoCreatedTemplate.data("todoId", todoDomainCreated.todoId())
+                .data("description", todoDomainCreated.description())
                 .render();
     }
 
     @Override
-    public String generateTodoMarkedAsCompleted(final Todo todoMarkedAsCompleted) throws IOException {
-        return todoMarkedAsCompletedTemplate.data("todoId", todoMarkedAsCompleted.todoId())
-                .data("description", todoMarkedAsCompleted.description())
+    public String generateTodoMarkedAsCompleted(final TodoDomain todoDomainMarkedAsCompleted) {
+        return todoMarkedAsCompletedTemplate.data("todoId", todoDomainMarkedAsCompleted.todoId())
+                .data("description", todoDomainMarkedAsCompleted.description())
                 .render();
     }
 }

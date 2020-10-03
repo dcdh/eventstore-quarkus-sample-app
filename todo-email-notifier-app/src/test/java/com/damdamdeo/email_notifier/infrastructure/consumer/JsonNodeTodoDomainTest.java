@@ -1,9 +1,9 @@
-package com.damdamdeo.email_notifier.consumer;
+package com.damdamdeo.email_notifier.infrastructure.consumer;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
 
-public class JsonNodeTodoTest {
+public class JsonNodeTodoDomainTest {
 
     @Test
     public void should_verify_equality() {
