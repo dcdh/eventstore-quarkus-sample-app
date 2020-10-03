@@ -1,6 +1,8 @@
 package com.damdamdeo.email_notifier.infrastructure.consumer;
 
 import com.damdamdeo.email_notifier.KafkaDebeziumProducer;
+import com.damdamdeo.email_notifier.domain.TodoCreatedNotifierService;
+import com.damdamdeo.email_notifier.domain.TodoDomain;
 import com.damdamdeo.eventsourced.consumer.infra.eventsourcing.DebeziumAggregateRootEventId;
 import com.damdamdeo.eventsourced.consumer.infra.eventsourcing.DecryptedAggregateRootEventConsumable;
 import com.damdamdeo.eventsourced.encryption.api.PresentSecret;
@@ -40,6 +42,9 @@ public class DebeziumTodoCreatedEventConsumerTest {
 
     @InjectSpy
     TodoCreatedEventConsumer todoCreatedEventConsumer;
+
+    @InjectMock
+    TodoCreatedNotifierService todoCreatedNotifierService;
 
     @InjectMock
     SecretStore secretStore;
@@ -93,6 +98,21 @@ public class DebeziumTodoCreatedEventConsumerTest {
 
         verify(todoCreatedEventConsumer, atLeastOnce()).aggregateRootType();
         verify(todoCreatedEventConsumer, atLeastOnce()).eventType();
+    }
+
+    @Test
+    public void should_call_notification_service() throws Exception {
+        // Given
+
+        // When
+        kafkaDebeziumProducer.produce("todoCreatedEvent.json");
+        waitForEventToBeConsumed();
+
+        // Then
+        verify(todoCreatedNotifierService, times(1)).notify(TodoDomain.newBuilder()
+                .withTodoId("todoId")
+                .withDescription("lorem ipsum")
+                .build());
     }
 
     @Test
