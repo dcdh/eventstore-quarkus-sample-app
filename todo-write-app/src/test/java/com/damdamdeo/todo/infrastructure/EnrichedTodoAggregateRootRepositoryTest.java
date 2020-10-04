@@ -1,8 +1,8 @@
 package com.damdamdeo.todo.infrastructure;
 
-import com.damdamdeo.todo.aggregate.TodoAggregateRoot;
-import com.damdamdeo.todo.aggregate.TodoAggregateRootRepository;
-import com.damdamdeo.todo.command.CreateNewTodoCommand;
+import com.damdamdeo.todo.domain.TodoAggregateRoot;
+import com.damdamdeo.todo.domain.TodoAggregateRootRepository;
+import com.damdamdeo.todo.domain.command.CreateNewTodoCommand;
 import io.agroal.api.AgroalDataSource;
 import io.quarkus.agroal.DataSource;
 import io.quarkus.test.junit.QuarkusTest;

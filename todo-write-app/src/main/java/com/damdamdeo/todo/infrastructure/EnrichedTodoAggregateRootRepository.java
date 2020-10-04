@@ -2,8 +2,8 @@ package com.damdamdeo.todo.infrastructure;
 
 import com.damdamdeo.eventsourced.mutable.api.eventsourcing.AggregateRootRepository;
 import com.damdamdeo.eventsourced.mutable.api.eventsourcing.UnknownAggregateRootException;
-import com.damdamdeo.todo.aggregate.TodoAggregateRoot;
-import com.damdamdeo.todo.aggregate.TodoAggregateRootRepository;
+import com.damdamdeo.todo.domain.TodoAggregateRoot;
+import com.damdamdeo.todo.domain.TodoAggregateRootRepository;
 import io.agroal.api.AgroalDataSource;
 import io.quarkus.agroal.DataSource;
 

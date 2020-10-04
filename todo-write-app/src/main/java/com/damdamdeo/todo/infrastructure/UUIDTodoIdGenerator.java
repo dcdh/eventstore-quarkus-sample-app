@@ -1,6 +1,6 @@
 package com.damdamdeo.todo.infrastructure;
 
-import com.damdamdeo.todo.command.handler.TodoIdGenerator;
+import com.damdamdeo.todo.domain.command.handler.TodoIdGenerator;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.UUID;
