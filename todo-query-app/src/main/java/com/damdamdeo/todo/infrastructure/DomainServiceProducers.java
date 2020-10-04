@@ -4,12 +4,14 @@ import com.damdamdeo.todo.domain.*;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
-import javax.inject.Inject;
 
 public class DomainServiceProducers {
 
-    @Inject
-    TodoDomainRepository todoDomainRepository;
+    private final TodoDomainRepository todoDomainRepository;
+
+    public DomainServiceProducers(final TodoDomainRepository todoDomainRepository) {
+        this.todoDomainRepository = todoDomainRepository;
+    }
 
     @Produces
     @ApplicationScoped
