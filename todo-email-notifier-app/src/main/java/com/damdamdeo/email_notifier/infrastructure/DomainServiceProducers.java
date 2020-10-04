@@ -4,15 +4,17 @@ import com.damdamdeo.email_notifier.domain.*;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
-import javax.inject.Inject;
 
 public class DomainServiceProducers {
 
-    @Inject
-    TemplateGenerator templateGenerator;
+    private final TemplateGenerator templateGenerator;
 
-    @Inject
-    EmailNotifier emailNotifier;
+    private final EmailNotifier emailNotifier;
+
+    public DomainServiceProducers(final TemplateGenerator templateGenerator, final EmailNotifier emailNotifier) {
+        this.templateGenerator = templateGenerator;
+        this.emailNotifier = emailNotifier;
+    }
 
     @Produces
     @ApplicationScoped
