@@ -1,47 +1,54 @@
-package com.damdamdeo.todo.infrastructure;
+package com.damdamdeo.todo.domain;
 
-import com.damdamdeo.todo.domain.TodoDomain;
 import com.damdamdeo.todo.domain.api.Todo;
 import com.damdamdeo.todo.domain.api.TodoStatus;
-import org.hibernate.envers.Audited;
 
-import javax.persistence.*;
 import java.util.Objects;
 
-@Entity
-@Audited
-public class TodoEntity implements Todo {
+public final class TodoDomain implements Todo {
 
-    @Id
-    private String todoId;
+    private final String todoId;
 
-    private String description;
+    private final String description;
 
-    @Enumerated(EnumType.STRING)
-    private TodoStatus todoStatus;
+    private final TodoStatus todoStatus;
 
-    private Long version;
+    private final Long version;
 
-    public TodoEntity() {}
-
-    private TodoEntity(final Builder builder) {
+    private TodoDomain(final Builder builder) {
         this.todoId = Objects.requireNonNull(builder.todoId);
         this.description = Objects.requireNonNull(builder.description);
         this.todoStatus = Objects.requireNonNull(builder.todoStatus);
         this.version = Objects.requireNonNull(builder.version);
     }
 
-    public TodoDomain toDomain() {
-        return TodoDomain.newBuilder()
+    public static Builder newBuilder() {
+        return new Builder();
+    }
+
+    public TodoDomain markAsCompleted(final Long version) {
+        return newBuilder()
                 .withTodoId(todoId)
                 .withDescription(description)
-                .withTodoStatus(todoStatus)
+                .withTodoStatus(TodoStatus.COMPLETED)
                 .withVersion(version)
                 .build();
     }
 
-    public static Builder newBuilder() {
-        return new Builder();
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof TodoDomain)) return false;
+        TodoDomain that = (TodoDomain) o;
+        return Objects.equals(todoId, that.todoId) &&
+                Objects.equals(description, that.description) &&
+                todoStatus == that.todoStatus &&
+                Objects.equals(version, that.version);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(todoId, description, todoStatus, version);
     }
 
     public static class Builder {
@@ -74,8 +81,8 @@ public class TodoEntity implements Todo {
             return this;
         }
 
-        public TodoEntity build() {
-            return new TodoEntity(this);
+        public TodoDomain build() {
+            return new TodoDomain(this);
         }
 
     }
@@ -100,26 +107,4 @@ public class TodoEntity implements Todo {
         return version;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof TodoEntity)) return false;
-        TodoEntity that = (TodoEntity) o;
-        return Objects.equals(todoId, that.todoId);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(todoId);
-    }
-
-    @Override
-    public String toString() {
-        return "TodoEntity{" +
-                "todoId='" + todoId + '\'' +
-                ", description='" + description + '\'' +
-                ", todoStatus=" + todoStatus +
-                ", version=" + version +
-                '}';
-    }
 }

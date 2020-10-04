@@ -1,28 +1,50 @@
 package com.damdamdeo.todo.infrastructure;
 
-import com.damdamdeo.eventsourced.model.api.AggregateRootEventId;
+import com.damdamdeo.todo.domain.TodoDomain;
 import com.damdamdeo.todo.domain.api.TodoStatus;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
 
 public class TodoEntityTest {
 
     @Test
-    public void should_mark_todo_as_completed() {
+    public void should_build_entity() {
         // Given
-        final AggregateRootEventId eventId = mock(AggregateRootEventId.class);
-        doReturn(1l).when(eventId).version();
-        final TodoEntity todoEntity = new TodoEntity();
+        final TodoEntity todoEntity = TodoEntity.newBuilder()
+                .withTodoId("todoId")
+                .withDescription("description")
+                .withTodoStatus(TodoStatus.IN_PROGRESS)
+                .withVersion(0l).build();
 
         // When
-        todoEntity.markAsCompleted(eventId);
 
         // Then
-        assertEquals(TodoStatus.COMPLETED, todoEntity.todoStatus());
-        assertEquals(1l, todoEntity.version());
-        verify(eventId, times(1)).version();
-        verifyNoMoreInteractions(eventId);
+        assertEquals("todoId", todoEntity.todoId());
+        assertEquals("description", todoEntity.description());
+        assertEquals(TodoStatus.IN_PROGRESS, todoEntity.todoStatus());
+        assertEquals(0l, todoEntity.version());
     }
+
+    @Test
+    public void should_map_entity_to_domain() {
+        // Given
+        final TodoEntity todoEntity = TodoEntity.newBuilder()
+                .withTodoId("todoId")
+                .withDescription("description")
+                .withTodoStatus(TodoStatus.IN_PROGRESS)
+                .withVersion(0l).build();
+
+        // When
+        final TodoDomain todoDomain = todoEntity.toDomain();
+
+        // Then
+        assertEquals(TodoDomain.newBuilder()
+                        .withTodoId("todoId")
+                        .withDescription("description")
+                        .withTodoStatus(TodoStatus.IN_PROGRESS)
+                        .withVersion(0l).build(),
+                todoDomain);
+    }
+
 }

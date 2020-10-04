@@ -155,8 +155,16 @@ public class E2ETest {
                 .add(AuditEntity.id().eq("todoId"))
                 .getResultList();
 
-        assertTrue(EqualsBuilder.reflectionEquals(new TodoEntity("todoId", "lorem ipsum", TodoStatus.IN_PROGRESS, 0l), todos.get(0)));
-        assertTrue(EqualsBuilder.reflectionEquals(new TodoEntity("todoId", "lorem ipsum", TodoStatus.COMPLETED, 1l), todos.get(1)));
+        assertTrue(EqualsBuilder.reflectionEquals(TodoEntity.newBuilder()
+                .withTodoId("todoId")
+                .withDescription("lorem ipsum")
+                .withTodoStatus(TodoStatus.IN_PROGRESS)
+                .withVersion(0l).build(), todos.get(0)));
+        assertTrue(EqualsBuilder.reflectionEquals(TodoEntity.newBuilder()
+                .withTodoId("todoId")
+                .withDescription("lorem ipsum")
+                .withTodoStatus(TodoStatus.COMPLETED)
+                .withVersion(1l).build(), todos.get(1)));
     }
 
     private String getAccessToken() {

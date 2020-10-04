@@ -1,4 +1,4 @@
-package com.damdamdeo.todo.interfaces;
+package com.damdamdeo.todo.infrastructure.interfaces;
 
 import com.damdamdeo.todo.domain.api.Todo;
 import com.damdamdeo.todo.domain.api.TodoStatus;

@@ -1,4 +1,4 @@
-package com.damdamdeo.todo.consumer;
+package com.damdamdeo.todo.infrastructure.consumer;
 
 import com.damdamdeo.eventsourced.consumer.infra.eventsourcing.DebeziumAggregateRootEventId;
 import com.damdamdeo.eventsourced.consumer.infra.eventsourcing.DecryptedAggregateRootEventConsumable;
@@ -7,11 +7,13 @@ import com.damdamdeo.eventsourced.encryption.api.SecretStore;
 import com.damdamdeo.eventsourced.encryption.infra.jackson.JacksonAggregateRootId;
 import com.damdamdeo.eventsourced.model.api.AggregateRootId;
 import com.damdamdeo.todo.KafkaDebeziumProducer;
+import com.damdamdeo.todo.domain.MarkTodoAsCompletedService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.agroal.api.AgroalDataSource;
 import io.quarkus.agroal.DataSource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
+import io.quarkus.test.junit.mockito.InjectSpy;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,8 +38,11 @@ public class DebeziumTodoMarkedAsCompletedEventConsumerTest {
     @Inject
     KafkaDebeziumProducer kafkaDebeziumProducer;
 
-    @InjectMock
+    @InjectSpy
     TodoMarkedAsCompletedEventConsumer todoMarkedAsCompletedEventConsumer;
+
+    @InjectMock
+    MarkTodoAsCompletedService markTodoAsCompletedService;
 
     @InjectMock
     SecretStore secretStore;
@@ -74,8 +79,6 @@ public class DebeziumTodoMarkedAsCompletedEventConsumerTest {
     public void should_consume_event() throws Exception {
         // Given
         final ObjectMapper objectMapper = new ObjectMapper();
-        doCallRealMethod().when(todoMarkedAsCompletedEventConsumer).aggregateRootType();
-        doCallRealMethod().when(todoMarkedAsCompletedEventConsumer).eventType();
 
         // When
         kafkaDebeziumProducer.produce("todoMarkedAsCompletedEvent.json");
@@ -91,15 +94,28 @@ public class DebeziumTodoMarkedAsCompletedEventConsumerTest {
                 objectMapper.readTree("{\"description\":\"lorem ipsum\",\"todoId\":\"todoId\",\"todoStatus\":\"COMPLETED\"}")
         ));
 
-        verify(todoMarkedAsCompletedEventConsumer, times(1)).aggregateRootType();
-        verify(todoMarkedAsCompletedEventConsumer, times(1)).eventType();
+        verify(todoMarkedAsCompletedEventConsumer, atLeastOnce()).aggregateRootType();
+        verify(todoMarkedAsCompletedEventConsumer, atLeastOnce()).eventType();
+    }
+
+    @Test
+    public void should_call_mark_as_completed_service() throws Exception {
+        // Given
+
+        // When
+        kafkaDebeziumProducer.produce("todoMarkedAsCompletedEvent.json");
+        waitForEventToBeConsumed();
+
+        // Then
+        verify(markTodoAsCompletedService, times(1)).markTodoAsCompleted(
+                "todoId",
+                1l
+        );
     }
 
     @Test
     public void should_consume_event_only_once() throws Exception {
         // Given
-        doCallRealMethod().when(todoMarkedAsCompletedEventConsumer).aggregateRootType();
-        doCallRealMethod().when(todoMarkedAsCompletedEventConsumer).eventType();
         kafkaDebeziumProducer.produce("todoMarkedAsCompletedEvent.json");
         waitForEventToBeConsumed();
 
@@ -110,8 +126,8 @@ public class DebeziumTodoMarkedAsCompletedEventConsumerTest {
         // Then
         verify(todoMarkedAsCompletedEventConsumer, times(1)).consume(any());
 
-        verify(todoMarkedAsCompletedEventConsumer, times(1)).aggregateRootType();
-        verify(todoMarkedAsCompletedEventConsumer, times(1)).eventType();
+        verify(todoMarkedAsCompletedEventConsumer, atLeastOnce()).aggregateRootType();
+        verify(todoMarkedAsCompletedEventConsumer, atLeastOnce()).eventType();
     }
 
     private void waitForEventToBeConsumed() {

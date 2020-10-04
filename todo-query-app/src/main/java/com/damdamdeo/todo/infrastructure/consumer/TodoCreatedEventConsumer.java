@@ -1,15 +1,14 @@
-package com.damdamdeo.todo.consumer;
+package com.damdamdeo.todo.infrastructure.consumer;
 
 import com.damdamdeo.eventsourced.consumer.api.eventsourcing.AggregateRootEventConsumable;
 import com.damdamdeo.eventsourced.consumer.infra.eventsourcing.JsonNodeAggregateRootEventConsumer;
-import com.damdamdeo.todo.domain.api.TodoStatus;
-import com.damdamdeo.todo.infrastructure.JpaTodoRepository;
-import com.damdamdeo.todo.infrastructure.TodoEntity;
+import com.damdamdeo.todo.domain.CreateTodoService;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.transaction.Transactional;
 import java.util.Objects;
 
 @ApplicationScoped
@@ -17,21 +16,20 @@ public class TodoCreatedEventConsumer implements JsonNodeAggregateRootEventConsu
 
     private final Logger logger = LoggerFactory.getLogger(TodoCreatedEventConsumer.class);
 
-    final JpaTodoRepository jpaTodoRepository;
+    private final CreateTodoService createTodoService;
 
-    public TodoCreatedEventConsumer(final JpaTodoRepository jpaTodoRepository) {
-        this.jpaTodoRepository = Objects.requireNonNull(jpaTodoRepository);
+    public TodoCreatedEventConsumer(final CreateTodoService createTodoService) {
+        this.createTodoService = Objects.requireNonNull(createTodoService);
     }
 
     @Override
+    @Transactional
     public void consume(final AggregateRootEventConsumable<JsonNode> aggregateRootEventConsumable) {
         logger.info(String.format("Consuming '%s' for '%s'", eventType(), aggregateRootEventConsumable.eventId()));
-        final TodoEntity todoToCreate = new TodoEntity(
+        createTodoService.createTodo(
                 aggregateRootEventConsumable.eventPayload().get("todoId").asText(),
                 aggregateRootEventConsumable.eventPayload().get("description").asText(),
-                TodoStatus.IN_PROGRESS,
-                aggregateRootEventConsumable.eventId());
-        jpaTodoRepository.persist(todoToCreate);
+                aggregateRootEventConsumable.eventId().version());
     }
 
     @Override

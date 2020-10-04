@@ -1,8 +1,9 @@
-package com.damdamdeo.todo.interfaces;
+package com.damdamdeo.todo.infrastructure.interfaces;
 
-import com.damdamdeo.todo.domain.TodoRepository;
-import com.damdamdeo.todo.domain.api.Todo;
+import com.damdamdeo.todo.domain.TodoDomain;
+import com.damdamdeo.todo.domain.TodoDomainRepository;
 import com.damdamdeo.todo.domain.api.TodoStatus;
+import com.damdamdeo.todo.domain.api.UnknownTodoException;
 import com.jayway.restassured.module.jsv.JsonSchemaValidator;
 import io.quarkus.security.identity.SecurityIdentity;
 import io.quarkus.test.junit.QuarkusTest;
@@ -22,7 +23,7 @@ import static org.mockito.Mockito.*;
 public class TodoEndpointTest {
 
     @InjectMock
-    TodoRepository todoRepository;
+    TodoDomainRepository todoDomainRepository;
 
     @InjectMock
     SecurityIdentity securityIdentity;
@@ -30,15 +31,15 @@ public class TodoEndpointTest {
     @Test
     public void should_return_todo() {
         // Given
-        final Todo todo = mock(Todo.class);
-        doReturn("todoId").when(todo).todoId();
-        doReturn("lorem ipsum").when(todo).description();
-        doReturn(TodoStatus.IN_PROGRESS).when(todo).todoStatus();
-        doReturn(0l).when(todo).version();
-        doCallRealMethod().when(todo).canMarkTodoAsCompletedSpecification();
+        final TodoDomain todoDomain = TodoDomain.newBuilder()
+                .withTodoId("todoId")
+                .withDescription("lorem ipsum")
+                .withTodoStatus(TodoStatus.IN_PROGRESS)
+                .withVersion(0l)
+                .build();
 
         doReturn(Boolean.TRUE).when(securityIdentity).hasRole("frontend-user");
-        doReturn(todo).when(todoRepository).get("todoId");
+        doReturn(todoDomain).when(todoDomainRepository).get("todoId");
 
         // When && Then
         given()
@@ -54,13 +55,8 @@ public class TodoEndpointTest {
                 .body("version", equalTo(0));
 
         verify(securityIdentity, times(1)).hasRole(anyString());
-        verify(todo, atLeastOnce()).todoId();
-        verify(todo, times(1)).description();
-        verify(todo, atLeastOnce()).todoStatus();
-        verify(todo, times(1)).version();
-        verify(todo, times(1)).canMarkTodoAsCompletedSpecification();
-        verify(todoRepository, times(1)).get(any());
-        verifyNoMoreInteractions(securityIdentity, todoRepository, todo);
+        verify(todoDomainRepository, times(1)).get(any());
+        verifyNoMoreInteractions(securityIdentity, todoDomainRepository);
     }
 
     @Test
@@ -83,7 +79,7 @@ public class TodoEndpointTest {
     @Test
     public void should_api_fail_when_retrieving_unknown_todo() {
         // Given
-        doReturn(null).when(todoRepository).get("todoId");
+        doThrow(new UnknownTodoException("todoId")).when(todoDomainRepository).get("todoId");
         doReturn(Boolean.TRUE).when(securityIdentity).hasRole("frontend-user");
 
         // When && Then
@@ -95,21 +91,21 @@ public class TodoEndpointTest {
                 .contentType(MediaType.TEXT_PLAIN)
                 .body(Matchers.equalTo("Le todoId 'todoId' est inconnu."));
         verify(securityIdentity, times(1)).hasRole(anyString());
-        verify(todoRepository, times(1)).get(any());
-        verifyNoMoreInteractions(securityIdentity, todoRepository);
+        verify(todoDomainRepository, times(1)).get(any());
+        verifyNoMoreInteractions(securityIdentity, todoDomainRepository);
     }
 
     @Test
     public void should_list_all_todos() {
         // Given
-        final Todo todo = mock(Todo.class);
-        doReturn("todoId").when(todo).todoId();
-        doReturn("lorem ipsum").when(todo).description();
-        doReturn(TodoStatus.IN_PROGRESS).when(todo).todoStatus();
-        doReturn(0l).when(todo).version();
-        doCallRealMethod().when(todo).canMarkTodoAsCompletedSpecification();
+        final TodoDomain todoDomain = TodoDomain.newBuilder()
+                .withTodoId("todoId")
+                .withDescription("lorem ipsum")
+                .withTodoStatus(TodoStatus.IN_PROGRESS)
+                .withVersion(0l)
+                .build();
 
-        doReturn(Collections.singletonList(todo)).when(todoRepository).fetchAll();
+        doReturn(Collections.singletonList(todoDomain)).when(todoDomainRepository).fetchAll();
         doReturn(Boolean.TRUE).when(securityIdentity).hasRole("frontend-user");
 
         // When && Then
@@ -126,13 +122,8 @@ public class TodoEndpointTest {
                 .body("[0].version", equalTo(0));
 
         verify(securityIdentity, times(1)).hasRole(anyString());
-        verify(todo, atLeastOnce()).todoId();
-        verify(todo, times(1)).description();
-        verify(todo, atLeastOnce()).todoStatus();
-        verify(todo, times(1)).version();
-        verify(todoRepository, times(1)).fetchAll();
-        verify(todo, times(1)).canMarkTodoAsCompletedSpecification();
-        verifyNoMoreInteractions(securityIdentity, todoRepository, todo);
+        verify(todoDomainRepository, times(1)).fetchAll();
+        verifyNoMoreInteractions(securityIdentity, todoDomainRepository);
     }
 
     @Test
@@ -148,7 +139,7 @@ public class TodoEndpointTest {
 
         verify(securityIdentity, times(1)).hasRole(anyString());
         verify(securityIdentity, times(1)).isAnonymous();
-        verifyNoMoreInteractions(securityIdentity, todoRepository);
+        verifyNoMoreInteractions(securityIdentity, todoDomainRepository);
     }
 
     @Test
@@ -164,7 +155,7 @@ public class TodoEndpointTest {
 
         verify(securityIdentity, times(1)).hasRole(anyString());
         verify(securityIdentity, times(1)).isAnonymous();
-        verifyNoMoreInteractions(securityIdentity, todoRepository);
+        verifyNoMoreInteractions(securityIdentity, todoDomainRepository);
     }
 
 }

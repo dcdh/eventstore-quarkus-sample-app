@@ -1,4 +1,4 @@
-package com.damdamdeo.todo.interfaces;
+package com.damdamdeo.todo.infrastructure.interfaces;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;

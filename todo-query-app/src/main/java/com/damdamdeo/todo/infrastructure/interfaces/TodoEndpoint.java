@@ -1,7 +1,6 @@
-package com.damdamdeo.todo.interfaces;
+package com.damdamdeo.todo.infrastructure.interfaces;
 
-import com.damdamdeo.todo.domain.TodoRepository;
-import com.damdamdeo.todo.domain.api.UnknownTodoException;
+import com.damdamdeo.todo.domain.TodoDomainRepository;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;
@@ -17,25 +16,25 @@ import java.util.stream.Collectors;
 @Produces(MediaType.APPLICATION_JSON)
 public class TodoEndpoint {
 
-    final TodoRepository todoRepository;
+    private final TodoDomainRepository todoDomainRepository;
 
-    public TodoEndpoint(final TodoRepository todoRepository) {
-        this.todoRepository = todoRepository;
+    public TodoEndpoint(final TodoDomainRepository todoDomainRepository) {
+        this.todoDomainRepository = todoDomainRepository;
     }
 
     @RolesAllowed("frontend-user")
     @GET
     @Path("/{todoId}")
     public TodoDTO getTodo(@PathParam("todoId") final String todoId) {
-        return Optional.ofNullable(todoRepository.get(todoId))
+        return Optional.of(todoDomainRepository.get(todoId))
                 .map(TodoDTO::new)
-                .orElseThrow(() -> new UnknownTodoException(todoId));
+                .get();
     }
 
     @RolesAllowed("frontend-user")
     @GET
     public List<TodoDTO> listAllTodos() {
-        return todoRepository.fetchAll()
+        return todoDomainRepository.fetchAll()
                 .stream()
                 .map(TodoDTO::new)
                 .collect(Collectors.toList());
