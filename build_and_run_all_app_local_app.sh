@@ -11,12 +11,10 @@ export TESTCONTAINERS_RYUK_DISABLED=true
 ### build custom version of keycloak having specific realm and users
 docker build -f todo-keycloak/Dockerfile -t damdamdeo/todo-keycloak:latest todo-keycloak
 
-### build todo-write-app
-mvn -f pom.xml clean install -pl todo-domain-api,todo-write-app || { echo 'build todo-write-app failed' ; exit 1; }
-docker build -f todo-write-app/src/main/docker/Dockerfile.jvm -t damdamdeo/todo-write-app:latest todo-write-app
-
-### build todo-query-app
-mvn -f pom.xml clean install -pl todo-domain-api,todo-query-app || { echo 'build todo-query-app failed' ; exit 1; }
+### build todo-write-app && todo-query-app (dependency with todo-domain-api)
+# -amd or --also-make-dependents ensure that all modules using todo-domain-api will be build too.
+mvn -f pom.xml clean install -pl todo-domain-api -amd || { echo 'build todo-domain-api or todo-write-app or todo-query-app failed' ; exit 1; }
+docker build -f todo-write-app/todo-write-app-infrastructure/src/main/docker/Dockerfile.jvm -t damdamdeo/todo-write-app:latest todo-write-app/todo-write-app-infrastructure
 docker build -f todo-query-app/src/main/docker/Dockerfile.jvm -t damdamdeo/todo-query-app:latest todo-query-app
 
 ### build todo-email-notifier-app
