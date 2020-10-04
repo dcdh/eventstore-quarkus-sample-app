@@ -87,7 +87,7 @@ public class JpaTodoDomainRepositoryTest {
         final TodoDomain todoPersisted = jpaTodoRepository.get("todoId");
 
         // Then
-        assertTrue(EqualsBuilder.reflectionEquals(todoPersisted, todoToCreate.toDomain()));
+        assertEquals(todoPersisted, todoToCreate.toDomain());
     }
 
     @Test
@@ -107,7 +107,7 @@ public class JpaTodoDomainRepositoryTest {
 
         // Then
         assertEquals(1, todos.size());
-        assertTrue(EqualsBuilder.reflectionEquals(todos.get(0), todoToCreate.toDomain()));
+        assertEquals(todos.get(0), todoToCreate.toDomain());
     }
 
     @Test
