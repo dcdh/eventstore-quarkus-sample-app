@@ -18,9 +18,9 @@ public class CreateNewTodoCommandHandler implements CommandHandler<TodoAggregate
 
     private final Logger logger = LoggerFactory.getLogger(CreateNewTodoCommandHandler.class);
 
-    final TodoAggregateRootRepository todoAggregateRootRepository;
-    final TodoIdGenerator todoIdGenerator;
-    final NewTodoAggregateRootProvider newTodoAggregateRootProvider;
+    private final TodoAggregateRootRepository todoAggregateRootRepository;
+    private final TodoIdGenerator todoIdGenerator;
+    private final NewTodoAggregateRootProvider newTodoAggregateRootProvider;
 
     public CreateNewTodoCommandHandler(final TodoAggregateRootRepository todoAggregateRootRepository,
                                        final TodoIdGenerator todoIdGenerator,
@@ -32,7 +32,7 @@ public class CreateNewTodoCommandHandler implements CommandHandler<TodoAggregate
 
     @CommandExecutorBinding
     @Override
-    public TodoAggregateRoot execute(CreateNewTodoCommand createNewTodoCommand) throws Throwable {
+    public TodoAggregateRoot execute(final CreateNewTodoCommand createNewTodoCommand) throws Throwable {
         logger.info(String.format("Handling '%s'", "CreateNewTodoCommand"));
         final String generatedTodoId = todoIdGenerator.generateTodoId();
         if (todoAggregateRootRepository.isTodoExistent(generatedTodoId)) {

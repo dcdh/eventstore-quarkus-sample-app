@@ -18,7 +18,7 @@ public class MarkTodoAsCompletedCommandHandler implements CommandHandler<TodoAgg
 
     private final Logger logger = LoggerFactory.getLogger(MarkTodoAsCompletedCommandHandler.class);
 
-    final TodoAggregateRootRepository todoAggregateRootRepository;
+    private final TodoAggregateRootRepository todoAggregateRootRepository;
 
     public MarkTodoAsCompletedCommandHandler(final TodoAggregateRootRepository todoAggregateRootRepository) {
         this.todoAggregateRootRepository = Objects.requireNonNull(todoAggregateRootRepository);
@@ -26,7 +26,7 @@ public class MarkTodoAsCompletedCommandHandler implements CommandHandler<TodoAgg
 
     @CommandExecutorBinding
     @Override
-    public TodoAggregateRoot execute(MarkTodoAsCompletedCommand markTodoAsCompletedCommand) throws Throwable {
+    public TodoAggregateRoot execute(final MarkTodoAsCompletedCommand markTodoAsCompletedCommand) throws Throwable {
         logger.info(String.format("Handling '%s' for '%s'", "MarkTodoAsCompletedCommand", markTodoAsCompletedCommand.todoId()));
         try {
             final TodoAggregateRoot todoAggregateRoot = todoAggregateRootRepository.load(markTodoAsCompletedCommand.todoId());
