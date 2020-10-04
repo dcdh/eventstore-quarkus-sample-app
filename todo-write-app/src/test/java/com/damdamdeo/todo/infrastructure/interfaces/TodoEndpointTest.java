@@ -19,6 +19,7 @@ import io.quarkus.test.junit.mockito.InjectMock;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
+import javax.inject.Named;
 import javax.ws.rs.core.MediaType;
 
 import static io.restassured.RestAssured.given;
@@ -30,9 +31,11 @@ import static org.mockito.Mockito.*;
 public class TodoEndpointTest {
 
     @InjectMock
+    @Named("SingleExecutionCreateNewTodoCommandHandler")
     CreateNewTodoCommandHandler createNewTodoCommandHandler;
 
     @InjectMock
+    @Named("SingleExecutionMarkTodoAsCompletedCommandHandler")
     MarkTodoAsCompletedCommandHandler markTodoAsCompletedCommandHandler;
 
     @InjectMock

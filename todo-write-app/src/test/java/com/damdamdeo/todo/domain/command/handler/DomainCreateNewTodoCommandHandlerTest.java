@@ -1,38 +1,34 @@
 package com.damdamdeo.todo.domain.command.handler;
 
-import com.damdamdeo.eventsourced.mutable.infra.eventsourcing.command.CommandExecutor;
 import com.damdamdeo.todo.domain.TodoAggregateRoot;
 import com.damdamdeo.todo.domain.TodoAggregateRootRepository;
 import com.damdamdeo.todo.domain.command.CreateNewTodoCommand;
 import com.damdamdeo.todo.domain.api.TodoAlreadyExistentException;
-import io.quarkus.test.junit.QuarkusTest;
-import io.quarkus.test.junit.mockito.InjectMock;
-import io.quarkus.test.junit.mockito.InjectSpy;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import javax.inject.Inject;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-@QuarkusTest
-public class CreateNewTodoCommandHandlerTest {
+public class DomainCreateNewTodoCommandHandlerTest {
 
-    @Inject
-    CreateNewTodoCommandHandler createNewTodoCommandHandler;
+    DomainCreateNewTodoCommandHandler domainCreateNewTodoCommandHandler;
 
-    @InjectMock
     TodoAggregateRootRepository mockTodoAggregateRootRepository;
 
-    @InjectMock
     TodoIdGenerator mockTodoIdGenerator;
 
-    @InjectMock
     NewTodoAggregateRootProvider mockNewTodoAggregateRootProvider;
 
-    @InjectSpy
-    CommandExecutor spyCommandExecutor;
+    @BeforeEach
+    public void setup() {
+        mockTodoAggregateRootRepository = mock(TodoAggregateRootRepository.class);
+        mockTodoIdGenerator = mock(TodoIdGenerator.class);
+        mockNewTodoAggregateRootProvider = mock(NewTodoAggregateRootProvider.class);
+        domainCreateNewTodoCommandHandler = new DomainCreateNewTodoCommandHandler(mockTodoAggregateRootRepository,
+                mockTodoIdGenerator, mockNewTodoAggregateRootProvider);
+    }
 
     @Test
     public void should_create_new_todo() throws Throwable {
@@ -43,7 +39,7 @@ public class CreateNewTodoCommandHandlerTest {
         doReturn(todoAggregateRoot).when(mockNewTodoAggregateRootProvider).create("todoId");
 
         // When
-        createNewTodoCommandHandler.execute(createNewTodoCommand);
+        domainCreateNewTodoCommandHandler.execute(createNewTodoCommand);
 
         // Then
         verify(todoAggregateRoot, times(1)).handle(createNewTodoCommand, "todoId");
@@ -62,7 +58,7 @@ public class CreateNewTodoCommandHandlerTest {
 
         // When && Then
         final TodoAlreadyExistentException todoAlreadyExistentException = assertThrows(TodoAlreadyExistentException.class,
-                () -> createNewTodoCommandHandler.execute(createNewTodoCommand));
+                () -> domainCreateNewTodoCommandHandler.execute(createNewTodoCommand));
         assertEquals(new TodoAlreadyExistentException(todoAggregateRoot), todoAlreadyExistentException);
 
         verify(mockTodoIdGenerator, times(1)).generateTodoId();
@@ -82,7 +78,7 @@ public class CreateNewTodoCommandHandlerTest {
         final CreateNewTodoCommand createNewTodoCommand = new CreateNewTodoCommand("lorem ipsum");
 
         // When
-        final TodoAggregateRoot returnedTodoAggregateRoot = createNewTodoCommandHandler.execute(createNewTodoCommand);
+        final TodoAggregateRoot returnedTodoAggregateRoot = domainCreateNewTodoCommandHandler.execute(createNewTodoCommand);
 
         // Then
         assertEquals(todoAggregateRoot, returnedTodoAggregateRoot);
@@ -93,20 +89,6 @@ public class CreateNewTodoCommandHandlerTest {
         verify(mockNewTodoAggregateRootProvider, times(1)).create(any());
         verifyNoMoreInteractions(mockTodoAggregateRootRepository, mockTodoIdGenerator, mockNewTodoAggregateRootProvider,
                 todoAggregateRoot);
-    }
-
-    @Test
-    public void should_use_executor_to_execute_command() throws Throwable {
-        // Given
-        final CreateNewTodoCommand createNewTodoCommand = new CreateNewTodoCommand("lorem ipsum");
-        doReturn(mock(TodoAggregateRoot.class)).when(mockNewTodoAggregateRootProvider).create(any());
-
-        // When
-        createNewTodoCommandHandler.execute(createNewTodoCommand);
-
-        // Then
-        verify(spyCommandExecutor, times(1)).execute(any());
-        verify(mockNewTodoAggregateRootProvider, times(1)).create(any());
     }
 
 }

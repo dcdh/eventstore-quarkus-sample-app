@@ -1,11 +1,12 @@
-package com.damdamdeo.todo.domain;
+package com.damdamdeo.todo.infrastructure.deserializer;
 
 import com.damdamdeo.eventsourced.encryption.api.PresentSecret;
 import com.damdamdeo.eventsourced.encryption.api.SecretStore;
 import com.damdamdeo.eventsourced.model.api.AggregateRootId;
 import com.damdamdeo.eventsourced.mutable.infra.eventsourcing.serialization.JacksonAggregateRootMaterializedStateDeSerializer;
-import com.damdamdeo.todo.domain.command.CreateNewTodoCommand;
+import com.damdamdeo.todo.domain.TodoAggregateRoot;
 import com.damdamdeo.todo.domain.api.TodoStatus;
+import com.damdamdeo.todo.domain.command.CreateNewTodoCommand;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.junit.QuarkusTest;
@@ -14,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 import javax.inject.Inject;
-
 import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

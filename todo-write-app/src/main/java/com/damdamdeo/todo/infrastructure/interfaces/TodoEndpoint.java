@@ -8,6 +8,7 @@ import com.damdamdeo.todo.domain.command.handler.CreateNewTodoCommandHandler;
 import com.damdamdeo.todo.domain.command.handler.MarkTodoAsCompletedCommandHandler;
 
 import javax.annotation.security.RolesAllowed;
+import javax.inject.Named;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.Objects;
@@ -23,8 +24,8 @@ public class TodoEndpoint {
 
     final AggregateRootRepository aggregateRootRepository;
 
-    public TodoEndpoint(final CreateNewTodoCommandHandler createNewTodoCommandHandler,
-                        final MarkTodoAsCompletedCommandHandler markTodoAsCompletedCommandHandler,
+    public TodoEndpoint(@Named("SingleExecutionCreateNewTodoCommandHandler") final CreateNewTodoCommandHandler createNewTodoCommandHandler,
+                        @Named("SingleExecutionMarkTodoAsCompletedCommandHandler") final MarkTodoAsCompletedCommandHandler markTodoAsCompletedCommandHandler,
                         final AggregateRootRepository aggregateRootRepository) {
         this.createNewTodoCommandHandler = Objects.requireNonNull(createNewTodoCommandHandler);
         this.markTodoAsCompletedCommandHandler = Objects.requireNonNull(markTodoAsCompletedCommandHandler);
