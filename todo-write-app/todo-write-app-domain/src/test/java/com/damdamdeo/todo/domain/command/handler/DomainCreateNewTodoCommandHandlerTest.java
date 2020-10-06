@@ -6,11 +6,14 @@ import com.damdamdeo.todo.domain.api.TodoAlreadyExistentException;
 import com.damdamdeo.todo.domain.command.CreateNewTodoCommand;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 public class DomainCreateNewTodoCommandHandlerTest {
 
     DomainCreateNewTodoCommandHandler domainCreateNewTodoCommandHandler;
@@ -43,8 +46,6 @@ public class DomainCreateNewTodoCommandHandlerTest {
 
         // Then
         verify(todoAggregateRoot, times(1)).handle(createNewTodoCommand, "todoId");
-        verify(mockTodoIdGenerator, times(1)).generateTodoId();
-        verify(mockNewTodoAggregateRootProvider, times(1)).create(any());
     }
 
     @Test
@@ -60,11 +61,6 @@ public class DomainCreateNewTodoCommandHandlerTest {
         final TodoAlreadyExistentException todoAlreadyExistentException = assertThrows(TodoAlreadyExistentException.class,
                 () -> domainCreateNewTodoCommandHandler.execute(createNewTodoCommand));
         assertEquals(new TodoAlreadyExistentException(todoAggregateRoot), todoAlreadyExistentException);
-
-        verify(mockTodoIdGenerator, times(1)).generateTodoId();
-        verify(mockTodoAggregateRootRepository, times(1)).isTodoExistent(anyString());
-        verify(mockTodoAggregateRootRepository, times(1)).load(anyString());
-        verifyNoMoreInteractions(mockTodoAggregateRootRepository, mockTodoIdGenerator, mockNewTodoAggregateRootProvider, todoAggregateRoot);
     }
 
     @Test
@@ -82,13 +78,6 @@ public class DomainCreateNewTodoCommandHandlerTest {
 
         // Then
         assertEquals(todoAggregateRoot, returnedTodoAggregateRoot);
-        verify(todoAggregateRoot, times(1)).handle(any(), any());
-        verify(mockTodoAggregateRootRepository, times(1)).save(any(TodoAggregateRoot.class));
-        verify(mockTodoIdGenerator, times(1)).generateTodoId();
-        verify(mockTodoAggregateRootRepository, times(1)).isTodoExistent(any());
-        verify(mockNewTodoAggregateRootProvider, times(1)).create(any());
-        verifyNoMoreInteractions(mockTodoAggregateRootRepository, mockTodoIdGenerator, mockNewTodoAggregateRootProvider,
-                todoAggregateRoot);
     }
 
 }

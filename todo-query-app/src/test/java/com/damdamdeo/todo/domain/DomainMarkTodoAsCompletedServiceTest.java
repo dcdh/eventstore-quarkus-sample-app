@@ -2,9 +2,12 @@ package com.damdamdeo.todo.domain;
 
 import com.damdamdeo.todo.domain.api.TodoStatus;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 public class DomainMarkTodoAsCompletedServiceTest {
 
     @Test

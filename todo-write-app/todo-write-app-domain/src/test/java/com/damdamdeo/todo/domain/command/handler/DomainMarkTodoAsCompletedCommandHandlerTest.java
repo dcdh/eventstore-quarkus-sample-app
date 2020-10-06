@@ -10,11 +10,14 @@ import com.damdamdeo.todo.domain.api.shared.specification.Specification;
 import com.damdamdeo.todo.domain.command.MarkTodoAsCompletedCommand;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 public class DomainMarkTodoAsCompletedCommandHandlerTest {
 
     DomainMarkTodoAsCompletedCommandHandler domainMarkTodoAsCompletedCommandHandler;
@@ -61,7 +64,6 @@ public class DomainMarkTodoAsCompletedCommandHandlerTest {
         // When && Then
         final UnknownTodoException unknownTodoException = assertThrows(UnknownTodoException.class, () -> domainMarkTodoAsCompletedCommandHandler.execute(markTodoAsCompletedCommand));
         assertEquals(new UnknownTodoException("todoId"), unknownTodoException);
-        verify(mockTodoAggregateRootRepository, times(1)).load(any());
     }
 
 }
