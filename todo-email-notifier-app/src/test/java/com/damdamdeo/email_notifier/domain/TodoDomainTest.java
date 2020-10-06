@@ -1,7 +1,7 @@
 package com.damdamdeo.email_notifier.domain;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TodoDomainTest {
 

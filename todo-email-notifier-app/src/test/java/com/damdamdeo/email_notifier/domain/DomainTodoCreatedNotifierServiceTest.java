@@ -1,6 +1,6 @@
 package com.damdamdeo.email_notifier.domain;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.mockito.Mockito.*;
 
@@ -13,7 +13,7 @@ public class DomainTodoCreatedNotifierServiceTest {
         final EmailNotifier emailNotifier = mock(EmailNotifier.class);
         final TodoCreatedNotifierService todoCreatedNotifierService = new DomainTodoCreatedNotifierService(templateGenerator,
                 emailNotifier);
-        final TodoDomain todoDomain = TodoDomain.newBuilder().build();
+        final TodoDomain todoDomain = buildTodoDomain4Test().build();
 
         // When
         todoCreatedNotifierService.notify(todoDomain);
@@ -29,7 +29,7 @@ public class DomainTodoCreatedNotifierServiceTest {
         final EmailNotifier emailNotifier = mock(EmailNotifier.class);
         final TodoCreatedNotifierService todoCreatedNotifierService = new DomainTodoCreatedNotifierService(templateGenerator,
                 emailNotifier);
-        final TodoDomain todoDomain = TodoDomain.newBuilder().build();
+        final TodoDomain todoDomain = buildTodoDomain4Test().build();
 
         doReturn("content").when(templateGenerator).generateTodoCreated(todoDomain);
 
@@ -40,4 +40,11 @@ public class DomainTodoCreatedNotifierServiceTest {
         verify(emailNotifier, times(1)).notify("New Todo created", "content");
         verify(templateGenerator, times(1)).generateTodoCreated(any());
     }
+
+    private TodoDomain.Builder buildTodoDomain4Test() {
+        return TodoDomain.newBuilder()
+                .withTodoId("todoId")
+                .withDescription("description");
+    }
+
 }

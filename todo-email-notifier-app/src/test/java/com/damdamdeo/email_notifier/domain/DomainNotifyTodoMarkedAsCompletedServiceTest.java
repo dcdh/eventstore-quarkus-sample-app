@@ -1,6 +1,6 @@
 package com.damdamdeo.email_notifier.domain;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -14,7 +14,7 @@ public class DomainNotifyTodoMarkedAsCompletedServiceTest {
         final EmailNotifier emailNotifier = mock(EmailNotifier.class);
         final TodoMarkedAsCompletedNotifierService todoMarkedAsCompletedNotifierService = new DomainTodoMarkedAsCompletedNotifierService(templateGenerator,
                 emailNotifier);
-        final TodoDomain todoDomain = TodoDomain.newBuilder().build();
+        final TodoDomain todoDomain = buildTodoDomain4Test().build();
 
         // When
         todoMarkedAsCompletedNotifierService.notify(todoDomain);
@@ -30,7 +30,7 @@ public class DomainNotifyTodoMarkedAsCompletedServiceTest {
         final EmailNotifier emailNotifier = mock(EmailNotifier.class);
         final TodoMarkedAsCompletedNotifierService todoMarkedAsCompletedNotifierService = new DomainTodoMarkedAsCompletedNotifierService(templateGenerator,
                 emailNotifier);
-        final TodoDomain todoDomain = TodoDomain.newBuilder().build();
+        final TodoDomain todoDomain = buildTodoDomain4Test().build();
 
         doReturn("content").when(templateGenerator).generateTodoMarkedAsCompleted(todoDomain);
 
@@ -40,5 +40,11 @@ public class DomainNotifyTodoMarkedAsCompletedServiceTest {
         // Then
         verify(emailNotifier, times(1)).notify("Todo marked as completed", "content");
         verify(templateGenerator, times(1)).generateTodoMarkedAsCompleted(any());
+    }
+
+    private TodoDomain.Builder buildTodoDomain4Test() {
+        return TodoDomain.newBuilder()
+                .withTodoId("todoId")
+                .withDescription("description");
     }
 }
