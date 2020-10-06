@@ -4,6 +4,7 @@ import com.damdamdeo.todo.publicfrontend.domain.authentication.UserAuthenticatio
 import com.damdamdeo.todo.publicfrontend.domain.authentication.UsernameOrPasswordInvalidException;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectSpy;
+import io.restassured.http.ContentType;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -47,6 +48,25 @@ public class AuthenticationEndpointTest {
                 .body("refreshExpiresIn", notNullValue());
         verify(userAuthenticationRemoteService, times(1)).login(username, password);
         verifyNoMoreInteractions(userAuthenticationRemoteService);
+    }
+
+    @Test
+    public void should_akveo_login() {
+        // Given
+        final String username = "damdamdeo";
+        final String password = "damdamdeo";
+
+        // When && Then
+        given()
+                .formParams("username", username,
+                        "password", password)
+                .when()
+                .post("/authentication/akveo/login")
+                .then()
+                .statusCode(200)
+                .body("token.access_token", notNullValue())
+                .body("token.expires_in", notNullValue())
+                .body("token.refresh_token", notNullValue());
     }
 
     @Test
@@ -131,6 +151,32 @@ public class AuthenticationEndpointTest {
                 .body("expiresIn", notNullValue())
                 .body("refreshToken", notNullValue())
                 .body("refreshExpiresIn", notNullValue());
+    }
+
+    @Test
+    public void should_akveo_refresh_token() {
+        // Given
+        final String refreshToken = given()
+                .formParams("username", "damdamdeo",
+                        "password", "damdamdeo")
+                .when()
+                .post("/authentication/login")
+                .then()
+                .statusCode(200)
+                .extract()
+                .path("refreshToken");
+
+        // When && Then
+        given()
+                .contentType(ContentType.JSON)
+                .body(String.format("{\"token\":{\"refresh_token\":\"%s\", \"access_token\":\"accessToken\"}}", refreshToken))
+                .when().post("/authentication/akveo/refresh-token")
+                .then()
+                .log().all()
+                .statusCode(200)
+                .body("token.access_token", notNullValue())
+                .body("token.expires_in", notNullValue())
+                .body("token.refresh_token", notNullValue());
     }
 
     @Test
