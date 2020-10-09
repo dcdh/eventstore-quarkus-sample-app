@@ -23,9 +23,11 @@ import { NbAuthComponent } from './auth.component';
 import { NbAuthBlockComponent } from './auth-block/auth-block.component';
 import { LoginComponent } from './login/login.component';
 import { LogoutComponent } from './logout/logout.component';
+import { AuthRoutingModule } from './auth-routing.module';
 
 @NgModule({
   imports: [
+    AuthRoutingModule,
     CommonModule,
     NbLayoutModule,
     NbCardModule,
