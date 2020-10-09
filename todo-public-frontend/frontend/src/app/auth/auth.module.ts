@@ -5,6 +5,7 @@ import { AuthGuard } from "./auth.guard";
 import { AuthInterceptor } from "./auth.interceptor";
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ConnectedUserComponent } from './connected-user/connected-user.component';
+import { CommonModule } from '@angular/common';
 
 import {
   NbAlertModule,
@@ -32,7 +33,8 @@ import { AuthRoutingModule } from './auth-routing.module';
     NbInputModule,
     NbButtonModule,
     NbIconModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    CommonModule
   ],
   declarations: [
     NbAuthComponent,
