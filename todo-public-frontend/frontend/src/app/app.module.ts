@@ -14,9 +14,7 @@ import { TodoListComponent } from './todo-list/todo-list.component';
 import { HttpClientModule } from '@angular/common/http';
 import { BASE_PATH } from 'src/generated';
 import { environment } from '../environments/environment';
-import { ConnectedUserComponent } from './connected-user/connected-user.component';
 import { NotificationComponent } from './notification/notification.component';
-import { LogoutComponent } from './logout/logout.component';
 import { NbThemeModule } from '@nebular/theme';
 import { NbAuthModule } from './auth/auth.module';
 
@@ -25,9 +23,7 @@ import { NbAuthModule } from './auth/auth.module';
     AppComponent,
     TodoComponent,
     TodoListComponent,
-    ConnectedUserComponent,
-    NotificationComponent,
-    LogoutComponent
+    NotificationComponent
   ],
   imports: [
     BrowserModule,
