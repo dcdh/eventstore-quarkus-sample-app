@@ -3,6 +3,10 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { HttpRequest } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
+import { AuthService } from "./auth.service";
+import { AuthGuard } from "./auth.guard";
+import { AuthInterceptor } from "./auth.interceptor";
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import {
   NbAlertModule,
@@ -41,7 +45,9 @@ import { LoginComponent } from './login/login.component';
     NbAuthBlockComponent,
   ],
   providers: [
-
+    AuthService,
+    AuthGuard,
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}
   ],
 })
 export class NbAuthModule {

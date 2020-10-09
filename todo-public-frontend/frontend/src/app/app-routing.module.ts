@@ -3,7 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { TodoListComponent } from './todo-list/todo-list.component';
 import { LoginComponent } from './auth/login/login.component';
 import { NbAuthComponent } from './auth/auth.component';
-import { AuthGuard } from "./auth.guard";
+import { AuthGuard } from "./auth/auth.guard";
 
 export const routes: Routes = [
   {

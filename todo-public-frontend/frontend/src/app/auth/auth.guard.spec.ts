@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { AuthGuard } from './auth.guard';
 import { AuthService } from "./auth.service";
 import { Router, UrlTree } from '@angular/router';
-import { NotificationService } from './notification/notification.service';
+import { NotificationService } from './../notification/notification.service';
 
 describe('AuthGuard', () => {
   let guard: AuthGuard;

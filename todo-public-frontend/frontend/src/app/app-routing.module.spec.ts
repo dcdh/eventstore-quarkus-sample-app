@@ -48,13 +48,13 @@ describe("Router: App", () => {
     });
   });
 
-  it('should navigate to "" redirect to /login when user is not authenticated', done => {
+  it('should navigate to "" redirect to /auth/login when user is not authenticated', done => {
     // Given
     authServiceSpy.isLoggedIn.and.returnValue(false);
 
     // When && Then
     router.navigate(['']).then(() => {
-      expect(location.path()).toBe('/login');
+      expect(location.path()).toBe('/auth/login');
       expect(authServiceSpy.isLoggedIn).toHaveBeenCalled();
       done();
     });
@@ -72,35 +72,35 @@ describe("Router: App", () => {
     });
   });
 
-  it('should navigate to "todos" redirect to /login when user is not authenticated', done => {
+  it('should navigate to "todos" redirect to /auth/login when user is not authenticated', done => {
     // Given
     authServiceSpy.isLoggedIn.and.returnValue(false);
 
     // When && Then
     router.navigate(['todos']).then(() => {
-      expect(location.path()).toBe('/login');
+      expect(location.path()).toBe('/auth/login');
       expect(authServiceSpy.isLoggedIn).toHaveBeenCalled();
       done();
     });
   });
 
-  it('should navigate to "login" redirect to /login when user is authenticated', done => {
+  it('should navigate to "login" redirect to /auth/login when user is authenticated', done => {
     // Given
 
     // When && Then
     router.navigate(['login']).then(() => {
-      expect(location.path()).toBe('/login');
+      expect(location.path()).toBe('/auth/login');
       expect(authServiceSpy.isLoggedIn).not.toHaveBeenCalled();
       done();
     });
   });
 
-  it('should navigate to "login" redirect to /login when user is not authenticated', done => {
+  it('should navigate to "login" redirect to /auth/login when user is not authenticated', done => {
     // Given
 
     // When && Then
     router.navigate(['login']).then(() => {
-      expect(location.path()).toBe('/login');
+      expect(location.path()).toBe('/auth/login');
       expect(authServiceSpy.isLoggedIn).not.toHaveBeenCalled();
       done();
     });

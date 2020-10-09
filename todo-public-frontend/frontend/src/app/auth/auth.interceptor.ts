@@ -4,7 +4,7 @@ import { AuthService } from "./auth.service";
 import { throwError, Observable, empty } from "rxjs";
 import { tap, catchError, flatMap } from "rxjs/operators";
 import { AccessTokenDto } from 'src/generated';
-import { NotificationService } from './notification/notification.service';
+import { NotificationService } from './../notification/notification.service';
 import { Router } from '@angular/router';
 
 @Injectable({

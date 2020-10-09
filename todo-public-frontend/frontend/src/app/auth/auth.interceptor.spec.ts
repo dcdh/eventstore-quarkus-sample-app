@@ -8,7 +8,7 @@ import { AuthService } from "./auth.service";
 import { AuthenticationService, TodoService } from 'src/generated';
 import { Router } from '@angular/router';
 import { defer } from 'rxjs';
-import { NotificationService } from './notification/notification.service';
+import { NotificationService } from './../notification/notification.service';
 
 // https://medium.com/@dev.s4522/how-to-write-unit-test-cases-for-angular-http-interceptor-7595cb3a8843
 describe('AuthInterceptor', () => {
@@ -284,7 +284,7 @@ describe('AuthInterceptor', () => {
       tick();// execute the second http request
 
       // Then
-      expect(routerSpy.navigate).toHaveBeenCalledWith(['/login']);
+      expect(routerSpy.navigate).toHaveBeenCalledWith(['/auth/login']);
       expect(authServiceSpy.accessToken).toHaveBeenCalled();
       expect(authServiceSpy.renewToken).toHaveBeenCalled();
     }));
