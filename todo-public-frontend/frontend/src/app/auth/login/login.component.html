@@ -1,0 +1,50 @@
+<h1 id="title" class="title">Login</h1>
+<p class="sub-title">Hello! Log in with your username.</p>
+
+<nb-alert *ngIf="errors?.length && !submitted" outline="danger" role="alert">
+  <p class="alert-title"><b>An error has occurred !</b></p>
+  <ul class="alert-message-list">
+    <li *ngFor="let error of errors" class="alert-message">{{ error }}</li>
+  </ul>
+</nb-alert>
+
+<div [formGroup]="loginForm" aria-labelledby="title">
+  <div class="form-control-group">
+    <label for="input-username">Username:</label>
+    <input  nbInput
+            fullWidth
+            id="input-username"
+            formControlName="username"
+            [status]="username.dirty ? (username.invalid  ? 'danger' : 'success') : ''"
+            [attr.aria-invalid]="username.invalid && username.touched ? true : null"
+            placeholder="Username">
+    <ng-container *ngIf="username.invalid && username.touched">
+      <p class="caption status-danger" *ngIf="username?.errors?.required">
+        Username is required!
+      </p>
+    </ng-container>
+  </div>
+
+  <div class="form-control-group">
+    <label for="input-password">Password:</label>
+    <input  nbInput
+            fullWidth
+            id="input-password"
+            formControlName="password"
+            type="password"
+            [status]="password.dirty ? (password.invalid  ? 'danger' : 'success') : ''"
+            placeholder="Password">
+    <ng-container *ngIf="password.invalid && password.touched">
+      <p class="caption status-danger" *ngIf="password?.errors?.required">
+        Password is required!
+      </p>
+    </ng-container>
+  </div>
+
+  <button nbButton fullWidth status="primary" size="large"
+          (click)="login()" [disabled]="submitted || !loginForm.valid"
+          [class.btn-pulse]="submitted">
+    Log In
+  </button>
+
+</div>

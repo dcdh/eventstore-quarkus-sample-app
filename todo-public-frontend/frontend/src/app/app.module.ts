@@ -2,7 +2,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -15,7 +14,6 @@ import { TodoListComponent } from './todo-list/todo-list.component';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BASE_PATH } from 'src/generated';
 import { environment } from '../environments/environment';
-import { LoginComponent } from './login/login.component';
 import { AuthService } from "./auth.service";
 import { AuthGuard } from "./auth.guard";
 import { AuthInterceptor } from "./auth.interceptor";
@@ -23,13 +21,13 @@ import { ConnectedUserComponent } from './connected-user/connected-user.componen
 import { NotificationComponent } from './notification/notification.component';
 import { LogoutComponent } from './logout/logout.component';
 import { NbThemeModule } from '@nebular/theme';
+import { NbAuthModule } from './auth/auth.module';
 
 @NgModule({
   declarations: [
     AppComponent,
     TodoComponent,
     TodoListComponent,
-    LoginComponent,
     ConnectedUserComponent,
     NotificationComponent,
     LogoutComponent
@@ -40,16 +38,17 @@ import { NbThemeModule } from '@nebular/theme';
     BrowserAnimationsModule,
     MatToolbarModule,
     MatSnackBarModule,
-    ReactiveFormsModule,
     ApiModule,
     HttpClientModule,
+    NbAuthModule,
     NbThemeModule.forRoot({ name: 'dark' })
   ],
   providers: [
     { provide: BASE_PATH, useValue: environment.API_BASE_PATH },
     AuthService,
-    AuthGuard,
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}],
+//    AuthGuard,
+//    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
