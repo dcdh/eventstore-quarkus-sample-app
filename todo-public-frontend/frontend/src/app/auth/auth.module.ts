@@ -1,7 +1,4 @@
 import { Injector, ModuleWithProviders, NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
-import { HttpRequest } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from "./auth.service";
 import { AuthGuard } from "./auth.guard";
@@ -28,14 +25,12 @@ import { AuthRoutingModule } from './auth-routing.module';
 @NgModule({
   imports: [
     AuthRoutingModule,
-    CommonModule,
     NbLayoutModule,
     NbCardModule,
     NbCheckboxModule,
     NbAlertModule,
     NbInputModule,
     NbButtonModule,
-    RouterModule,
     NbIconModule,
     ReactiveFormsModule
   ],
