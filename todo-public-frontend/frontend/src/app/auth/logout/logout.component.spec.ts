@@ -62,7 +62,7 @@ describe('LogoutComponent', () => {
 
     // Then
     fixture.whenStable().then(() => {
-      expect(routerSpy.navigate).toHaveBeenCalledWith(['/login']);
+      expect(routerSpy.navigate).toHaveBeenCalledWith(['/auth/login']);
     });
   }));
 
