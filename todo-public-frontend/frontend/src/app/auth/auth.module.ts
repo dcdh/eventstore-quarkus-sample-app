@@ -42,8 +42,6 @@ import { AuthRoutingModule } from './auth-routing.module';
     LogoutComponent
   ],
   exports: [
-    NbAuthComponent,
-    NbAuthBlockComponent,
     ConnectedUserComponent
   ],
   providers: [
