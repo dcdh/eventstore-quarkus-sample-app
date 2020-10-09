@@ -24,7 +24,7 @@ export class AuthService {
   login(username: string, password: string): Observable<AccessTokenDto> {
     return this.authenticationService.authenticationLoginPost(username, password)
       .pipe(
-        tap((response: AccessTokenDto) => console.info('Received response when renewing token', response)),
+        tap((response: AccessTokenDto) => console.info('Received response when login in', response)),
         map((accessToken: AccessTokenDto) => {
           localStorage.setItem('accessToken', JSON.stringify(accessToken));
           return accessToken;
