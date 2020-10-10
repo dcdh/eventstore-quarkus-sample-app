@@ -1,20 +1,19 @@
-<div class="row">
-  <div class="col-md-12">
-    <nb-card class="inline-form-card">
-      <nb-card-header>Create new todo</nb-card-header>
-      <nb-card-body>
-        <div class="form-inline">
-          <input #newTodo placeholder="Create here !"
-                 nbInput fullWidth
-                 (keyup.enter)="createNewTodo(newTodo.value); newTodo.value='' ">
-        </div>
-      </nb-card-body>
-    </nb-card>
-  </div>
-</div>
+<nb-card class="inline-form-card">
+  <nb-card-header>Create new todo</nb-card-header>
+  <nb-card-body>
+    <div class="form-inline">
+      <input #newTodo placeholder="Create here !"
+             nbInput fullWidth
+             (keyup.enter)="createNewTodo(newTodo.value); newTodo.value='' ">
+    </div>
+  </nb-card-body>
+</nb-card>
 
-<div class="row">
-  <div *ngFor="let todo of listTodoDTO">
-    <todo [todo]="todo"></todo>
-  </div>
-</div>
+<nb-card class="inline-form-card">
+  <nb-card-header>Todo list</nb-card-header>
+  <nb-card-body>
+    <div *ngFor="let todo of listTodoDTO">
+      <todo [todo]="todo"></todo>
+    </div>
+  </nb-card-body>
+</nb-card>
