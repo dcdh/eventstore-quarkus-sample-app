@@ -2,7 +2,7 @@
   <nb-card-header>Create new todo</nb-card-header>
   <nb-card-body>
     <div class="form-inline">
-      <input #newTodo placeholder="Create here !"
+      <input #newTodo placeholder="Describe what you have to do here !"
              nbInput fullWidth
              (keyup.enter)="createNewTodo(newTodo.value); newTodo.value='' ">
     </div>
