@@ -1,7 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { NotificationService } from './notification.service';
 import { Subscription } from 'rxjs';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { NbToastrService, NbComponentStatus } from '@nebular/theme';
+import { NotificationType } from './notification.model';
+import { delay } from 'rxjs/operators';
 
 @Component({
   selector: 'app-notification',
@@ -12,17 +14,29 @@ export class NotificationComponent implements OnInit, OnDestroy {
 
   notificationSubscription: Subscription;
 
-  constructor(private notificationService: NotificationService, private matSnackBar: MatSnackBar) {}
+  constructor(private notificationService: NotificationService, private nbToastrService: NbToastrService) {}
 
   ngOnInit(): void {
     // subscribe to new notifications
     this.notificationSubscription = this.notificationService.onNotification()
+      .pipe(delay(50))// I add to add a delay to avoid this race condition error in console "this.container is undefined" from auth.guard
       .subscribe(notification => {
-        this.matSnackBar.open(notification.message, null, {
-          duration: 5000,
-          horizontalPosition: 'start',
-          verticalPosition: 'bottom',
-        });
+        let status : NbComponentStatus;
+        switch (notification.type) {
+          case NotificationType.Success:
+            status = 'success';
+            break;
+          case NotificationType.Error:
+            status = 'danger';
+            break;
+          case NotificationType.Info:
+            status = 'info';
+            break;
+          case NotificationType.Warning:
+            status = 'warning';
+            break;
+        }
+        this.nbToastrService.show(status, notification.message, { duration: 5000, status: status, preventDuplicates: true });
       });
   }
 
