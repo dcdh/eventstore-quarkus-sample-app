@@ -1,5 +1,8 @@
 <div class="row mt-3">
-  <div class="col-md-11">
+  <div class="col-md-11" *ngIf="todo.canMarkTodoAsCompleted">
+    {{ todo.description }}
+  </div>
+  <div class="col-md-11" *ngIf="!todo.canMarkTodoAsCompleted" [style.text-decoration]="'line-through'">
     {{ todo.description }}
   </div>
   <div class="col-md-1">
