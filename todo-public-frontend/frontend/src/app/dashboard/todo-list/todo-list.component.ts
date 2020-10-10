@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { TodoService } from 'src/generated';
 import { ListTodoDTO } from 'src/generated';
 import { TodoDTO } from 'src/generated';
+import { NotificationService } from './../../notification/notification.service';
 
 @Component({
   selector: 'todo-list',
@@ -14,7 +15,8 @@ export class TodoListComponent implements OnInit {
   listTodoDTO: ListTodoDTO;
 
   constructor(
-    private todoService: TodoService
+    private todoService: TodoService,
+    private notificationService: NotificationService
   ) {
   }
 
@@ -25,7 +27,10 @@ export class TodoListComponent implements OnInit {
 
   createNewTodo(description: string): void {
     this.todoService.todosCreateNewTodoPost(description)
-      .subscribe((todo: TodoDTO) => this.listTodoDTO.push(todo));
+      .subscribe((todo: TodoDTO) => {
+        this.notificationService.success('New todo created !');
+        this.listTodoDTO.push(todo);
+      });
   }
 
 }

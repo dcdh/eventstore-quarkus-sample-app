@@ -4,7 +4,7 @@ import { DashboardComponent } from './dashboard.component';
 import { AuthGuard } from "./../auth/auth.guard";
 import { TodoListComponent } from './todo-list/todo-list.component';
 
-const routes: Routes = [
+export const routes: Routes = [
   {
     path: 'dashboard',
     component: DashboardComponent,

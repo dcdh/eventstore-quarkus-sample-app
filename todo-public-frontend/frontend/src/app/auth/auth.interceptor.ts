@@ -42,7 +42,7 @@ export class AuthInterceptor implements HttpInterceptor {
                   );
                 }),
                 catchError((error: HttpErrorResponse) => {
-                  this.notificationService.error('Unable to renew authentication token, redirecting to login page');
+                  this.notificationService.info('The action cannot be made because your session is closed. You need to login and retry again.');
                   this.router.navigate(['/auth/login']);
                   return empty();
                 })

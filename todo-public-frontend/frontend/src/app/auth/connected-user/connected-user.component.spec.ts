@@ -45,15 +45,5 @@ describe('ConnectedUserComponent', () => {
     })
   }));
 
-  it('should display username connected', async(() => {
-    fixture.whenStable().then(() => {
-      fixture.detectChanges();
-
-      const usernameEl: HTMLInputElement = fixture.debugElement.nativeElement.querySelector('strong');
-      expect(usernameEl.innerText).toEqual('damdamdeo');
-      expect(authenticationServiceSpy.authenticationMeGet).toHaveBeenCalled();
-    })
-  }));
-
 // TODO cas ou une exception est émise !!!
 });

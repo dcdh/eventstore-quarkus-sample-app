@@ -18,7 +18,7 @@ describe('AuthInterceptor', () => {
   let httpClient: HttpClient;
   let httpTestingController: HttpTestingController;
   const authServiceSpy = jasmine.createSpyObj('AuthService', ['accessToken', 'logout', 'renewToken']);
-  const notificationServiceSpy = jasmine.createSpyObj('NotificationService', ['error']);
+  const notificationServiceSpy = jasmine.createSpyObj('NotificationService', ['info']);
   const routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
   beforeEach(() => {
@@ -45,7 +45,7 @@ describe('AuthInterceptor', () => {
     authServiceSpy.accessToken.calls.reset();
     authServiceSpy.logout.calls.reset();
     authServiceSpy.renewToken.calls.reset();
-    notificationServiceSpy.error.calls.reset();
+    notificationServiceSpy.info.calls.reset();
     routerSpy.navigate.calls.reset();
   });
 
@@ -107,12 +107,12 @@ describe('AuthInterceptor', () => {
     it('should add authorization bearer token when access token is present', fakeAsync(() => {
       // Given
       authServiceSpy.accessToken.and.returnValue({ 'accessToken': 'accessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'refreshToken' });
-      httpClient.get('/fake').subscribe(res => {
+      httpClient.get('/fake1').subscribe(res => {
         expect(res).toBeTruthy();
       });
 
       // When
-      const httpReq = httpTestingController.expectOne('/fake');
+      const httpReq = httpTestingController.expectOne('/fake1');
       httpReq.flush({});
 
       // Then
@@ -123,12 +123,12 @@ describe('AuthInterceptor', () => {
     it('should not add authorization bearer token when access token is not available', fakeAsync(() => {
       // Given
       authServiceSpy.accessToken.and.returnValue(null);
-      httpClient.get('/fake').subscribe(res => {
+      httpClient.get('/fake2').subscribe(res => {
         expect(res).toBeTruthy();
       });
 
       // When
-      const httpReq = httpTestingController.expectOne('/fake');
+      const httpReq = httpTestingController.expectOne('/fake2');
       httpReq.flush({});
 
       // Then
@@ -139,14 +139,14 @@ describe('AuthInterceptor', () => {
     it('should throw exception when request return an error response other than 401', fakeAsync(() => {
       // Given
       authServiceSpy.accessToken.and.returnValue({ 'accessToken': 'accessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'refreshToken' });
-      httpClient.get('/fake').subscribe(
+      httpClient.get('/fake3').subscribe(
         res => {},
         err => {
           expect(err).toBeTruthy();
         });
 
       // When
-      const httpReq = httpTestingController.expectOne('/fake');
+      const httpReq = httpTestingController.expectOne('/fake3');
       httpReq.flush('Internal Server Error ', new HttpErrorResponse({ error: 'Internal Server Error ', status: 500, statusText: 'Internal Server Error ' }));
 
       // Then
@@ -202,7 +202,7 @@ describe('AuthInterceptor', () => {
     it('should call authentication service renewToken when user request execution is unauthorized', fakeAsync(() => {
       // Given
       authServiceSpy.accessToken.and.returnValue({ 'accessToken': 'accessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'refreshToken' });
-      httpClient.get('/fake').subscribe(
+      httpClient.get('/fake4').subscribe(
         res => {},
         err => {
           // Then
@@ -210,7 +210,7 @@ describe('AuthInterceptor', () => {
         });
 
       // When
-      const httpReq = httpTestingController.expectOne('/fake');
+      const httpReq = httpTestingController.expectOne('/fake4');
       httpReq.flush('unauthorized', new HttpErrorResponse({ error: '401 error', status: 401, statusText: 'Unauthorized' }));
       tick();// execute the second http request
 
@@ -226,17 +226,17 @@ describe('AuthInterceptor', () => {
       authServiceSpy.renewToken.and.callFake(function() {
         return defer(() => Promise.resolve({ 'accessToken': 'newAccessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'newRefreshToken' }));
       });
-      httpClient.get('/fake').subscribe(
+      httpClient.get('/fake5').subscribe(
         res => {},
         err => {});
-      const firstHttpReq = httpTestingController.expectOne('/fake');
+      const firstHttpReq = httpTestingController.expectOne('/fake5');
       firstHttpReq.flush('unauthorized', new HttpErrorResponse({ error: '401 error', status: 401, statusText: 'Unauthorized' }));
 
       // When
       tick();// execute the second http request
 
       // Then
-      const secondHttpReq = httpTestingController.expectOne('/fake');
+      const secondHttpReq = httpTestingController.expectOne('/fake5');
 
       // Then
       expect(secondHttpReq.request.headers.get('Authorization')).toEqual('Bearer newAccessToken');
@@ -244,26 +244,26 @@ describe('AuthInterceptor', () => {
       expect(authServiceSpy.renewToken).toHaveBeenCalled();
     }));
 
-    it('should not throw exception when token fails to be renew', fakeAsync(() => {
+    it('should notify user when token fails to be renew', fakeAsync(() => {
       // Given
       authServiceSpy.accessToken.and.returnValue({ 'accessToken': 'accessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'refreshToken' });
       authServiceSpy.renewToken.and.callFake(function() {
         return defer(() => Promise.reject({}));
       });
-      httpClient.get('/fake').subscribe(
+      httpClient.get('/fake6').subscribe(
         res => {},
         err => {
           // Then
           fail("Callback has been called");
         });
-      const firstHttpReq = httpTestingController.expectOne('/fake');
+      const firstHttpReq = httpTestingController.expectOne('/fake6');
       firstHttpReq.flush('unauthorized', new HttpErrorResponse({ error: '401 error', status: 401, statusText: 'Unauthorized' }));
 
       // When
       tick();// execute the second http request
 
       // Then
-      expect(notificationServiceSpy.error).toHaveBeenCalledWith('Unable to renew authentication token, redirecting to login page');
+      expect(notificationServiceSpy.info).toHaveBeenCalledWith('The action cannot be made because your session is closed. You need to login and retry again.');
       expect(authServiceSpy.accessToken).toHaveBeenCalled();
       expect(authServiceSpy.renewToken).toHaveBeenCalled();
     }));
@@ -274,10 +274,10 @@ describe('AuthInterceptor', () => {
       authServiceSpy.renewToken.and.callFake(function() {
         return defer(() => Promise.reject({}));
       });
-      httpClient.get('/fake').subscribe(
+      httpClient.get('/fake7').subscribe(
         res => {},
         err => {});
-      const firstHttpReq = httpTestingController.expectOne('/fake');
+      const firstHttpReq = httpTestingController.expectOne('/fake7');
       firstHttpReq.flush('unauthorized', new HttpErrorResponse({ error: '401 error', status: 401, statusText: 'Unauthorized' }));
 
       // When
@@ -299,18 +299,18 @@ describe('AuthInterceptor', () => {
       authServiceSpy.renewToken.and.callFake(function() {
         return defer(() => Promise.resolve({ 'accessToken': 'newAccessToken', 'expiresIn': 300, 'refreshExpiresIn': 1800, 'refreshToken': 'newRefreshToken' }));
       });
-      httpClient.get('/fake').subscribe(
+      httpClient.get('/fake8').subscribe(
         res => {},
         err => {
         // Then
         expect(err).toBeTruthy();
       });
-      const firstHttpReq = httpTestingController.expectOne('/fake');
+      const firstHttpReq = httpTestingController.expectOne('/fake8');
       firstHttpReq.flush('unauthorized', new HttpErrorResponse({ error: '401 error', status: 401, statusText: 'Unauthorized' }));
 
       // When
       tick();// execute the second http request
-      const secondHttpReq = httpTestingController.expectOne('/fake');
+      const secondHttpReq = httpTestingController.expectOne('/fake8');
       secondHttpReq.flush('Internal Server Error ', new HttpErrorResponse({ error: 'Internal Server Error ', status: 500, statusText: 'Internal Server Error ' }));
 
       // Then

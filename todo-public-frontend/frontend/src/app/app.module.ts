@@ -1,7 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -13,7 +11,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { BASE_PATH } from 'src/generated';
 import { environment } from '../environments/environment';
 import { NotificationComponent } from './notification/notification.component';
-import { NbThemeModule, NbMenuModule } from '@nebular/theme';
+import { NbThemeModule, NbMenuModule, NbToastrModule } from '@nebular/theme';
 import { NbAuthModule } from './auth/auth.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { NbEvaIconsModule } from '@nebular/eva-icons';
@@ -27,15 +25,14 @@ import { NbEvaIconsModule } from '@nebular/eva-icons';
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    MatToolbarModule,
-    MatSnackBarModule,
     ApiModule,
     HttpClientModule,
     NbAuthModule,
     DashboardModule,
     NbThemeModule.forRoot({ name: 'default' }),
     NbEvaIconsModule,
-    NbMenuModule.forRoot()
+    NbMenuModule.forRoot(),
+    NbToastrModule.forRoot()
   ],
   providers: [
     { provide: BASE_PATH, useValue: environment.API_BASE_PATH },

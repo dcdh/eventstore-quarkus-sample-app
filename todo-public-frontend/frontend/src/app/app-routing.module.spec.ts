@@ -4,10 +4,13 @@ import { RouterTestingModule } from "@angular/router/testing";
 import { Router } from "@angular/router";
 import { HttpClient, HttpHandler } from "@angular/common/http";
 
-import { routes } from "./app-routing.module";
+import { routes as appRoutes } from "./app-routing.module";
+import { routes as authRoutes } from "./auth/auth-routing.module";
+import { routes as dashboardRoutes } from "./dashboard/dashboard-routing.module";
+
 import { AuthenticationService } from 'src/generated';
-import { AuthGuard } from "./auth.guard";
-import { AuthService } from "./auth.service";
+import { AuthGuard } from "./auth/auth.guard";
+import { AuthService } from "./auth/auth.service";
 
 describe("Router: App", () => {
   let location: Location;
@@ -17,7 +20,11 @@ describe("Router: App", () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [ RouterTestingModule.withRoutes(routes) ],
+      imports: [
+        RouterTestingModule.withRoutes(appRoutes),
+        RouterTestingModule.withRoutes(authRoutes),
+        RouterTestingModule.withRoutes(dashboardRoutes)
+      ],
       providers: [
         AuthenticationService,
         HttpClient,
@@ -60,46 +67,46 @@ describe("Router: App", () => {
     });
   });
 
-  it('should navigate to "todos" redirect to /dashboard/todos when user is authenticated', done => {
+  it('should navigate to "/dashboard/todos" redirect to /dashboard/todos when user is authenticated', done => {
     // Given
     authServiceSpy.isLoggedIn.and.returnValue(true);
 
     // When && Then
-    router.navigate(['todos']).then(() => {
+    router.navigate(['/dashboard/todos']).then(() => {
       expect(location.path()).toBe('/dashboard/todos');
       expect(authServiceSpy.isLoggedIn).toHaveBeenCalled();
       done();
     });
   });
 
-  it('should navigate to "todos" redirect to /auth/login when user is not authenticated', done => {
+  it('should navigate to "/dashboard/todos" redirect to /auth/login when user is not authenticated', done => {
     // Given
     authServiceSpy.isLoggedIn.and.returnValue(false);
 
     // When && Then
-    router.navigate(['todos']).then(() => {
+    router.navigate(['/dashboard/todos']).then(() => {
       expect(location.path()).toBe('/auth/login');
       expect(authServiceSpy.isLoggedIn).toHaveBeenCalled();
       done();
     });
   });
 
-  it('should navigate to "login" redirect to /auth/login when user is authenticated', done => {
+  it('should navigate to "/auth/login" redirect to /auth/login when user is authenticated', done => {
     // Given
 
     // When && Then
-    router.navigate(['login']).then(() => {
+    router.navigate(['/auth/login']).then(() => {
       expect(location.path()).toBe('/auth/login');
       expect(authServiceSpy.isLoggedIn).not.toHaveBeenCalled();
       done();
     });
   });
 
-  it('should navigate to "login" redirect to /auth/login when user is not authenticated', done => {
+  it('should navigate to "/auth/login" redirect to /auth/login when user is not authenticated', done => {
     // Given
 
     // When && Then
-    router.navigate(['login']).then(() => {
+    router.navigate(['/auth/login']).then(() => {
       expect(location.path()).toBe('/auth/login');
       expect(authServiceSpy.isLoggedIn).not.toHaveBeenCalled();
       done();

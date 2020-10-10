@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 
 import { TodoService } from 'src/generated';
 import { TodoDTO } from 'src/generated';
+import { NotificationService } from './../../notification/notification.service';
 
 @Component({
   selector: 'todo',
@@ -14,7 +15,8 @@ export class TodoComponent implements OnInit {
   todo: TodoDTO = {};
 
   constructor(
-    private todoService: TodoService
+    private todoService: TodoService,
+    private notificationService: NotificationService
   ) { }
 
   ngOnInit(): void {
@@ -22,7 +24,10 @@ export class TodoComponent implements OnInit {
 
   markTodoAsCompleted(todo: TodoDTO): void {
     this.todoService.todosMarkTodoAsCompletedPost(todo.todoId)
-      .subscribe((todo: TodoDTO) => this.todo = todo);
+      .subscribe((todo: TodoDTO) => {
+        this.notificationService.success('Todo marked as completed !');
+        this.todo = todo;
+      });
   }
 
 }

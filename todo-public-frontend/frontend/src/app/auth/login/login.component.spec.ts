@@ -2,25 +2,30 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { LoginComponent } from './login.component';
 import { AuthService } from "./../auth.service";
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { DebugElement } from "@angular/core";
+import { DebugElement, ChangeDetectorRef } from "@angular/core";
 import { By } from "@angular/platform-browser";
 import { Router } from '@angular/router';
 import { defer } from 'rxjs';
 
+// https://stackoverflow.com/questions/39712150/angular2-formbuilder-unit-testing
 describe('LoginComponent', () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
 
   const authServiceSpy = jasmine.createSpyObj('AuthService', ['login']);
   const routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+  const changeDetectorRefSpy = jasmine.createSpyObj('ChangeDetectorRef', ['detectChanges']);
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ LoginComponent ],
       providers: [
         { provide: AuthService, useValue: authServiceSpy },
-        { provide: Router, useValue: routerSpy }
+        { provide: Router, useValue: routerSpy },
+        { provide: FormBuilder },
+        { provide: ChangeDetectorRef, useValue: changeDetectorRefSpy }
       ]
     })
     .compileComponents();
@@ -35,6 +40,7 @@ describe('LoginComponent', () => {
   afterEach(() => {
     authServiceSpy.login.calls.reset();
     routerSpy.navigate.calls.reset();
+    changeDetectorRefSpy.detectChanges.calls.reset();
   });
 
   it('should create', () => {
@@ -51,7 +57,7 @@ describe('LoginComponent', () => {
     component.loginForm.controls['password'].setValue("123456789");
 
     // When
-    component.onLogin();
+    component.login();
 
     // Then
     fixture.whenStable().then(() => {
@@ -66,7 +72,7 @@ describe('LoginComponent', () => {
     });
 
     // When
-    component.onLogin();
+    component.login();
 
     // Then
     fixture.whenStable().then(() => {

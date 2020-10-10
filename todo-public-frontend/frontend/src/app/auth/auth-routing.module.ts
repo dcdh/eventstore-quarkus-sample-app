@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { NbAuthComponent } from './auth.component';
 import { LoginComponent } from './login/login.component';
 
-const routes: Routes = [
+export const routes: Routes = [
   {
     path: 'auth',
     component: NbAuthComponent,

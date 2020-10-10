@@ -46,7 +46,7 @@ describe('AuthGuard', () => {
 
       // Then
       expect(canActivate).toEqual(urlTree);
-      expect(routerSpy.parseUrl).toHaveBeenCalledWith('/login');
+      expect(routerSpy.parseUrl).toHaveBeenCalledWith('/auth/login');
       expect(authServiceSpy.isLoggedIn).toHaveBeenCalled();
     });
 
