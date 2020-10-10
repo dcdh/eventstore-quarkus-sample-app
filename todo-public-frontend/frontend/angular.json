@@ -24,6 +24,7 @@
               "src/assets"
             ],
             "styles": [
+              "node_modules/bootstrap/dist/css/bootstrap.css",
               "node_modules/@nebular/theme/styles/prebuilt/default.css",
               "src/styles.css"
             ],
@@ -89,6 +90,7 @@
               "src/assets"
             ],
             "styles": [
+              "node_modules/bootstrap/dist/css/bootstrap.css",
               "node_modules/@nebular/theme/styles/prebuilt/default.css",
               "src/styles.css"
             ],
