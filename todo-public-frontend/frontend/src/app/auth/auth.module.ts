@@ -15,6 +15,7 @@ import {
   NbIconModule,
   NbInputModule,
   NbLayoutModule,
+  NbUserModule,
 } from '@nebular/theme';
 
 import { NbAuthComponent } from './auth.component';
@@ -34,6 +35,7 @@ import { AuthRoutingModule } from './auth-routing.module';
     NbButtonModule,
     NbIconModule,
     ReactiveFormsModule,
+    NbUserModule,
     CommonModule
   ],
   declarations: [
@@ -44,7 +46,8 @@ import { AuthRoutingModule } from './auth-routing.module';
     LogoutComponent
   ],
   exports: [
-    ConnectedUserComponent
+    ConnectedUserComponent,
+    LogoutComponent
   ],
   providers: [
     AuthService,

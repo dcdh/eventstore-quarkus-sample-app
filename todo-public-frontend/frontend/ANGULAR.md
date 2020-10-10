@@ -32,6 +32,8 @@ npm install --save @nebular/eva-icons
 
 npm install --save bootstrap@4.3.1
 
+npm i eva-icons @nebular/eva-icons
+
 ### update packages
 
 npm update

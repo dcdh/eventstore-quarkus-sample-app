@@ -16,6 +16,7 @@ import { NotificationComponent } from './notification/notification.component';
 import { NbThemeModule } from '@nebular/theme';
 import { NbAuthModule } from './auth/auth.module';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { NbEvaIconsModule } from '@nebular/eva-icons';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { DashboardModule } from './dashboard/dashboard.module';
     HttpClientModule,
     NbAuthModule,
     DashboardModule,
-    NbThemeModule.forRoot({ name: 'default' })
+    NbThemeModule.forRoot({ name: 'default' }),
+    NbEvaIconsModule
   ],
   providers: [
     { provide: BASE_PATH, useValue: environment.API_BASE_PATH },

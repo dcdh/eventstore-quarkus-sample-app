@@ -11,7 +11,14 @@ import { Component, OnInit } from '@angular/core';
   template: `
     <nb-layout windowMode>
       <nb-layout-header fixed>
-        <app-connected-user></app-connected-user>
+        <nb-actions size="small">
+          <nb-action>
+            <app-connected-user></app-connected-user>
+          </nb-action>
+          <nb-action>
+            <app-logout></app-logout>
+          </nb-action>
+        </nb-actions>
       </nb-layout-header>
       <nb-layout-column>
         <router-outlet></router-outlet>

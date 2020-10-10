@@ -12,6 +12,7 @@ import {
   NbInputModule,
   NbLayoutModule,
   NbListModule,
+  NbActionsModule,
 } from '@nebular/theme';
 
 import { DashboardComponent } from './dashboard.component';
@@ -34,6 +35,7 @@ import { NbAuthModule } from './../auth/auth.module';
     NbListModule,
     ReactiveFormsModule,
     NbAuthModule,
+    NbActionsModule,
     CommonModule
   ],
   declarations: [
