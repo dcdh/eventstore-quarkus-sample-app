@@ -1,0 +1,10 @@
+<nb-card class="inline-form-card">
+  <nb-card-body>
+    {{ todo.description }}
+  </nb-card-body>
+  <nb-card-footer>
+    <button nbButton (click)="markTodoAsCompleted(todo)" [disabled]="!todo.canMarkTodoAsCompleted">
+      mark as completed
+    </button>
+  </nb-card-footer>
+</nb-card>

@@ -50,7 +50,7 @@ export class LoginComponent implements OnInit {
       .subscribe({
           next: (value) => {
             this.submitted = false;
-            this.router.navigate(['/todos'])
+            this.router.navigate(['/dashboard/todos'])
           },
           error: (httpErrorResponse: HttpErrorResponse) => {
             this.submitted = false;

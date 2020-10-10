@@ -70,7 +70,7 @@ describe('LoginComponent', () => {
 
     // Then
     fixture.whenStable().then(() => {
-      expect(routerSpy.navigate).toHaveBeenCalledWith(['/todos']);
+      expect(routerSpy.navigate).toHaveBeenCalledWith(['/dashboard/todos']);
       expect(authServiceSpy.login).toHaveBeenCalled();
     });
   }));

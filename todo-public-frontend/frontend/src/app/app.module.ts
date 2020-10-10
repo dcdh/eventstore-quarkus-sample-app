@@ -6,10 +6,8 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { TodoComponent } from './todo/todo.component';
 
 import { ApiModule } from 'src/generated';
-import { TodoListComponent } from './todo-list/todo-list.component';
 
 import { HttpClientModule } from '@angular/common/http';
 import { BASE_PATH } from 'src/generated';
@@ -17,12 +15,11 @@ import { environment } from '../environments/environment';
 import { NotificationComponent } from './notification/notification.component';
 import { NbThemeModule } from '@nebular/theme';
 import { NbAuthModule } from './auth/auth.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @NgModule({
   declarations: [
     AppComponent,
-    TodoComponent,
-    TodoListComponent,
     NotificationComponent
   ],
   imports: [
@@ -34,7 +31,8 @@ import { NbAuthModule } from './auth/auth.module';
     ApiModule,
     HttpClientModule,
     NbAuthModule,
-    NbThemeModule.forRoot({ name: 'dark' })
+    DashboardModule,
+    NbThemeModule.forRoot({ name: 'default' })
   ],
   providers: [
     { provide: BASE_PATH, useValue: environment.API_BASE_PATH },

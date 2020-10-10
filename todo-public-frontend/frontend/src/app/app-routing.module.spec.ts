@@ -36,13 +36,13 @@ describe("Router: App", () => {
     authServiceSpy.isLoggedIn.calls.reset();
   });
 
-  it('should navigate to "" redirect to /todos when user is authenticated', done => {
+  it('should navigate to "" redirect to /dashboard/todos when user is authenticated', done => {
     // Given
     authServiceSpy.isLoggedIn.and.returnValue(true);
 
     // When && Then
     router.navigate(['']).then(() => {
-      expect(location.path()).toBe('/todos');
+      expect(location.path()).toBe('/dashboard/todos');
       expect(authServiceSpy.isLoggedIn).toHaveBeenCalled();
       done();
     });
@@ -60,13 +60,13 @@ describe("Router: App", () => {
     });
   });
 
-  it('should navigate to "todos" redirect to /todos when user is authenticated', done => {
+  it('should navigate to "todos" redirect to /dashboard/todos when user is authenticated', done => {
     // Given
     authServiceSpy.isLoggedIn.and.returnValue(true);
 
     // When && Then
     router.navigate(['todos']).then(() => {
-      expect(location.path()).toBe('/todos');
+      expect(location.path()).toBe('/dashboard/todos');
       expect(authServiceSpy.isLoggedIn).toHaveBeenCalled();
       done();
     });
