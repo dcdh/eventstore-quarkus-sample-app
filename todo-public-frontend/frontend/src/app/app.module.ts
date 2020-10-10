@@ -13,7 +13,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { BASE_PATH } from 'src/generated';
 import { environment } from '../environments/environment';
 import { NotificationComponent } from './notification/notification.component';
-import { NbThemeModule } from '@nebular/theme';
+import { NbThemeModule, NbMenuModule } from '@nebular/theme';
 import { NbAuthModule } from './auth/auth.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { NbEvaIconsModule } from '@nebular/eva-icons';
@@ -34,7 +34,8 @@ import { NbEvaIconsModule } from '@nebular/eva-icons';
     NbAuthModule,
     DashboardModule,
     NbThemeModule.forRoot({ name: 'default' }),
-    NbEvaIconsModule
+    NbEvaIconsModule,
+    NbMenuModule.forRoot()
   ],
   providers: [
     { provide: BASE_PATH, useValue: environment.API_BASE_PATH },

@@ -13,6 +13,7 @@ import {
   NbLayoutModule,
   NbListModule,
   NbActionsModule,
+  NbContextMenuModule,
 } from '@nebular/theme';
 
 import { DashboardComponent } from './dashboard.component';
@@ -36,6 +37,7 @@ import { NbAuthModule } from './../auth/auth.module';
     ReactiveFormsModule,
     NbAuthModule,
     NbActionsModule,
+    NbContextMenuModule,
     CommonModule
   ],
   declarations: [

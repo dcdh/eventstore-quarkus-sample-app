@@ -3,7 +3,8 @@
  * Licensed under the Single Application / Multi Application License.
  * See LICENSE_SINGLE_APP / LICENSE_MULTI_APP in the 'docs' folder for license information on type of purchased license.
  */
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
+import { NbMenuItem } from '@nebular/theme';
 
 @Component({
   selector: 'dashboard',
@@ -18,6 +19,9 @@ import { Component, OnInit } from '@angular/core';
           <nb-action>
             <app-logout></app-logout>
           </nb-action>
+          <nb-action>
+            <nb-icon icon="settings-outline" [nbContextMenu]="infrastructures"></nb-icon>
+          </nb-action>
         </nb-actions>
       </nb-layout-header>
       <nb-layout-column>
@@ -27,6 +31,45 @@ import { Component, OnInit } from '@angular/core';
   `,
 })
 export class DashboardComponent implements OnInit {
+
+  // https://akveo.github.io/nebular/docs/components/menu/overview#nbmenuitem
+  infrastructures: NbMenuItem[] = [
+    {
+      title: 'Mailhog',
+      url: 'http://localhost:8025/',
+      target: '_blank'
+    },
+    {
+      title: 'Keycloak',
+      url: 'http://localhost:8087',
+      target: '_blank'
+    },
+    {
+      title: 'Jaeger UI',
+      url: 'http://localhost:16686',
+      target: '_blank'
+    },
+    {
+      title: 'Kibana',
+      url: 'http://localhost:5601/',
+      target: '_blank'
+    },
+    {
+      title: 'Todo public frontend',
+      url: 'http://localhost:8086/swagger-ui/#/default',
+      target: '_blank'
+    },
+    {
+      title: 'Todo write app',
+      url: 'http://localhost:8084/swagger-ui/#/default',
+      target: '_blank'
+    },
+    {
+      title: 'Todo query app',
+      url: 'http://localhost:8085/swagger-ui/#/default',
+      target: '_blank'
+    },
+  ];
 
   ngOnInit(): void {
   }
