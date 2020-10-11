@@ -21,6 +21,7 @@ import { DashboardRoutingModule } from './dashboard-routing.module';
 import { TodoComponent } from './todo/todo.component';
 import { TodoListComponent } from './todo-list/todo-list.component';
 import { NbAuthModule } from './../auth/auth.module';
+import { WhatIsItComponent } from './what-is-it/what-is-it.component';
 
 @NgModule({
   imports: [
@@ -43,7 +44,8 @@ import { NbAuthModule } from './../auth/auth.module';
   declarations: [
     DashboardComponent,
     TodoComponent,
-    TodoListComponent
+    TodoListComponent,
+    WhatIsItComponent
   ],
   exports: [
 

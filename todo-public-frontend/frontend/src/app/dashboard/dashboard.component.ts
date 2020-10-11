@@ -22,6 +22,7 @@ import { NbMenuItem } from '@nebular/theme';
           <nb-action>
             <nb-icon icon="settings-outline" [nbContextMenu]="infrastructures"></nb-icon>
           </nb-action>
+          <nb-action link="/dashboard/what-is-it" icon="question-mark-circle-outline" title="What is it"></nb-action>
         </nb-actions>
       </nb-layout-header>
       <nb-layout-column>

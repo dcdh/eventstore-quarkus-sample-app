@@ -34,6 +34,8 @@ npm install --save bootstrap@4.3.1
 
 npm i eva-icons @nebular/eva-icons
 
+ng g component dashboard/what-is-it
+
 ### update packages
 
 npm update

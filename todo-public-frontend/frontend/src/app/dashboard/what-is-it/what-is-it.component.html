@@ -1,0 +1,33 @@
+<nb-card class="inline-form-card">
+  <nb-card-header>
+    <nb-action link="/dashboard/todos" icon="arrow-back-outline" title="Todo list" size="medium"></nb-action>
+  </nb-card-header>
+  <nb-card-body>
+    <h1>What is it ?</h1>
+    <p>Simple todo list compounds of several applications using CQRS patterns.</p>
+    <h4>Patterns</h4>
+    <p>CQRS+ES patterns are used in this showcase. This imply two sides : a write side and a query side compounds of multiples applications.
+      A kafka broker is used as communication infrastructure from write side to query side. Each message produce by the write side is compound of a domain event and a materialized state.</p>
+    <p><img src="assets/img/architecture.png" style="width:100%"></p>
+    <h4>Applications stack</h4>
+    <p>The <b>todo-write-app</b> is an application exposing a rest API to mute and validate the domain state. Domains events with associated materialized states are stored into an event store.
+      Change Data Capture - using Debezium - is used to push events from the event store to a Kafka messages broker</p>
+    <p>The <b>todo-query-app</b> is an application exposing a rest API to query the domain. This application consume domain events and materialized states from the Kafka broker.</p>
+    <p>The <b>todo-email-notifier-app</b> is an application sending email each time the domain change. This application consume domain events and materialized states from the Kafka broker.</p>
+    <p>The <b>todo-public-frontend-app</b> is a BFF (Backend For Frontend) application. It aggregate api from write side and query side.
+      It is connected with keycloak to handle user registration and logging user using token oauth2. The Rest api exposed is used by an Angular application.
+      By using this layer we can protect backends apis by exposing to public only needed rest endpoint and filter properties to expose.
+    </p>
+    <h4>Infrastructure stack</h4>
+    <p><b>Mailhog</b> is used as a local smtp server. User can check mail sent from here.</p>
+    <p><b>Keycloak</b> is used to handle user registration, login... using oauth2. All applications have access to it.</p>
+    <p>Multiple instances of <b>PostgreSQL</b> are used for keycloak, and all 3 applications.</p>
+    <p><b>Kafka</b> is used to store message and make them consumed by applications. In conjunction with kafka a kafka connector <b>Debezium</b> is used to publish data from write application into Kafka topics.</p>
+    <h4>Monitoring stack</h4>
+    <p>A <b>Jeager</b> instance is used to aggregate all rest api calls. Users can now rest calls response times, failures ...</p>
+    <p>A <b>Prometheus</b> instance is used to scrap metrics from all applications <b>NOT DONE IN THIS EXAMPLE</b> Each application expose a <b>metrics</b> endpoint.</p>
+    <p>A <b>Grafana</b> instance is used to display metrics from Prometheus <b>NOT DONE IN THIS EXAMPLE</b></p>
+    <h4>Logging stack</h4>
+    <p>A <b>ELK</b> instance is used to aggregate all logs produced by all applications. Users can easily seek on logs using this tool.</p>
+  </nb-card-body>
+</nb-card>
