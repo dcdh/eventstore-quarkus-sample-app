@@ -1,3 +1,7 @@
+# Access the application
+
+http://localhost:8086/
+
 ## create component
 
 ng generate component todo
