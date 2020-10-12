@@ -51,6 +51,16 @@ export class DashboardComponent implements OnInit {
       target: '_blank'
     },
     {
+      title: 'Prometheus',
+      url: 'http://localhost:9090',
+      target: '_blank'
+    },
+    {
+      title: 'Grafana',
+      url: 'http://localhost:3000',
+      target: '_blank'
+    },
+    {
       title: 'Kibana',
       url: 'http://localhost:5601/',
       target: '_blank'

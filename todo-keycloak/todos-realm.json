@@ -1068,10 +1068,10 @@
     "strictTransportSecurity" : "max-age=31536000; includeSubDomains"
   },
   "smtpServer" : { },
-  "eventsEnabled" : false,
-  "eventsListeners" : [ "jboss-logging" ],
+  "eventsEnabled" : true,
+  "eventsListeners" : [ "jboss-logging", "metrics-listener" ],
   "enabledEventTypes" : [ ],
-  "adminEventsEnabled" : false,
+  "adminEventsEnabled" : true,
   "adminEventsDetailsEnabled" : false,
   "components" : {
     "org.keycloak.services.clientregistration.policy.ClientRegistrationPolicy" : [ {

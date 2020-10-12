@@ -3,13 +3,15 @@ version: '3'
 services:
 
   zookeeper:
-    image: debezium/zookeeper:1.1.1.Final
+    image: damdamdeo/debezium-zookeeper-prometheus-exporter:1.1.1.Final
     ports:
       - 2181:2181
       - 2888:2888
       - 3888:3888
+      - 7074:8081
     environment:
       - LOG_LEVEL=WARN
+      - SERVER_JVMFLAGS=-javaagent:/jmx_prometheus_javaagent.jar=8081:/config.yml
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.8.2
@@ -19,19 +21,32 @@ services:
     environment:
       ES_JAVA_OPTS: "-Xms512m -Xmx512m"
 
+  elasticsearch-exporter:
+    image: justwatch/elasticsearch_exporter:1.1.0
+    ports:
+      - 9114:9114
+    command:
+      - '--es.uri=http://elasticsearch:9200'
+
   logstash:
-    image: docker.elastic.co/logstash/logstash-oss:6.8.2
+    image: damdamdeo/logstash-oss-prometheus-exporter:6.8.2
     volumes:
       - $HOME/pipelines:/usr/share/logstash/pipeline:z
     ports:
       - 12201:12201/udp
       - 5000:5000
       - 9600:9600
+      - 7075:8080
+    environment:
+      - LS_JAVA_OPTS=-javaagent:/jmx_prometheus_javaagent.jar=8080:/config.yml
 
   kibana:
     image: docker.elastic.co/kibana/kibana-oss:6.8.2
     ports:
       - 5601:5601
+
+# use cadvisor to expose mailhog container metrics. In a k8s env not needed as pod are already monitored
+# TODO exporter kibana
 
   kafka:
     image: debezium/kafka:1.1.1.Final
@@ -43,11 +58,20 @@ services:
       - KAFKA_LOG_RETENTION_MS=5000
       - KAFKA_LOG_RETENTION_CHECK_INTERVAL_MS=5000
       - LOG_LEVEL=WARN
+      - KAFKA_OPTS=
+
+  kafka-exporter:
+    image: danielqsj/kafka-exporter:v1.2.0
+    ports:
+      - 9308:9308
+    environment:
+      - kafka.server=kafka:9092
 
   connect:
-    image: debezium/connect:1.1.1.Final
+    image: damdamdeo/debezium-connect-prometheus-exporter:1.1.1.Final
     ports:
       - 8083:8083
+      - 7073:8080
     environment:
       - BOOTSTRAP_SERVERS=kafka:9092
       - GROUP_ID=1
@@ -55,6 +79,9 @@ services:
       - OFFSET_STORAGE_TOPIC=my_connect_offsets
       - STATUS_STORAGE_TOPIC=my_connect_statuses
       - LOG_LEVEL=WARN
+      - EXTRA_ARGS=-javaagent:/jmx_prometheus_javaagent.jar=8080:/config.yml
+
+  # https://debezium.io/documentation/reference/connectors/postgresql.html#postgresql-monitoring
 
   mutable:
     image: dcdh1983/postgresql-10-debezium-centos7:latest
@@ -65,6 +92,13 @@ services:
       - POSTGRESQL_PASSWORD=postgrespassword
       - POSTGRESQL_DATABASE=mutable
 
+  mutable-exporter:
+    image: wrouesnel/postgres_exporter:v0.8.0
+    ports:
+    - 9187:9187
+    environment:
+      - DATA_SOURCE_NAME=postgresql://postgresuser:postgrespassword@mutable:5432/mutable?sslmode=disable
+
   todo-query:
     image: postgres:11-alpine
     ports:
@@ -73,6 +107,13 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=todo-query
+
+  todo-query-exporter:
+    image: wrouesnel/postgres_exporter:v0.8.0
+    ports:
+      - 9188:9187
+    environment:
+      - DATA_SOURCE_NAME=postgresql://postgres:postgres@todo-query:5432/todo-query?sslmode=disable
 
   todo-email-notifier:
     image: postgres:11-alpine
@@ -83,6 +124,13 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=todo-email-notifier
 
+  todo-email-notifier-exporter:
+    image: wrouesnel/postgres_exporter:v0.8.0
+    ports:
+      - 9189:9187
+    environment:
+      - DATA_SOURCE_NAME=postgresql://postgres:postgres@todo-email-notifier:5432/todo-email-notifier?sslmode=disable
+
   secret-store:
     image: debezium/postgres:11-alpine
     ports:
@@ -92,11 +140,22 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=secret-store
 
+  secret-store-exporter:
+    image: wrouesnel/postgres_exporter:v0.8.0
+    ports:
+      - 9190:9187
+    environment:
+      - DATA_SOURCE_NAME=postgresql://postgres:postgres@secret-store:5432/secret-store?sslmode=disable
+
   mailhog:
     image: mailhog/mailhog:v1.0.0
     ports:
       - 1025:1025
       - 8025:8025
+
+# use cadvisor to expose mailhog container metrics. In a k8s env not needed as pod are already monitored
+# TODO exporter mailhog
+
 
   todo-write-app:
     image: damdamdeo/todo-write-app:latest
@@ -219,6 +278,15 @@ services:
       - POSTGRES_PASSWORD=keycloak
       - POSTGRES_DB=keycloak
 
+  keycloak-db-exporter:
+    image: wrouesnel/postgres_exporter:v0.8.0
+    ports:
+      - 9191:9187
+    environment:
+      - DATA_SOURCE_NAME=postgresql://keycloak:keycloak@keycloak-db:5432/keycloak?sslmode=disable
+
+  # metrics are exported following https://github.com/aerogear/keycloak-metrics-spi
+  # Warnings: manual setup have to be performed regarding master realm
   keycloak:
     image: damdamdeo/todo-keycloak:latest
     ports:
@@ -232,6 +300,8 @@ services:
       - DB_USER=keycloak
       - DB_PASSWORD=keycloak
 
+# flûte je devrais utiliser zipkin (car un exporter existe au lieu de jaeger ...)
+
   jaeger:
     image: jaegertracing/all-in-one:latest
     ports:
@@ -241,3 +311,31 @@ services:
       - 5778:5778
       - 16686:16686
       - 14268:14268
+
+# TODO change jaeger to zipkin and export zipkin
+
+  # https://prometheus:io/docs/instrumenting/exporters/:
+
+  prometheus:
+    image: prom/prometheus:v2.21.0
+    ports:
+      - 9090:9090
+    volumes:
+      - $HOME/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=365d'
+
+# TODO exporter prometheus
+
+  grafana:
+    image: grafana/grafana:7.2.1
+    ports:
+      - 3000:3000
+    environment:
+    # metrics are exported by default. See https://grafana.com/docs/grafana/latest/administration/metrics/
+      - GF_PATHS_CONFIG=/etc/grafana/grafana.ini
+    volumes:
+      - $HOME/grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
+      - $HOME/grafana/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml

@@ -26,6 +26,10 @@
     <h4>Monitoring stack</h4>
     <p>A <b>Jeager</b> instance is used to aggregate all rest api calls. Users can now rest calls response times, failures ...</p>
     <p>A <b>Prometheus</b> instance is used to scrap metrics from all applications <b>NOT DONE IN THIS EXAMPLE</b> Each application expose a <b>metrics</b> endpoint.</p>
+    <p>Prometheus use <b>exporter</b> to expose metrics.</p>
+    <p>It is easy to do it for Postgresql (just add a postgresql exporter container).</p>
+    <p>Same for Kafka as Postgresql.</p>
+    <p>Forget about Kibana as the container should be modified (so need to do a custom image): https://github.com/pjhampton/kibana-prometheus-exporter</p>
     <p>A <b>Grafana</b> instance is used to display metrics from Prometheus <b>NOT DONE IN THIS EXAMPLE</b></p>
     <h4>Logging stack</h4>
     <p>A <b>ELK</b> instance is used to aggregate all logs produced by all applications. Users can easily seek on logs using this tool.</p>
