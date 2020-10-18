@@ -13,8 +13,8 @@
         <surefire-plugin.version>2.22.2</surefire-plugin.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <quarkus.version>1.7.2.Final</quarkus.version>
-        <event-data-spreader.version>1.0-5db63e2</event-data-spreader.version>
+        <quarkus.version>1.8.3.Final</quarkus.version>
+        <event-data-spreader.version>1.0-b23e16e</event-data-spreader.version>
     </properties>
 
     <modules>

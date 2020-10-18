@@ -42,6 +42,8 @@ public class InfrastructureQuarkusTestResourceLifecycleManager implements Quarku
 
     private GenericContainer todoWriteAppContainer;
 
+    private GenericContainer hazelcastContainer;
+
     @Override
     public Map<String, String> start() {
         final Slf4jLogConsumer logConsumer = new Slf4jLogConsumer(logger);
@@ -148,6 +150,16 @@ public class InfrastructureQuarkusTestResourceLifecycleManager implements Quarku
         todoQueryAppContainer.start();
         todoQueryAppContainer.followOutput(logConsumer);
 
+
+        hazelcastContainer = new GenericContainer("hazelcast/hazelcast:4.0.3")
+                .withNetwork(network)
+                .withNetworkAliases("hazelcast")
+                .waitingFor(
+                        Wait.forLogMessage(".*is STARTED.*\\n", 1)
+                );
+        hazelcastContainer.start();
+        hazelcastContainer.followOutput(logConsumer);
+
         todoWriteAppContainer = new GenericContainer("damdamdeo/todo-write-app:latest")
                 .withExposedPorts(8080)
                 .withEnv("JAVA_OPTIONS", Stream.of("-Dquarkus.http.host=0.0.0.0",
@@ -171,7 +183,8 @@ public class InfrastructureQuarkusTestResourceLifecycleManager implements Quarku
                         "-Dconnector.mutable.database.port=5432",
                         "-Dconnector.mutable.database.dbname=mutable",
                         "-Dslot.drop.on.stop=true",
-                        "-Dquarkus.oidc.auth-server-url=http://keycloak:8080/auth/realms/todos"
+                        "-Dquarkus.oidc.auth-server-url=http://keycloak:8080/auth/realms/todos",
+                        "-Dquarkus.hazelcast-client.cluster-members=hazelcast:5701"
                 ).collect(Collectors.joining(" ")))
                 .withNetwork(network)
                 .dependsOn(kafkaContainer, debeziumContainer, postgresSecretStoreContainer, postgresMutableContainer)
@@ -272,6 +285,9 @@ public class InfrastructureQuarkusTestResourceLifecycleManager implements Quarku
         }
         if (kafkaContainer != null) {
             kafkaContainer.close();
+        }
+        if (hazelcastContainer != null) {
+            hazelcastContainer.close();
         }
         if (debeziumContainer != null) {
             debeziumContainer.close();

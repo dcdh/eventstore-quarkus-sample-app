@@ -156,6 +156,15 @@ services:
 # use cadvisor to expose mailhog container metrics. In a k8s env not needed as pod are already monitored
 # TODO exporter mailhog
 
+  hazelcast:
+    image: hazelcast/hazelcast:4.0.3
+    ports:
+      - 5701:5701
+      - 8088:8080
+    environment:
+      - PROMETHEUS_PORT=8080
+
+# TODO conf exporter
 
   todo-write-app:
     image: damdamdeo/todo-write-app:latest
@@ -193,6 +202,7 @@ services:
         -Dquarkus.log.handler.gelf.additional-field.env.type=String
         -Dquarkus.log.handler.gelf.additional-field.serviceName.value=todo-write-app
         -Dquarkus.log.handler.gelf.additional-field.serviceName.type=String
+        -Dquarkus.hazelcast-client.cluster-members=hazelcast:5701
 
   todo-query-app:
     image: damdamdeo/todo-query-app:latest

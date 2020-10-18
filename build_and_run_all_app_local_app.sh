@@ -180,7 +180,7 @@ providers:
       path: /var/lib/grafana/dashboards
 EOF
 ### start infra
-docker-compose -f docker-compose-local-run.yaml up --detach jaeger elasticsearch logstash kibana zookeeper kafka connect mutable todo-query todo-email-notifier secret-store mailhog keycloak-db
+docker-compose -f docker-compose-local-run.yaml up --detach jaeger elasticsearch logstash kibana zookeeper kafka connect mutable todo-query todo-email-notifier secret-store mailhog keycloak-db hazelcast
 sleep 20
 
 ### start keycloak
