@@ -1,6 +1,7 @@
 package com.damdamdeo.todo.domain.command;
 
 import com.damdamdeo.eventsourced.mutable.api.eventsourcing.command.Command;
+import com.damdamdeo.eventsourced.mutable.api.eventsourcing.command.CommandLockingType;
 
 import java.util.Objects;
 
@@ -28,4 +29,15 @@ public final class CreateNewTodoCommand implements Command {
     public int hashCode() {
         return Objects.hash(description);
     }
+
+    @Override
+    public CommandLockingType commandLockingType() {
+        return CommandLockingType.GLOBAL;
+    }
+
+    @Override
+    public String aggregateRootId() {
+        return null;
+    }
+
 }

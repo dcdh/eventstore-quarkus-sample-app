@@ -30,7 +30,7 @@ public class SingleExecutionCreateNewTodoCommandHandlerTest {
     @Test
     public void should_call_domain_command_handler() throws Throwable {
         // Given
-        final CreateNewTodoCommand createNewTodoCommand = mock(CreateNewTodoCommand.class);
+        final CreateNewTodoCommand createNewTodoCommand = new CreateNewTodoCommand("description");
 
         // When
         singleExecutionCreateNewTodoCommandHandler.execute(createNewTodoCommand);
@@ -42,7 +42,7 @@ public class SingleExecutionCreateNewTodoCommandHandlerTest {
     @Test
     public void should_use_executor_to_execute_command() throws Throwable {
         // Given
-        final CreateNewTodoCommand createNewTodoCommand = mock(CreateNewTodoCommand.class);
+        final CreateNewTodoCommand createNewTodoCommand = new CreateNewTodoCommand("description");
 
         // When
         singleExecutionCreateNewTodoCommandHandler.execute(createNewTodoCommand);

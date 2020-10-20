@@ -30,7 +30,7 @@ public class SingleExecutionMarkTodoAsCompletedCommandHandlerTest {
     @Test
     public void should_call_domain_command_handler() throws Throwable {
         // Given
-        final MarkTodoAsCompletedCommand markTodoAsCompletedCommand = mock(MarkTodoAsCompletedCommand.class);
+        final MarkTodoAsCompletedCommand markTodoAsCompletedCommand = new MarkTodoAsCompletedCommand("todoId");
 
         // When
         singleExecutionMarkTodoAsCompletedCommandHandler.execute(markTodoAsCompletedCommand);
@@ -42,7 +42,7 @@ public class SingleExecutionMarkTodoAsCompletedCommandHandlerTest {
     @Test
     public void should_use_executor_to_execute_command() throws Throwable {
         // Given
-        final MarkTodoAsCompletedCommand markTodoAsCompletedCommand = mock(MarkTodoAsCompletedCommand.class);
+        final MarkTodoAsCompletedCommand markTodoAsCompletedCommand = new MarkTodoAsCompletedCommand("todoId");
 
         // When
         singleExecutionMarkTodoAsCompletedCommandHandler.execute(markTodoAsCompletedCommand);
