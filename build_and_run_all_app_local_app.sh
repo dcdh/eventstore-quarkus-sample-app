@@ -6,7 +6,6 @@ docker kill $(docker ps -aq)
 docker rm $(docker ps -aq)
 docker volume prune -f
 docker network prune -f
-export TESTCONTAINERS_RYUK_DISABLED=true
 
 
 docker build -f containers/debezium-connect-prometheus-exporter/Dockerfile -t damdamdeo/debezium-connect-prometheus-exporter:1.1.1.Final containers/debezium-connect-prometheus-exporter
