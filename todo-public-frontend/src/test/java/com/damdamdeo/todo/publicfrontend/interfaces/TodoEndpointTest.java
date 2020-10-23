@@ -3,7 +3,7 @@ package com.damdamdeo.todo.publicfrontend.interfaces;
 import com.damdamdeo.todo.publicfrontend.domain.TodoStatus;
 import com.damdamdeo.todo.publicfrontend.infrastructure.TodoQueryRemoteService;
 import com.damdamdeo.todo.publicfrontend.infrastructure.TodoWriteRemoteService;
-import com.jayway.restassured.module.jsv.JsonSchemaValidator;
+import io.restassured.module.jsv.JsonSchemaValidator;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
 import org.eclipse.microprofile.rest.client.inject.RestClient;

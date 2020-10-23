@@ -4,7 +4,7 @@ import com.damdamdeo.todo.domain.TodoDomain;
 import com.damdamdeo.todo.domain.TodoDomainRepository;
 import com.damdamdeo.todo.domain.api.TodoStatus;
 import com.damdamdeo.todo.domain.api.UnknownTodoException;
-import com.jayway.restassured.module.jsv.JsonSchemaValidator;
+import io.restassured.module.jsv.JsonSchemaValidator;
 import io.quarkus.security.identity.SecurityIdentity;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;

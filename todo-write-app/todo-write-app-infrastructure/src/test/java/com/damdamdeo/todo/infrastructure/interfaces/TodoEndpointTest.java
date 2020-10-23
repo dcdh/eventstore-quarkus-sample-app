@@ -12,7 +12,7 @@ import com.damdamdeo.todo.domain.command.CreateNewTodoCommand;
 import com.damdamdeo.todo.domain.command.MarkTodoAsCompletedCommand;
 import com.damdamdeo.todo.domain.command.handler.CreateNewTodoCommandHandler;
 import com.damdamdeo.todo.domain.command.handler.MarkTodoAsCompletedCommandHandler;
-import com.jayway.restassured.module.jsv.JsonSchemaValidator;
+import io.restassured.module.jsv.JsonSchemaValidator;
 import io.quarkus.security.identity.SecurityIdentity;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;

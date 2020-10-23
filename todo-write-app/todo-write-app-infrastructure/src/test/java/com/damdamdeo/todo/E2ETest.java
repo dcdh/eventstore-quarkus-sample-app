@@ -1,7 +1,7 @@
 package com.damdamdeo.todo;
 
 import com.damdamdeo.todo.infrastructure.UUIDTodoIdGenerator;
-import com.jayway.restassured.module.jsv.JsonSchemaValidator;
+import io.restassured.module.jsv.JsonSchemaValidator;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
 import io.restassured.RestAssured;

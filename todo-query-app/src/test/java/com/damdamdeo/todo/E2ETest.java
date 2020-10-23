@@ -5,11 +5,11 @@ import com.damdamdeo.eventsourced.encryption.infra.jackson.JacksonAggregateRootI
 import com.damdamdeo.eventsourced.model.api.AggregateRootId;
 import com.damdamdeo.todo.domain.api.TodoStatus;
 import com.damdamdeo.todo.infrastructure.TodoEntity;
-import com.jayway.restassured.module.jsv.JsonSchemaValidator;
 import io.agroal.api.AgroalDataSource;
 import io.quarkus.agroal.DataSource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
+import io.restassured.module.jsv.JsonSchemaValidator;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.hibernate.envers.AuditReaderFactory;

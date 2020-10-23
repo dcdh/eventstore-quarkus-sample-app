@@ -1,6 +1,6 @@
 package com.damdamdeo.todo.publicfrontend;
 
-import com.jayway.restassured.module.jsv.JsonSchemaValidator;
+import io.restassured.module.jsv.JsonSchemaValidator;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
