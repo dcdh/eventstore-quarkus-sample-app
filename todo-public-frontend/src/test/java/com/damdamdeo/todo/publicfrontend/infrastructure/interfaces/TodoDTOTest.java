@@ -1,5 +1,6 @@
-package com.damdamdeo.todo.publicfrontend.interfaces;
+package com.damdamdeo.todo.publicfrontend.infrastructure.interfaces;
 
+import com.damdamdeo.todo.publicfrontend.infrastructure.interfaces.TodoDTO;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
 

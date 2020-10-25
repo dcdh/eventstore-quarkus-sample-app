@@ -4,11 +4,10 @@ import com.damdamdeo.eventsourced.mutable.api.eventsourcing.AggregateRootReposit
 import com.damdamdeo.todo.domain.TodoAggregateRoot;
 import com.damdamdeo.todo.domain.command.CreateNewTodoCommand;
 import com.damdamdeo.todo.domain.command.MarkTodoAsCompletedCommand;
-import com.damdamdeo.todo.domain.command.handler.CreateNewTodoCommandHandler;
-import com.damdamdeo.todo.domain.command.handler.MarkTodoAsCompletedCommandHandler;
+import com.damdamdeo.todo.infrastructure.command.ManagedDomainCreateNewTodoCommandHandler;
+import com.damdamdeo.todo.infrastructure.command.ManagedExecutionMarkTodoAsCompletedCommandHandler;
 
 import javax.annotation.security.RolesAllowed;
-import javax.inject.Named;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.Objects;
@@ -18,14 +17,14 @@ import java.util.Optional;
 @Produces(MediaType.APPLICATION_JSON)
 public class TodoEndpoint {
 
-    final CreateNewTodoCommandHandler createNewTodoCommandHandler;
+    final ManagedDomainCreateNewTodoCommandHandler createNewTodoCommandHandler;
 
-    final MarkTodoAsCompletedCommandHandler markTodoAsCompletedCommandHandler;
+    final ManagedExecutionMarkTodoAsCompletedCommandHandler markTodoAsCompletedCommandHandler;
 
     final AggregateRootRepository aggregateRootRepository;
 
-    public TodoEndpoint(@Named("SingleExecutionCreateNewTodoCommandHandler") final CreateNewTodoCommandHandler createNewTodoCommandHandler,
-                        @Named("SingleExecutionMarkTodoAsCompletedCommandHandler") final MarkTodoAsCompletedCommandHandler markTodoAsCompletedCommandHandler,
+    public TodoEndpoint(final ManagedDomainCreateNewTodoCommandHandler createNewTodoCommandHandler,
+                        final ManagedExecutionMarkTodoAsCompletedCommandHandler markTodoAsCompletedCommandHandler,
                         final AggregateRootRepository aggregateRootRepository) {
         this.createNewTodoCommandHandler = Objects.requireNonNull(createNewTodoCommandHandler);
         this.markTodoAsCompletedCommandHandler = Objects.requireNonNull(markTodoAsCompletedCommandHandler);

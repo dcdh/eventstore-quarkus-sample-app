@@ -1,7 +1,7 @@
 package com.damdamdeo.todo;
 
 import com.damdamdeo.eventsourced.encryption.api.SecretStore;
-import com.damdamdeo.eventsourced.encryption.infra.jackson.JacksonAggregateRootId;
+import com.damdamdeo.eventsourced.encryption.infra.jsonb.JsonObjectEncryptedAggregateRootId;
 import com.damdamdeo.eventsourced.model.api.AggregateRootId;
 import com.damdamdeo.todo.domain.api.TodoStatus;
 import com.damdamdeo.todo.infrastructure.TodoEntity;
@@ -86,7 +86,7 @@ public class E2ETest {
     @Test
     public void should_consume_todo_created_event_and_todo_marked_as_completed_event() throws Exception {
         // When
-        final AggregateRootId aggregateRootId = new JacksonAggregateRootId("todoId", "TodoAggregateRoot");
+        final AggregateRootId aggregateRootId = new JsonObjectEncryptedAggregateRootId("TodoAggregateRoot", "todoId");
         secretStore.store(aggregateRootId, "IbXcNPlTEnoPzWVPNwASmPepRVWBHhPN");
         kafkaDebeziumProducer.produce("todoCreatedEvent.json");
         await().atMost(2, TimeUnit.SECONDS).until(() ->

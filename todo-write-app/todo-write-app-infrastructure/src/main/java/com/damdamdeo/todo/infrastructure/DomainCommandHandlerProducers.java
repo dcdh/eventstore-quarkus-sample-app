@@ -5,7 +5,6 @@ import com.damdamdeo.todo.domain.command.handler.*;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
-import javax.inject.Named;
 import java.util.Objects;
 
 public class DomainCommandHandlerProducers {
@@ -23,16 +22,14 @@ public class DomainCommandHandlerProducers {
     }
 
     @Produces
-    @Named("DomainCreateNewTodoCommandHandler")
     @ApplicationScoped
-    public CreateNewTodoCommandHandler domainCreateNewTodoCommandHandlerProducer() {
+    public DomainCreateNewTodoCommandHandler createNewTodoCommandHandler() {
         return new DomainCreateNewTodoCommandHandler(todoAggregateRootRepository, todoIdGenerator, newTodoAggregateRootProvider);
     }
 
     @Produces
-    @Named("DomainMarkTodoAsCompletedCommandHandler")
     @ApplicationScoped
-    public MarkTodoAsCompletedCommandHandler domainMarkTodoAsCompletedCommandHandlerProducer() {
+    public DomainMarkTodoAsCompletedCommandHandler markTodoAsCompletedCommandHandler() {
         return new DomainMarkTodoAsCompletedCommandHandler(todoAggregateRootRepository);
     }
 

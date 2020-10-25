@@ -1,4 +1,4 @@
-package com.damdamdeo.todo.publicfrontend.interfaces;
+package com.damdamdeo.todo.publicfrontend.infrastructure.interfaces;
 
 import com.damdamdeo.todo.publicfrontend.infrastructure.TodoQueryRemoteService;
 import com.damdamdeo.todo.publicfrontend.infrastructure.TodoWriteRemoteService;

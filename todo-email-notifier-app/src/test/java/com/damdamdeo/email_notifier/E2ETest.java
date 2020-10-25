@@ -1,7 +1,7 @@
 package com.damdamdeo.email_notifier;
 
 import com.damdamdeo.email_notifier.domain.EmailNotifier;
-import com.damdamdeo.eventsourced.consumer.infra.eventsourcing.DebeziumAggregateRootEventId;
+import com.damdamdeo.eventsourced.consumer.infra.eventsourcing.record.event_in.DebeziumJsonbAggregateRootId;
 import com.damdamdeo.eventsourced.encryption.api.SecretStore;
 import com.damdamdeo.eventsourced.model.api.AggregateRootId;
 import io.agroal.api.AgroalDataSource;
@@ -92,7 +92,7 @@ public class E2ETest {
     @Test
     public void should_consume_todo_created_event_and_todo_marked_as_completed_event() throws Exception {
         // When
-        final AggregateRootId aggregateRootId = new DebeziumAggregateRootEventId.DebeziumAggregateRootId("todoId", "TodoAggregateRoot");
+        final AggregateRootId aggregateRootId = new DebeziumJsonbAggregateRootId("TodoAggregateRoot", "todoId");
         secretStore.store(aggregateRootId, "IbXcNPlTEnoPzWVPNwASmPepRVWBHhPN");
         kafkaDebeziumProducer.produce("todoCreatedEvent.json");
         await().atMost(2, TimeUnit.SECONDS).until(() ->

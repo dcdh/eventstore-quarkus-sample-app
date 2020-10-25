@@ -1,8 +1,9 @@
-package com.damdamdeo.todo.publicfrontend.interfaces;
+package com.damdamdeo.todo.publicfrontend.infrastructure.interfaces;
 
 import com.damdamdeo.todo.publicfrontend.domain.TodoStatus;
 import com.damdamdeo.todo.publicfrontend.infrastructure.TodoQueryRemoteService;
 import com.damdamdeo.todo.publicfrontend.infrastructure.TodoWriteRemoteService;
+import com.damdamdeo.todo.publicfrontend.infrastructure.interfaces.TodoDTO;
 import io.restassured.module.jsv.JsonSchemaValidator;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;

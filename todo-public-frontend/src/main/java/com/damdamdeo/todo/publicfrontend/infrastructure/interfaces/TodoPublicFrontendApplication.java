@@ -1,4 +1,4 @@
-package com.damdamdeo.todo.publicfrontend.interfaces;
+package com.damdamdeo.todo.publicfrontend.infrastructure.interfaces;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;

@@ -1,4 +1,4 @@
-package com.damdamdeo.todo.publicfrontend.interfaces.authentication;
+package com.damdamdeo.todo.publicfrontend.infrastructure.interfaces.authentication;
 
 import com.damdamdeo.todo.publicfrontend.domain.authentication.AccessToken;
 import com.damdamdeo.todo.publicfrontend.domain.authentication.RefreshTokenInvalidException;

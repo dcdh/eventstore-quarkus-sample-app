@@ -4,14 +4,15 @@ import com.damdamdeo.eventsourced.encryption.api.Secret;
 import com.damdamdeo.eventsourced.encryption.api.SecretStore;
 import com.damdamdeo.eventsourced.mutable.api.eventsourcing.ApiAggregateRootId;
 import com.damdamdeo.todo.domain.event.TodoCreatedEventPayload;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 import javax.inject.Inject;
+import javax.json.Json;
+import javax.json.JsonObject;
+import java.io.StringReader;
 import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,15 +30,14 @@ public class TodoCreatedEventPayloadTest {
     @Test
     public void should_serialize() throws Exception {
         // Given
-        final ObjectMapper objectMapper = new ObjectMapper();
         final Secret secret = mock(Secret.class);
         doReturn(secret).when(secretStore).read(any());
         doReturn("encryptedDescription").when(secret).encrypt(any(), any(), any());
 
         // When
-        final JsonNode serialized = todoCreatedEventPayloadDeSerializer.encode(
+        final JsonObject serialized = todoCreatedEventPayloadDeSerializer.encode(
                 new ApiAggregateRootId("todoId", "TodoAggregateRoot"),
-                new TodoCreatedEventPayload("todoId", "lorem ipsum"), objectMapper);
+                new TodoCreatedEventPayload("todoId", "lorem ipsum"));
 
         // Then
         final String expectedJsonPayload = new Scanner(this.getClass().getResourceAsStream("/expected/todoCreatedEventPayload.json"), "UTF-8")
@@ -50,11 +50,10 @@ public class TodoCreatedEventPayloadTest {
     @Test
     public void should_deserialize() throws Exception {
         // Given
-        final ObjectMapper objectMapper = new ObjectMapper();
-        final JsonNode jsonNode = objectMapper.readTree("{\"todoId\": \"todoId\", \"description\": \"lorem ipsum\"}");
+        final JsonObject jsonObject = Json.createReader(new StringReader("{\"todoId\": \"todoId\", \"description\": \"lorem ipsum\"}")).readObject();
 
         // When
-        final TodoCreatedEventPayload aggregateRootEventPayload = (TodoCreatedEventPayload) todoCreatedEventPayloadDeSerializer.decode(jsonNode);
+        final TodoCreatedEventPayload aggregateRootEventPayload = (TodoCreatedEventPayload) todoCreatedEventPayloadDeSerializer.decode(jsonObject);
 
         // Then
         assertEquals(new TodoCreatedEventPayload("todoId", "lorem ipsum"), aggregateRootEventPayload);

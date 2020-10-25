@@ -10,8 +10,8 @@ import com.damdamdeo.todo.domain.api.TodoAlreadyMarkedAsCompletedException;
 import com.damdamdeo.todo.domain.api.TodoStatus;
 import com.damdamdeo.todo.domain.command.CreateNewTodoCommand;
 import com.damdamdeo.todo.domain.command.MarkTodoAsCompletedCommand;
-import com.damdamdeo.todo.domain.command.handler.CreateNewTodoCommandHandler;
-import com.damdamdeo.todo.domain.command.handler.MarkTodoAsCompletedCommandHandler;
+import com.damdamdeo.todo.infrastructure.command.ManagedDomainCreateNewTodoCommandHandler;
+import com.damdamdeo.todo.infrastructure.command.ManagedExecutionMarkTodoAsCompletedCommandHandler;
 import io.restassured.module.jsv.JsonSchemaValidator;
 import io.quarkus.security.identity.SecurityIdentity;
 import io.quarkus.test.junit.QuarkusTest;
@@ -19,7 +19,6 @@ import io.quarkus.test.junit.mockito.InjectMock;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Named;
 import javax.ws.rs.core.MediaType;
 
 import static io.restassured.RestAssured.given;
@@ -31,12 +30,10 @@ import static org.mockito.Mockito.*;
 public class TodoEndpointTest {
 
     @InjectMock
-    @Named("SingleExecutionCreateNewTodoCommandHandler")
-    CreateNewTodoCommandHandler createNewTodoCommandHandler;
+    ManagedDomainCreateNewTodoCommandHandler createNewTodoCommandHandler;
 
     @InjectMock
-    @Named("SingleExecutionMarkTodoAsCompletedCommandHandler")
-    MarkTodoAsCompletedCommandHandler markTodoAsCompletedCommandHandler;
+    ManagedExecutionMarkTodoAsCompletedCommandHandler markTodoAsCompletedCommandHandler;
 
     @InjectMock
     SecurityIdentity securityIdentity;

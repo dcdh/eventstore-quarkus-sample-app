@@ -1,4 +1,4 @@
-package com.damdamdeo.todo.publicfrontend.interfaces.user;
+package com.damdamdeo.todo.publicfrontend.infrastructure.interfaces.user;
 
 import com.damdamdeo.todo.publicfrontend.domain.user.UsernameOrEmailAlreadyUsedException;
 

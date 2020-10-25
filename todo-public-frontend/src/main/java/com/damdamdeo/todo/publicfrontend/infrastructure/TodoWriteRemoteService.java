@@ -1,6 +1,6 @@
 package com.damdamdeo.todo.publicfrontend.infrastructure;
 
-import com.damdamdeo.todo.publicfrontend.interfaces.TodoDTO;
+import com.damdamdeo.todo.publicfrontend.infrastructure.interfaces.TodoDTO;
 import org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 

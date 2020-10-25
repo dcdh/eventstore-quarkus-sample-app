@@ -1,18 +1,18 @@
 package com.damdamdeo.todo.infrastructure.consumer;
 
 import com.damdamdeo.eventsourced.consumer.api.eventsourcing.AggregateRootEventConsumable;
-import com.damdamdeo.eventsourced.consumer.infra.eventsourcing.JsonNodeAggregateRootEventConsumer;
+import com.damdamdeo.eventsourced.consumer.infra.eventsourcing.JsonObjectAggregateRootEventConsumer;
 import com.damdamdeo.todo.domain.CreateTodoService;
-import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.json.JsonObject;
 import javax.transaction.Transactional;
 import java.util.Objects;
 
 @ApplicationScoped
-public class TodoCreatedEventConsumer implements JsonNodeAggregateRootEventConsumer {
+public class TodoCreatedEventConsumer implements JsonObjectAggregateRootEventConsumer {
 
     private final Logger logger = LoggerFactory.getLogger(TodoCreatedEventConsumer.class);
 
@@ -24,11 +24,11 @@ public class TodoCreatedEventConsumer implements JsonNodeAggregateRootEventConsu
 
     @Override
     @Transactional
-    public void consume(final AggregateRootEventConsumable<JsonNode> aggregateRootEventConsumable) {
+    public void consume(final AggregateRootEventConsumable<JsonObject> aggregateRootEventConsumable) {
         logger.info(String.format("Consuming '%s' for '%s'", eventType(), aggregateRootEventConsumable.eventId()));
         createTodoService.createTodo(
-                aggregateRootEventConsumable.eventPayload().get("todoId").asText(),
-                aggregateRootEventConsumable.eventPayload().get("description").asText(),
+                aggregateRootEventConsumable.eventPayload().getString("todoId"),
+                aggregateRootEventConsumable.eventPayload().getString("description"),
                 aggregateRootEventConsumable.eventId().version());
     }
 

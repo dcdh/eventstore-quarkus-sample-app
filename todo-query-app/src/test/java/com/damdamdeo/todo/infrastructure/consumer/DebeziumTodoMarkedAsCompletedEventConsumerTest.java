@@ -1,14 +1,14 @@
 package com.damdamdeo.todo.infrastructure.consumer;
 
-import com.damdamdeo.eventsourced.consumer.infra.eventsourcing.DebeziumAggregateRootEventId;
 import com.damdamdeo.eventsourced.consumer.infra.eventsourcing.DecryptedAggregateRootEventConsumable;
+import com.damdamdeo.eventsourced.consumer.infra.eventsourcing.record.event_in.DebeziumJsonbAggregateRootEventId;
+import com.damdamdeo.eventsourced.consumer.infra.eventsourcing.record.event_in.DebeziumJsonbAggregateRootId;
 import com.damdamdeo.eventsourced.encryption.api.PresentSecret;
 import com.damdamdeo.eventsourced.encryption.api.SecretStore;
-import com.damdamdeo.eventsourced.encryption.infra.jackson.JacksonAggregateRootId;
+import com.damdamdeo.eventsourced.encryption.infra.jsonb.JsonObjectEncryptedAggregateRootId;
 import com.damdamdeo.eventsourced.model.api.AggregateRootId;
 import com.damdamdeo.todo.KafkaDebeziumProducer;
 import com.damdamdeo.todo.domain.MarkTodoAsCompletedService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.agroal.api.AgroalDataSource;
 import io.quarkus.agroal.DataSource;
 import io.quarkus.test.junit.QuarkusTest;
@@ -19,7 +19,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
+import javax.json.Json;
 import javax.transaction.Transactional;
+import java.io.StringReader;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -65,7 +67,7 @@ public class DebeziumTodoMarkedAsCompletedEventConsumerTest {
 
     @BeforeEach
     public void setupSecretStore() {
-        final AggregateRootId aggregateRootId = new JacksonAggregateRootId("todoId", "TodoAggregateRoot");
+        final AggregateRootId aggregateRootId = new JsonObjectEncryptedAggregateRootId("TodoAggregateRoot", "todoId");
         doReturn(new PresentSecret("IbXcNPlTEnoPzWVPNwASmPepRVWBHhPN"))
                 .when(secretStore).read(aggregateRootId);
     }
@@ -78,7 +80,6 @@ public class DebeziumTodoMarkedAsCompletedEventConsumerTest {
     @Test
     public void should_consume_event() throws Exception {
         // Given
-        final ObjectMapper objectMapper = new ObjectMapper();
 
         // When
         kafkaDebeziumProducer.produce("todoMarkedAsCompletedEvent.json");
@@ -86,12 +87,12 @@ public class DebeziumTodoMarkedAsCompletedEventConsumerTest {
 
         // Then
         verify(todoMarkedAsCompletedEventConsumer, times(1)).consume(new DecryptedAggregateRootEventConsumable(
-                new DebeziumAggregateRootEventId("todoId", "TodoAggregateRoot", 1l),
+                new DebeziumJsonbAggregateRootEventId(new DebeziumJsonbAggregateRootId("TodoAggregateRoot", "todoId"), 1l),
                 "TodoMarkedAsCompletedEvent",
                 LocalDateTime.of(2019, Month.JULY, 12, 0, 7, 24, 922000000),
-                objectMapper.readTree("{\"todoId\":\"todoId\"}"),
-                objectMapper.readTree("{\"user.anonymous\":false,\"user.name\":\"damdamdeo\"}"),
-                objectMapper.readTree("{\"description\":\"lorem ipsum\",\"todoId\":\"todoId\",\"todoStatus\":\"COMPLETED\"}")
+                Json.createReader(new StringReader("{\"todoId\":\"todoId\"}")).readObject(),
+                Json.createReader(new StringReader("{\"user.anonymous\":false,\"user.name\":\"damdamdeo\"}")).readObject(),
+                Json.createReader(new StringReader("{\"description\":\"lorem ipsum\",\"todoId\":\"todoId\",\"todoStatus\":\"COMPLETED\"}")).readObject()
         ));
 
         verify(todoMarkedAsCompletedEventConsumer, atLeastOnce()).aggregateRootType();

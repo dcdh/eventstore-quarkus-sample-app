@@ -1,25 +1,24 @@
 package com.damdamdeo.todo.infrastructure.deserializer;
 
-import com.damdamdeo.eventsourced.encryption.infra.jackson.JsonCryptoService;
+import com.damdamdeo.eventsourced.encryption.api.JsonbCryptoService;
 import com.damdamdeo.eventsourced.model.api.AggregateRootId;
 import com.damdamdeo.eventsourced.mutable.api.eventsourcing.AggregateRoot;
-import com.damdamdeo.eventsourced.mutable.infra.eventsourcing.serialization.JacksonAggregateRootMaterializedStateDeSerializer;
+import com.damdamdeo.eventsourced.mutable.infra.eventsourcing.serialization.JsonbAggregateRootMaterializedStateDeSerializer;
 import com.damdamdeo.todo.domain.TodoAggregateRoot;
 import com.damdamdeo.todo.domain.api.TodoStatus;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.json.Json;
+import javax.json.JsonObject;
 import java.util.Objects;
 
 @ApplicationScoped
-public class TodoAggregateJacksonAggregateRootMaterializedStateDeSerializer implements JacksonAggregateRootMaterializedStateDeSerializer {
+public class TodoAggregateJacksonAggregateRootMaterializedStateDeSerializer implements JsonbAggregateRootMaterializedStateDeSerializer {
 
-    final JsonCryptoService jsonCryptoService;
+    final JsonbCryptoService jsonbCryptoService;
 
-    public TodoAggregateJacksonAggregateRootMaterializedStateDeSerializer(final JsonCryptoService jsonCryptoService) {
-        this.jsonCryptoService = Objects.requireNonNull(jsonCryptoService);
+    public TodoAggregateJacksonAggregateRootMaterializedStateDeSerializer(final JsonbCryptoService jsonbCryptoService) {
+        this.jsonbCryptoService = Objects.requireNonNull(jsonbCryptoService);
     }
 
     @Override
@@ -28,25 +27,22 @@ public class TodoAggregateJacksonAggregateRootMaterializedStateDeSerializer impl
     }
 
     @Override
-    public JsonNode serialize(final AggregateRoot aggregateRoot,
-                              final boolean shouldEncrypt,
-                              final ObjectMapper objectMapper) {
+    public JsonObject serialize(final AggregateRoot aggregateRoot, final boolean shouldEncrypt) {
         final TodoAggregateRoot todoAggregateRoot = (TodoAggregateRoot) aggregateRoot;
-        final ObjectNode objectNode = objectMapper.createObjectNode();
-        objectNode.put("description", todoAggregateRoot.description());
-        objectNode.put("todoId", todoAggregateRoot.todoId());
-        objectNode.put("todoStatus", todoAggregateRoot.todoStatus().name());
-        jsonCryptoService.encrypt(aggregateRoot.aggregateRootId(), objectNode, "description", shouldEncrypt);
-        return objectNode;
+        return Json.createObjectBuilder()
+                .add("description", jsonbCryptoService.encrypt(aggregateRoot.aggregateRootId(), todoAggregateRoot.description(), shouldEncrypt))
+                .add("todoId", todoAggregateRoot.todoId())
+                .add("todoStatus", todoAggregateRoot.todoStatus().name())
+                .build();
     }
 
     @Override
-    public TodoAggregateRoot deserialize(final AggregateRootId aggregateRootId, final JsonNode aggregateRoot, final Long version) {
+    public TodoAggregateRoot deserialize(final AggregateRootId aggregateRootId, final JsonObject aggregateRoot, final Long version) {
         return TodoAggregateRoot.newBuilder()
                 .withAggregateRootId(aggregateRootId.aggregateRootId())
                 .withVersion(version)
-                .withDescription(aggregateRoot.get("description").asText())
-                .withTodoStatus(TodoStatus.valueOf(aggregateRoot.get("todoStatus").asText()))
+                .withDescription(aggregateRoot.getString("description"))
+                .withTodoStatus(TodoStatus.valueOf(aggregateRoot.getString("todoStatus")))
                 .build();
     }
 

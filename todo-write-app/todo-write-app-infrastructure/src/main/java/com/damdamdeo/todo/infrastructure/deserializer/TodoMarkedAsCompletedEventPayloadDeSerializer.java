@@ -2,16 +2,15 @@ package com.damdamdeo.todo.infrastructure.deserializer;
 
 import com.damdamdeo.eventsourced.model.api.AggregateRootId;
 import com.damdamdeo.eventsourced.mutable.api.eventsourcing.AggregateRootEventPayload;
-import com.damdamdeo.eventsourced.mutable.infra.eventsourcing.serialization.JacksonAggregateRootEventPayloadDeSerializer;
+import com.damdamdeo.eventsourced.mutable.infra.eventsourcing.serialization.JsonbAggregateRootEventPayloadDeSerializer;
 import com.damdamdeo.todo.domain.event.TodoMarkedAsCompletedEventPayload;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.json.Json;
+import javax.json.JsonObject;
 
 @ApplicationScoped
-public class TodoMarkedAsCompletedEventPayloadDeSerializer implements JacksonAggregateRootEventPayloadDeSerializer {
+public class TodoMarkedAsCompletedEventPayloadDeSerializer implements JsonbAggregateRootEventPayloadDeSerializer {
 
     @Override
     public String aggregateRootType() {
@@ -24,19 +23,17 @@ public class TodoMarkedAsCompletedEventPayloadDeSerializer implements JacksonAgg
     }
 
     @Override
-    public JsonNode encode(final AggregateRootId aggregateRootId,
-                           final AggregateRootEventPayload aggregateRootEventPayload,
-                           final ObjectMapper objectMapper) {
+    public JsonObject encode(final AggregateRootId aggregateRootId, final AggregateRootEventPayload aggregateRootEventPayload) {
         final TodoMarkedAsCompletedEventPayload todoMarkedAsCompletedEventPayload = (TodoMarkedAsCompletedEventPayload) aggregateRootEventPayload;
-        final ObjectNode objectNode = objectMapper.createObjectNode();
-        objectNode.put("todoId", todoMarkedAsCompletedEventPayload.todoId());
-        return objectNode;
+        return Json.createObjectBuilder()
+                .add("todoId", todoMarkedAsCompletedEventPayload.todoId())
+                .build();
     }
 
     @Override
-    public AggregateRootEventPayload decode(final JsonNode json) {
+    public AggregateRootEventPayload decode(final JsonObject json) {
         return new TodoMarkedAsCompletedEventPayload(
-                json.get("todoId").asText()
+                json.getString("todoId")
         );
     }
 

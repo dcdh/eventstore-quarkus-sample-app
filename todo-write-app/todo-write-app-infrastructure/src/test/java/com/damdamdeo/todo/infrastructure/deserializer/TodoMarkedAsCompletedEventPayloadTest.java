@@ -2,13 +2,14 @@ package com.damdamdeo.todo.infrastructure.deserializer;
 
 import com.damdamdeo.eventsourced.mutable.api.eventsourcing.ApiAggregateRootId;
 import com.damdamdeo.todo.domain.event.TodoMarkedAsCompletedEventPayload;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 import javax.inject.Inject;
+import javax.json.Json;
+import javax.json.JsonObject;
+import java.io.StringReader;
 import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -22,12 +23,11 @@ public class TodoMarkedAsCompletedEventPayloadTest {
     @Test
     public void should_serialize() throws Exception {
         // Given
-        final ObjectMapper objectMapper = new ObjectMapper();
 
         // When
-        final JsonNode serialized = todoMarkedAsCompletedEventPayloadDeSerializer.encode(
+        final JsonObject serialized = todoMarkedAsCompletedEventPayloadDeSerializer.encode(
                 new ApiAggregateRootId("todoId", "TodoAggregateRoot"),
-                new TodoMarkedAsCompletedEventPayload("todoId"), objectMapper);
+                new TodoMarkedAsCompletedEventPayload("todoId"));
 
         // Then
         final String expectedJsonPayload = new Scanner(this.getClass().getResourceAsStream("/expected/todoMarkedAsCompletedEventPayload.json"), "UTF-8")
@@ -38,11 +38,10 @@ public class TodoMarkedAsCompletedEventPayloadTest {
     @Test
     public void should_deserialize() throws Exception {
         // Given
-        final ObjectMapper objectMapper = new ObjectMapper();
-        final JsonNode jsonNode = objectMapper.readTree("{\"todoId\": \"todoId\"}");
+        final JsonObject jsonObject = Json.createReader(new StringReader("{\"todoId\": \"todoId\"}")).readObject();
 
         // When
-        final TodoMarkedAsCompletedEventPayload deserialized = (TodoMarkedAsCompletedEventPayload) todoMarkedAsCompletedEventPayloadDeSerializer.decode(jsonNode);
+        final TodoMarkedAsCompletedEventPayload deserialized = (TodoMarkedAsCompletedEventPayload) todoMarkedAsCompletedEventPayloadDeSerializer.decode(jsonObject);
 
         // Then
         assertEquals(new TodoMarkedAsCompletedEventPayload("todoId"), deserialized);

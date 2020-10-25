@@ -1,4 +1,4 @@
-package com.damdamdeo.todo.publicfrontend.interfaces;
+package com.damdamdeo.todo.publicfrontend.infrastructure.interfaces;
 
 import io.jaegertracing.internal.JaegerSpanContext;
 import io.opentracing.SpanContext;

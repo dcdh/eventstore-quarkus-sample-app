@@ -9,23 +9,21 @@ import io.quarkus.test.junit.mockito.InjectSpy;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @QuarkusTest
-public class SingleExecutionCreateNewTodoCommandHandlerTest {
+public class ManagedDomainCreateNewTodoCommandHandlerTest {
 
     @InjectSpy
     CommandExecutor spyCommandExecutor;
 
     @InjectMock
-    @Named("DomainCreateNewTodoCommandHandler")
-    CreateNewTodoCommandHandler domainCreateNewTodoCommandHandler;
+    CreateNewTodoCommandHandler createNewTodoCommandHandler;
 
     @Inject
-    SingleExecutionCreateNewTodoCommandHandler singleExecutionCreateNewTodoCommandHandler;
+    ManagedDomainCreateNewTodoCommandHandler managedDomainCreateNewTodoCommandHandler;
 
     @Test
     public void should_call_domain_command_handler() throws Throwable {
@@ -33,10 +31,10 @@ public class SingleExecutionCreateNewTodoCommandHandlerTest {
         final CreateNewTodoCommand createNewTodoCommand = new CreateNewTodoCommand("description");
 
         // When
-        singleExecutionCreateNewTodoCommandHandler.execute(createNewTodoCommand);
+        managedDomainCreateNewTodoCommandHandler.execute(createNewTodoCommand);
 
         // Then
-        verify(domainCreateNewTodoCommandHandler, times(1)).execute(createNewTodoCommand);
+        verify(createNewTodoCommandHandler, times(1)).execute(createNewTodoCommand);
     }
 
     @Test
@@ -45,7 +43,7 @@ public class SingleExecutionCreateNewTodoCommandHandlerTest {
         final CreateNewTodoCommand createNewTodoCommand = new CreateNewTodoCommand("description");
 
         // When
-        singleExecutionCreateNewTodoCommandHandler.execute(createNewTodoCommand);
+        managedDomainCreateNewTodoCommandHandler.execute(createNewTodoCommand);
 
         // Then
         verify(spyCommandExecutor, times(1)).execute(any());

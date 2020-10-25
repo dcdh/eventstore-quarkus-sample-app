@@ -1,15 +1,14 @@
 package com.damdamdeo.todo.publicfrontend.infrastructure.authentication;
 
 import com.damdamdeo.todo.publicfrontend.domain.authentication.AccessToken;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import org.keycloak.representations.AccessTokenResponse;
 
+import javax.json.bind.annotation.JsonbCreator;
+import javax.json.bind.annotation.JsonbProperty;
 import java.util.Objects;
 
 @RegisterForReflection
-@JsonIgnoreProperties(ignoreUnknown = true)
 public final class KeycloakAccessTokenDTO implements AccessToken {
 
     private final String accessToken;
@@ -17,10 +16,11 @@ public final class KeycloakAccessTokenDTO implements AccessToken {
     private final String refreshToken;
     private final Long refreshExpiresIn;
 
-    public KeycloakAccessTokenDTO(@JsonProperty("access_token") final String accessToken,
-                                  @JsonProperty("expires_in") final Long expiresIn,
-                                  @JsonProperty("refresh_token") final String refreshToken,
-                                  @JsonProperty("refresh_expires_in") final Long refreshExpiresIn) {
+    @JsonbCreator
+    public KeycloakAccessTokenDTO(@JsonbProperty("access_token") final String accessToken,
+                                  @JsonbProperty("expires_in") final Long expiresIn,
+                                  @JsonbProperty("refresh_token") final String refreshToken,
+                                  @JsonbProperty("refresh_expires_in") final Long refreshExpiresIn) {
         this.accessToken = Objects.requireNonNull(accessToken);
         this.expiresIn = Objects.requireNonNull(expiresIn);
         this.refreshToken = Objects.requireNonNull(refreshToken);

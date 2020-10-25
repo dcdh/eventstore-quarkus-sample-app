@@ -3,18 +3,19 @@ package com.damdamdeo.todo.infrastructure.deserializer;
 import com.damdamdeo.eventsourced.encryption.api.PresentSecret;
 import com.damdamdeo.eventsourced.encryption.api.SecretStore;
 import com.damdamdeo.eventsourced.model.api.AggregateRootId;
-import com.damdamdeo.eventsourced.mutable.infra.eventsourcing.serialization.JacksonAggregateRootMaterializedStateDeSerializer;
+import com.damdamdeo.eventsourced.mutable.infra.eventsourcing.serialization.JsonbAggregateRootMaterializedStateDeSerializer;
 import com.damdamdeo.todo.domain.TodoAggregateRoot;
 import com.damdamdeo.todo.domain.api.TodoStatus;
 import com.damdamdeo.todo.domain.command.CreateNewTodoCommand;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 import javax.inject.Inject;
+import javax.json.Json;
+import javax.json.JsonObject;
+import java.io.StringReader;
 import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,7 +26,7 @@ import static org.mockito.Mockito.*;
 public class TodoAggregateRootMaterializedStateTest {
 
     @Inject
-    JacksonAggregateRootMaterializedStateDeSerializer jacksonAggregateRootMaterializedStateDeSerializer;
+    JsonbAggregateRootMaterializedStateDeSerializer jsonbAggregateRootMaterializedStateDeSerializer;
 
     @InjectMock
     SecretStore secretStore;
@@ -33,14 +34,13 @@ public class TodoAggregateRootMaterializedStateTest {
     @Test
     public void should_serialize_encoded() throws Exception {
         // Given
-        final ObjectMapper objectMapper = new ObjectMapper();
         final TodoAggregateRoot todoAggregateRoot = new TodoAggregateRoot("todoId");
         todoAggregateRoot.handle(new CreateNewTodoCommand("lorem ipsum"), "todoId");
         doReturn(new PresentSecret("IbXcNPlTEnoPzWVPNwASmPepRVWBHhPN")).when(secretStore).read(any());
 
         // When
-        final JsonNode serialized = jacksonAggregateRootMaterializedStateDeSerializer.serialize(todoAggregateRoot,
-                true, objectMapper);
+        final JsonObject serialized = jsonbAggregateRootMaterializedStateDeSerializer.serialize(todoAggregateRoot,
+                true);
         final String expectedJsonMaterializedState = new Scanner(this.getClass().getResourceAsStream("/expected/todoAggregateRootMaterializedStateEncoded.json"), "UTF-8")
                 .useDelimiter("\\A").next();
         JSONAssert.assertEquals(expectedJsonMaterializedState, serialized.toString(), true);
@@ -50,13 +50,12 @@ public class TodoAggregateRootMaterializedStateTest {
     @Test
     public void should_serialize_not_encoded() throws Exception {
         // Given
-        final ObjectMapper objectMapper = new ObjectMapper();
         final TodoAggregateRoot todoAggregateRoot = new TodoAggregateRoot("todoId");
         todoAggregateRoot.handle(new CreateNewTodoCommand("lorem ipsum"), "todoId");
 
         // When
-        final JsonNode serialized = jacksonAggregateRootMaterializedStateDeSerializer.serialize(todoAggregateRoot,
-                false, objectMapper);
+        final JsonObject serialized = jsonbAggregateRootMaterializedStateDeSerializer.serialize(todoAggregateRoot,
+                false);
         final String expectedJsonMaterializedState = new Scanner(this.getClass().getResourceAsStream("/expected/todoAggregateRootMaterializedStateNotEncoded.json"), "UTF-8")
                 .useDelimiter("\\A").next();
         JSONAssert.assertEquals(expectedJsonMaterializedState, serialized.toString(), true);
@@ -65,17 +64,17 @@ public class TodoAggregateRootMaterializedStateTest {
     @Test
     public void should_deserialize_aggregate_root_from_materialized_state() throws Exception {
         // Given
-        final ObjectMapper objectMapper = new ObjectMapper();
         final AggregateRootId aggregateRootId = mock(AggregateRootId.class);
         doReturn("aggregateRootId").when(aggregateRootId).aggregateRootId();
-        final JsonNode aggregateRoot = objectMapper.readTree("{\n" +
+
+        final JsonObject aggregateRoot = Json.createReader(new StringReader("{\n" +
                 "  \"description\": \"lorem ipsum\",\n" +
                 "  \"todoId\": \"todoId\",\n" +
                 "  \"todoStatus\": \"IN_PROGRESS\"\n" +
-                "}");
+                "}")).readObject();
 
         // When
-        final TodoAggregateRoot todoAggregateRoot = jacksonAggregateRootMaterializedStateDeSerializer.deserialize(aggregateRootId, aggregateRoot, 0l);
+        final TodoAggregateRoot todoAggregateRoot = jsonbAggregateRootMaterializedStateDeSerializer.deserialize(aggregateRootId, aggregateRoot, 0l);
 
         // Then
         final TodoAggregateRoot expectedTodoAggregateRoot = TodoAggregateRoot.newBuilder()

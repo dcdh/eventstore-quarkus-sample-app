@@ -2,19 +2,19 @@ package com.damdamdeo.email_notifier.infrastructure.consumer;
 
 import com.damdamdeo.email_notifier.domain.TodoDomain;
 import com.damdamdeo.eventsourced.model.api.AggregateRootEventId;
-import com.fasterxml.jackson.databind.JsonNode;
 
+import javax.json.JsonObject;
 import java.util.Objects;
 
-public final class JsonNodeTodo {
+public final class JsonObjectTodo {
 
     private final TodoDomain todoDomain;
 
-    public JsonNodeTodo(final JsonNode jsonNode,
-                        final AggregateRootEventId aggregateRootEventId) {
+    public JsonObjectTodo(final JsonObject jsonObject,
+                          final AggregateRootEventId aggregateRootEventId) {
         this.todoDomain = TodoDomain.newBuilder()
-                .withTodoId(jsonNode.get("todoId").asText())
-                .withDescription(jsonNode.get("description").asText())
+                .withTodoId(jsonObject.getString("todoId"))
+                .withDescription(jsonObject.getString("description"))
                 .build();
     }
 
@@ -25,8 +25,8 @@ public final class JsonNodeTodo {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof JsonNodeTodo)) return false;
-        JsonNodeTodo that = (JsonNodeTodo) o;
+        if (!(o instanceof JsonObjectTodo)) return false;
+        JsonObjectTodo that = (JsonObjectTodo) o;
         return Objects.equals(todoDomain, that.todoDomain);
     }
 

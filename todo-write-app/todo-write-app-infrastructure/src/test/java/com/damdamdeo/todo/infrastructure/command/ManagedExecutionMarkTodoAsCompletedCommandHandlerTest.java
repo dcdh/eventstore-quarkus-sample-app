@@ -9,23 +9,21 @@ import io.quarkus.test.junit.mockito.InjectSpy;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @QuarkusTest
-public class SingleExecutionMarkTodoAsCompletedCommandHandlerTest {
+public class ManagedExecutionMarkTodoAsCompletedCommandHandlerTest {
 
     @InjectSpy
     CommandExecutor spyCommandExecutor;
 
     @InjectMock
-    @Named("DomainMarkTodoAsCompletedCommandHandler")
-    MarkTodoAsCompletedCommandHandler domainMarkTodoAsCompletedCommandHandler;
+    MarkTodoAsCompletedCommandHandler markTodoAsCompletedCommandHandler;
 
     @Inject
-    SingleExecutionMarkTodoAsCompletedCommandHandler singleExecutionMarkTodoAsCompletedCommandHandler;
+    ManagedExecutionMarkTodoAsCompletedCommandHandler managedExecutionMarkTodoAsCompletedCommandHandler;
 
     @Test
     public void should_call_domain_command_handler() throws Throwable {
@@ -33,10 +31,10 @@ public class SingleExecutionMarkTodoAsCompletedCommandHandlerTest {
         final MarkTodoAsCompletedCommand markTodoAsCompletedCommand = new MarkTodoAsCompletedCommand("todoId");
 
         // When
-        singleExecutionMarkTodoAsCompletedCommandHandler.execute(markTodoAsCompletedCommand);
+        managedExecutionMarkTodoAsCompletedCommandHandler.execute(markTodoAsCompletedCommand);
 
         // Then
-        verify(domainMarkTodoAsCompletedCommandHandler, times(1)).execute(markTodoAsCompletedCommand);
+        verify(markTodoAsCompletedCommandHandler, times(1)).execute(markTodoAsCompletedCommand);
     }
 
     @Test
@@ -45,7 +43,7 @@ public class SingleExecutionMarkTodoAsCompletedCommandHandlerTest {
         final MarkTodoAsCompletedCommand markTodoAsCompletedCommand = new MarkTodoAsCompletedCommand("todoId");
 
         // When
-        singleExecutionMarkTodoAsCompletedCommandHandler.execute(markTodoAsCompletedCommand);
+        managedExecutionMarkTodoAsCompletedCommandHandler.execute(markTodoAsCompletedCommand);
 
         // Then
         verify(spyCommandExecutor, times(1)).execute(any());

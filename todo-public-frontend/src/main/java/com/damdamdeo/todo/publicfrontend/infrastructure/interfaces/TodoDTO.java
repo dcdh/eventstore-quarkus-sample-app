@@ -1,14 +1,13 @@
-package com.damdamdeo.todo.publicfrontend.interfaces;
+package com.damdamdeo.todo.publicfrontend.infrastructure.interfaces;
 
 import com.damdamdeo.todo.publicfrontend.domain.TodoStatus;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
+import javax.json.bind.annotation.JsonbCreator;
+import javax.json.bind.annotation.JsonbProperty;
 import java.util.Objects;
 
 @RegisterForReflection
-@JsonIgnoreProperties(ignoreUnknown = true)
 public final class TodoDTO {
 
     public final String todoId;
@@ -21,11 +20,12 @@ public final class TodoDTO {
 
     public final Long version;
 
-    public TodoDTO(@JsonProperty("todoId") final String todoId,
-                   @JsonProperty("description") final String description,
-                   @JsonProperty("todoStatus") final TodoStatus todoStatus,
-                   @JsonProperty("canMarkTodoAsCompleted") final Boolean canMarkTodoAsCompleted,
-                   @JsonProperty("version") final Long version) {
+    @JsonbCreator
+    public TodoDTO(@JsonbProperty("todoId") final String todoId,
+                   @JsonbProperty("description") final String description,
+                   @JsonbProperty("todoStatus") final TodoStatus todoStatus,
+                   @JsonbProperty("canMarkTodoAsCompleted") final Boolean canMarkTodoAsCompleted,
+                   @JsonbProperty("version") final Long version) {
         this.todoId = todoId;
         this.description = description;
         this.todoStatus = todoStatus;
