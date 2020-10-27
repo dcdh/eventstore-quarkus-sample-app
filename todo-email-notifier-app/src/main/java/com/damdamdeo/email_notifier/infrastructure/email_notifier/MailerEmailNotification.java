@@ -27,7 +27,7 @@ public class MailerEmailNotification implements EmailNotifier {
 
     @Override
     public void notify(final String subject, final String content) {
-        LOGGER.info("email notification with subject ''{0}'' and content ''{1}''", new Object[] {subject, content});
+        LOGGER.info(String.format("email notification with subject '%s' and content '%s'", subject, content));
         mailer.send(Mail.withHtml(sendTo, subject, content));
     }
 
