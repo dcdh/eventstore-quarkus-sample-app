@@ -255,29 +255,29 @@ services:
         -Dquarkus.log.handler.gelf.additional-field.serviceName.type=String
 
   todo-public-frontend-app:
-    image: damdamdeo/todo-public-frontend-app:latest
+    image: damdamdeo/todo-public-frontend-native-app:latest
     ports:
       - 8086:8080
     environment:
-      - JAVA_OPTIONS=-Dtodo-write-api/mp-rest/url=http://todo-write-app:8080
-        -Dtodo-query-api/mp-rest/url=http://todo-query-app:8080
-        -Dquarkus.oidc.auth-server-url=http://keycloak:8080/auth/realms/todos
-        -Dkeycloak-api/mp-rest/url=http://keycloak:8080/auth/realms/todos
-        -Dkeycloak.admin.clientId=admin-cli
-        -Dkeycloak.admin.username=keycloak
-        -Dkeycloak.admin.password=keycloak
-        -Dquarkus.http.cors=true
-        -Dquarkus.http.cors.origins=http://localhost:8086,http://127.0.0.1:8086,http://localhost:4200,http://127.0.0.1:4200
-        -Dquarkus.jaeger.endpoint=http://jaeger:14268/api/traces
-        -Dquarkus.jaeger.tags=env=local
-        -Dquarkus.log.handler.gelf.enabled=true
-        -Dquarkus.log.handler.gelf.host=logstash
-        -Dquarkus.log.handler.gelf.port=12201
-        -Dquarkus.log.handler.gelf.include-full-mdc=true
-        -Dquarkus.log.handler.gelf.additional-field.env.value=local
-        -Dquarkus.log.handler.gelf.additional-field.env.type=String
-        -Dquarkus.log.handler.gelf.additional-field.serviceName.value=todo-public-frontend-app
-        -Dquarkus.log.handler.gelf.additional-field.serviceName.type=String
+      - todo-write-api/mp-rest/url=http://todo-write-app:8080
+      - todo-query-api/mp-rest/url=http://todo-query-app:8080
+      - quarkus.oidc.auth-server-url=http://keycloak:8080/auth/realms/todos
+      - keycloak-api/mp-rest/url=http://keycloak:8080/auth/realms/todos
+      - keycloak.admin.clientId=admin-cli
+      - keycloak.admin.username=keycloak
+      - keycloak.admin.password=keycloak
+      - quarkus.http.cors=true
+      - quarkus.http.cors.origins=http://localhost:8086,http://127.0.0.1:8086,http://localhost:4200,http://127.0.0.1:4200
+      - quarkus.jaeger.endpoint=http://jaeger:14268/api/traces
+      - quarkus.jaeger.tags=env=local
+      - quarkus.log.handler.gelf.enabled=true
+      - quarkus.log.handler.gelf.host=logstash
+      - quarkus.log.handler.gelf.port=12201
+      - quarkus.log.handler.gelf.include-full-mdc=true
+      - quarkus.log.handler.gelf.additional-field.env.value=local
+      - quarkus.log.handler.gelf.additional-field.env.type=String
+      - quarkus.log.handler.gelf.additional-field.serviceName.value=todo-public-frontend-app
+      - quarkus.log.handler.gelf.additional-field.serviceName.type=String
 
   keycloak-db:
     image: debezium/postgres:11-alpine

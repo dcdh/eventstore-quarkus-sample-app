@@ -1,7 +1,11 @@
-#!/bin/bash
+# https://gist.github.com/ricardozanini/fa65e485251913e1467837b1c5a8ed28
 ########################################################################################################################
 # Build
 ### prepare build
+export GRAALVM_HOME=/usr/lib/jvm/graalvm/
+export JAVA_HOME=${GRAALVM_HOME}
+export PATH=${GRAALVM_HOME}/bin:$PATH
+
 docker kill $(docker ps -aq)
 docker rm $(docker ps -aq)
 docker volume prune -f
@@ -25,9 +29,9 @@ docker build -f todo-query-app/src/main/docker/Dockerfile.jvm -t damdamdeo/todo-
 mvn -f pom.xml clean install -pl todo-domain-api,todo-email-notifier-app || { echo 'build todo-email-notifier-app failed' ; exit 1; }
 docker build -f todo-email-notifier-app/src/main/docker/Dockerfile.jvm -t damdamdeo/todo-email-notifier-app:latest todo-email-notifier-app
 
-### build todo-public-frontend-app
-mvn -f pom.xml clean install -pl todo-public-frontend || { echo 'build failed' ; exit 1; }
-docker build -f todo-public-frontend/src/main/docker/Dockerfile.jvm -t damdamdeo/todo-public-frontend:latest todo-public-frontend
+### build todo-public-frontend-native-app
+mvn -f pom.xml clean install package -pl todo-public-frontend -Pnative -Dquarkus.native.container-runtime=docker || { echo 'build todo-public-frontend in native mode failed' ; exit 1; }
+docker build -f todo-public-frontend/src/main/docker/Dockerfile.native -t damdamdeo/todo-public-frontend-native-app:latest todo-public-frontend
 
 
 
