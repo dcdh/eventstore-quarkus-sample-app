@@ -27,15 +27,13 @@ public class HazelcastTestResourceLifecycleManager implements QuarkusTestResourc
         hazelcastContainer.start();
         hazelcastContainer.followOutput(logConsumer);
 
-        System.setProperty("quarkus.hazelcast-client.cluster-name", "dev");
-        System.setProperty("quarkus.hazelcast-client.cluster-members", String.format("localhost:%d", hazelcastContainer.getMappedPort(5701)));
+        System.setProperty("HAZELCAST_IP", String.format("localhost:%d", hazelcastContainer.getMappedPort(5701)));
         return Collections.emptyMap();
     }
 
     @Override
     public void stop() {
-        System.clearProperty("quarkus.hazelcast-client.cluster-name");
-        System.clearProperty("quarkus.hazelcast-client.cluster-members");
+        System.clearProperty("HAZELCAST_IP");
 
         if (hazelcastContainer != null) {
             hazelcastContainer.close();

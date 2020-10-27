@@ -184,7 +184,7 @@ public class InfrastructureQuarkusTestResourceLifecycleManager implements Quarku
                         "-Dconnector.mutable.database.dbname=mutable",
                         "-Dslot.drop.on.stop=true",
                         "-Dquarkus.oidc.auth-server-url=http://keycloak:8080/auth/realms/todos",
-                        "-Dquarkus.hazelcast-client.cluster-members=hazelcast:5701"
+                        "-DHAZELCAST_IP=hazelcast:5701"
                 ).collect(Collectors.joining(" ")))
                 .withNetwork(network)
                 .dependsOn(kafkaContainer, debeziumContainer, postgresSecretStoreContainer, postgresMutableContainer)
