@@ -25,9 +25,9 @@ mvn -f pom.xml clean install -pl todo-domain-api -amd || { echo 'build todo-doma
 docker build -f todo-write-app/todo-write-app-infrastructure/src/main/docker/Dockerfile.jvm -t damdamdeo/todo-write-app:latest todo-write-app/todo-write-app-infrastructure
 docker build -f todo-query-app/src/main/docker/Dockerfile.jvm -t damdamdeo/todo-query-app:latest todo-query-app
 
-### build todo-email-notifier-app
-mvn -f pom.xml clean install -pl todo-domain-api,todo-email-notifier-app || { echo 'build todo-email-notifier-app failed' ; exit 1; }
-docker build -f todo-email-notifier-app/src/main/docker/Dockerfile.jvm -t damdamdeo/todo-email-notifier-app:latest todo-email-notifier-app
+### build todo-email-notifier-native-app
+mvn -f pom.xml clean install -pl todo-domain-api,todo-email-notifier-app -Pnative -Dquarkus.native.container-runtime=docker || { echo 'build todo-email-notifier-app in native mode failed' ; exit 1; }
+docker build -f todo-email-notifier-app/src/main/docker/Dockerfile.native -t damdamdeo/todo-email-notifier-native-app:latest todo-email-notifier-app
 
 ### build todo-public-frontend-native-app
 mvn -f pom.xml clean install package -pl todo-public-frontend -Pnative -Dquarkus.native.container-runtime=docker || { echo 'build todo-public-frontend in native mode failed' ; exit 1; }

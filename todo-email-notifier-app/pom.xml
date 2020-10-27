@@ -207,6 +207,7 @@
             </build>
             <properties>
                 <quarkus.package.type>native</quarkus.package.type>
+                <quarkus.native.additional-build-args>-H:ResourceConfigurationFiles=resources-config.json,-H:Log=registerResource,-H:IncludeResourceBundles=sun.util.resources.TimeZoneNames</quarkus.native.additional-build-args>
             </properties>
         </profile>
     </profiles>
