@@ -203,6 +203,8 @@ services:
         -Dquarkus.log.handler.gelf.additional-field.serviceName.value=todo-write-app
         -Dquarkus.log.handler.gelf.additional-field.serviceName.type=String
         -DHAZELCAST_IP=hazelcast:5701
+        -Xmx128m
+        -Xms128m
 
   todo-query-app:
     image: damdamdeo/todo-query-app:latest
