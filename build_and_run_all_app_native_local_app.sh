@@ -24,7 +24,7 @@ docker build -f todo-keycloak/Dockerfile -t damdamdeo/todo-keycloak:latest todo-
 mvn -f pom.xml clean install -pl todo-domain-api,todo-query-app -Pnative -Dquarkus.native.container-runtime=docker || { echo 'build todo-query-app in native mode failed' ; exit 1; }
 docker build -f todo-query-app/src/main/docker/Dockerfile.native -t damdamdeo/todo-query-native-app:latest todo-query-app
 
-mvn -f pom.xml clean install -pl todo-domain-api,todo-write-app || { echo 'build todo-write-app failed' ; exit 1; }
+mvn -f pom.xml clean install -pl 'todo-domain-api,todo-write-app,!todo-query-app' -amd || { echo 'build todo-write-app failed' ; exit 1; }
 docker build -f todo-write-app/todo-write-app-infrastructure/src/main/docker/Dockerfile.jvm -t damdamdeo/todo-write-app:latest todo-write-app/todo-write-app-infrastructure
 
 ### build todo-email-notifier-native-app
