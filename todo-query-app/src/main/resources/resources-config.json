@@ -1,0 +1,10 @@
+{
+  "resources": [
+    {
+      "pattern": ".*\\.ddl$"
+    },
+    {
+      "pattern": "^git\\.properties$"
+    }
+  ]
+}

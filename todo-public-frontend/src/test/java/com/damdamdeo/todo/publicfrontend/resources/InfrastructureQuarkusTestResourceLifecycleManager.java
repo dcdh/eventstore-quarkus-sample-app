@@ -129,6 +129,7 @@ public class InfrastructureQuarkusTestResourceLifecycleManager implements Quarku
 
         todoQueryAppContainer = new GenericContainer("damdamdeo/todo-query-app:latest")
                 .withExposedPorts(8080)
+                // keep jvm and native declaration for compatibility
                 .withEnv("JAVA_OPTIONS", Stream.of("-Dquarkus.http.host=0.0.0.0",
                         "-Dmp.messaging.incoming.event-in.bootstrap.servers=kafka:9092",
                         "-Dquarkus.datasource.jdbc.url=jdbc:postgresql://todo-query:5432/todo-query",
@@ -142,6 +143,18 @@ public class InfrastructureQuarkusTestResourceLifecycleManager implements Quarku
                         "-Dquarkus.datasource.consumed-events.password=" + postgresQueryContainer.getPassword(),
                         "-Dquarkus.oidc.auth-server-url=http://keycloak:8080/auth/realms/todos"
                 ).collect(Collectors.joining(" ")))
+                .withEnv("quarkus.http.host", "0.0.0.0")
+                .withEnv("mp.messaging.incoming.event-in.bootstrap.servers", "kafka:9092")
+                .withEnv("quarkus.datasource.jdbc.url", "jdbc:postgresql://todo-query:5432/todo-query")
+                .withEnv("quarkus.datasource.username", postgresQueryContainer.getUsername())
+                .withEnv("quarkus.datasource.password", postgresQueryContainer.getPassword())
+                .withEnv("quarkus.datasource.secret-store.jdbc.url", "jdbc:postgresql://secret-store:5432/secret-store")
+                .withEnv("quarkus.datasource.secret-store.username", postgresSecretStoreContainer.getUsername())
+                .withEnv("quarkus.datasource.secret-store.password", postgresSecretStoreContainer.getPassword())
+                .withEnv("quarkus.datasource.consumed-events.jdbc.url", "jdbc:postgresql://todo-query:5432/todo-query")
+                .withEnv("quarkus.datasource.consumed-events.username", postgresQueryContainer.getUsername())
+                .withEnv("quarkus.datasource.consumed-events.password", postgresQueryContainer.getPassword())
+                .withEnv("quarkus.oidc.auth-server-url", "http://keycloak:8080/auth/realms/todos")
                 .withNetwork(network)
                 .dependsOn(kafkaContainer, debeziumContainer, postgresSecretStoreContainer, postgresQueryContainer)
                 .waitingFor(

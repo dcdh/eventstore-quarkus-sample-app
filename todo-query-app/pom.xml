@@ -48,8 +48,8 @@
             <artifactId>quarkus-hibernate-validator</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-envers</artifactId>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-hibernate-envers</artifactId>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
@@ -234,6 +234,7 @@
             </build>
             <properties>
                 <quarkus.package.type>native</quarkus.package.type>
+                <quarkus.native.additional-build-args>-H:ResourceConfigurationFiles=resources-config.json,-H:Log=registerResource</quarkus.native.additional-build-args>
             </properties>
         </profile>
     </profiles>

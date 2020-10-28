@@ -21,9 +21,11 @@ docker build -f todo-keycloak/Dockerfile -t damdamdeo/todo-keycloak:latest todo-
 
 ### build todo-write-app && todo-query-app (dependency with todo-domain-api)
 # -amd or --also-make-dependents ensure that all modules using todo-domain-api will be build too.
-mvn -f pom.xml clean install -pl todo-domain-api -amd || { echo 'build todo-domain-api or todo-write-app or todo-query-app failed' ; exit 1; }
+mvn -f pom.xml clean install -pl todo-domain-api,todo-query-app -Pnative -Dquarkus.native.container-runtime=docker || { echo 'build todo-query-app in native mode failed' ; exit 1; }
+docker build -f todo-query-app/src/main/docker/Dockerfile.native -t damdamdeo/todo-query-native-app:latest todo-query-app
+
+mvn -f pom.xml clean install -pl todo-domain-api,todo-write-app || { echo 'build todo-write-app failed' ; exit 1; }
 docker build -f todo-write-app/todo-write-app-infrastructure/src/main/docker/Dockerfile.jvm -t damdamdeo/todo-write-app:latest todo-write-app/todo-write-app-infrastructure
-docker build -f todo-query-app/src/main/docker/Dockerfile.jvm -t damdamdeo/todo-query-app:latest todo-query-app
 
 ### build todo-email-notifier-native-app
 mvn -f pom.xml clean install -pl todo-domain-api,todo-email-notifier-app -Pnative -Dquarkus.native.container-runtime=docker || { echo 'build todo-email-notifier-app in native mode failed' ; exit 1; }

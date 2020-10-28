@@ -205,32 +205,32 @@ services:
         -DHAZELCAST_IP=hazelcast:5701
 
   todo-query-app:
-    image: damdamdeo/todo-query-app:latest
+    image: damdamdeo/todo-query-native-app:latest
     ports:
       - 8085:8080
     environment:
-      - JAVA_OPTIONS=-Dquarkus.http.host=0.0.0.0
-        -Dmp.messaging.incoming.event-in.bootstrap.servers=kafka:9092
-        -Dquarkus.datasource.jdbc.url=jdbc:postgresql://todo-query:5432/todo-query
-        -Dquarkus.datasource.username=postgres
-        -Dquarkus.datasource.password=postgres
-        -Dquarkus.datasource.secret-store.jdbc.url=jdbc:postgresql://secret-store:5432/secret-store
-        -Dquarkus.datasource.secret-store.username=postgres
-        -Dquarkus.datasource.secret-store.password=postgres
-        -Dquarkus.datasource.consumed-events.jdbc.url=jdbc:postgresql://todo-query:5432/todo-query
-        -Dquarkus.datasource.consumed-events.username=postgres
-        -Dquarkus.datasource.consumed-events.password=postgres
-        -Dquarkus.oidc.auth-server-url=http://keycloak:8080/auth/realms/todos
-        -Dquarkus.jaeger.endpoint=http://jaeger:14268/api/traces
-        -Dquarkus.jaeger.tags=env=local
-        -Dquarkus.log.handler.gelf.enabled=true
-        -Dquarkus.log.handler.gelf.host=logstash
-        -Dquarkus.log.handler.gelf.port=12201
-        -Dquarkus.log.handler.gelf.include-full-mdc=true
-        -Dquarkus.log.handler.gelf.additional-field.env.value=local
-        -Dquarkus.log.handler.gelf.additional-field.env.type=String
-        -Dquarkus.log.handler.gelf.additional-field.serviceName.value=todo-query-app
-        -Dquarkus.log.handler.gelf.additional-field.serviceName.type=String
+      - quarkus.http.host=0.0.0.0
+      - mp.messaging.incoming.event-in.bootstrap.servers=kafka:9092
+      - quarkus.datasource.jdbc.url=jdbc:postgresql://todo-query:5432/todo-query
+      - quarkus.datasource.username=postgres
+      - quarkus.datasource.password=postgres
+      - quarkus.datasource.secret-store.jdbc.url=jdbc:postgresql://secret-store:5432/secret-store
+      - quarkus.datasource.secret-store.username=postgres
+      - quarkus.datasource.secret-store.password=postgres
+      - quarkus.datasource.consumed-events.jdbc.url=jdbc:postgresql://todo-query:5432/todo-query
+      - quarkus.datasource.consumed-events.username=postgres
+      - quarkus.datasource.consumed-events.password=postgres
+      - quarkus.oidc.auth-server-url=http://keycloak:8080/auth/realms/todos
+      - quarkus.jaeger.endpoint=http://jaeger:14268/api/traces
+      - quarkus.jaeger.tags=env=local
+      - quarkus.log.handler.gelf.enabled=true
+      - quarkus.log.handler.gelf.host=logstash
+      - quarkus.log.handler.gelf.port=12201
+      - quarkus.log.handler.gelf.include-full-mdc=true
+      - quarkus.log.handler.gelf.additional-field.env.value=local
+      - quarkus.log.handler.gelf.additional-field.env.type=String
+      - quarkus.log.handler.gelf.additional-field.serviceName.value=todo-query-app
+      - quarkus.log.handler.gelf.additional-field.serviceName.type=String
 
   todo-email-notifier-app:
     image: damdamdeo/todo-email-notifier-native-app:latest
