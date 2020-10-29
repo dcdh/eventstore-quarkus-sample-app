@@ -234,7 +234,29 @@ services:
       - quarkus.log.handler.gelf.additional-field.serviceName.value=todo-query-app
       - quarkus.log.handler.gelf.additional-field.serviceName.type=String
 
-  todo-email-notifier-app:
+  todo-email-notifier-app-1:
+    image: damdamdeo/todo-email-notifier-native-app:latest
+    environment:
+      - mp.messaging.incoming.event-in.bootstrap.servers=kafka:9092
+      - quarkus.datasource.secret-store.jdbc.url=jdbc:postgresql://secret-store:5432/secret-store
+      - quarkus.datasource.secret-store.username=postgres
+      - quarkus.datasource.secret-store.password=postgres
+      - quarkus.datasource.consumed-events.jdbc.url=jdbc:postgresql://todo-email-notifier:5432/todo-email-notifier
+      - quarkus.datasource.consumed-events.username=postgres
+      - quarkus.datasource.consumed-events.password=postgres
+      - quarkus.mailer.host=mailhog
+      - quarkus.mailer.username=
+      - quarkus.mailer.password=
+      - quarkus.log.handler.gelf.enabled=true
+      - quarkus.log.handler.gelf.host=logstash
+      - quarkus.log.handler.gelf.port=12201
+      - quarkus.log.handler.gelf.include-full-mdc=true
+      - quarkus.log.handler.gelf.additional-field.env.value=local
+      - quarkus.log.handler.gelf.additional-field.env.type=String
+      - quarkus.log.handler.gelf.additional-field.serviceName.value=todo-email-notifier-app
+      - quarkus.log.handler.gelf.additional-field.serviceName.type=String
+
+  todo-email-notifier-app-2:
     image: damdamdeo/todo-email-notifier-native-app:latest
     environment:
       - mp.messaging.incoming.event-in.bootstrap.servers=kafka:9092

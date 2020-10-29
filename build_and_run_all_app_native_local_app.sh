@@ -200,7 +200,7 @@ sleep 5
 docker-compose -f docker-compose-local-native-run.yaml up --detach todo-query-app
 
 ### start todo-email-notifier-app
-docker-compose -f docker-compose-local-native-run.yaml up --detach todo-email-notifier-app
+docker-compose -f docker-compose-local-native-run.yaml up --detach todo-email-notifier-app-1 todo-email-notifier-app-2
 
 ### start todo-public-frontend-app
 docker-compose -f docker-compose-local-native-run.yaml up --detach todo-public-frontend-app
