@@ -3,7 +3,7 @@ version: '3'
 services:
 
   zookeeper:
-    image: damdamdeo/debezium-zookeeper-prometheus-exporter:1.1.1.Final
+    image: damdamdeo/debezium-zookeeper-prometheus-exporter:1.2.0.Final
     ports:
       - 2181:2181
       - 2888:2888
@@ -68,7 +68,7 @@ services:
       - kafka.server=kafka:9092
 
   connect:
-    image: damdamdeo/debezium-connect-prometheus-exporter:1.1.1.Final
+    image: damdamdeo/debezium-connect-prometheus-exporter:1.2.0.Final
     ports:
       - 8083:8083
       - 7073:8080

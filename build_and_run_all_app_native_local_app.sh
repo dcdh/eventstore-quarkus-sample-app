@@ -13,8 +13,8 @@ docker volume prune -f
 docker network prune -f
 
 
-docker build -f containers/debezium-connect-prometheus-exporter/Dockerfile -t damdamdeo/debezium-connect-prometheus-exporter:1.1.1.Final containers/debezium-connect-prometheus-exporter
-docker build -f containers/debezium-zookeeper-prometheus-exporter/Dockerfile -t damdamdeo/debezium-zookeeper-prometheus-exporter:1.1.1.Final containers/debezium-zookeeper-prometheus-exporter
+docker build -f containers/debezium-connect-prometheus-exporter/Dockerfile -t damdamdeo/debezium-connect-prometheus-exporter:1.2.0.Final containers/debezium-connect-prometheus-exporter
+docker build -f containers/debezium-zookeeper-prometheus-exporter/Dockerfile -t damdamdeo/debezium-zookeeper-prometheus-exporter:1.2.0.Final containers/debezium-zookeeper-prometheus-exporter
 docker build -f containers/logstash-oss-prometheus-exporter/Dockerfile -t damdamdeo/logstash-oss-prometheus-exporter:6.8.2 containers/logstash-oss-prometheus-exporter
 
 ### build custom version of keycloak having specific realm and users
