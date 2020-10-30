@@ -14,7 +14,7 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <quarkus.version>1.9.1.Final</quarkus.version>
-        <event-data-spreader.version>1.0-d460b1a</event-data-spreader.version>
+        <event-data-spreader.version>1.0-01b056f</event-data-spreader.version>
     </properties>
 
     <modules>
