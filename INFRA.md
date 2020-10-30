@@ -30,6 +30,8 @@ You need to wait for services to be up (just a few seconds) before running todo-
 >
 > curl http://connect:8083/connectors/event-sourced-connector/status
 >
+> bin/kafka-topics.sh --bootstrap-server kafka:9092 --describe --topic event
+> bin/kafka-consumer-groups.sh --bootstrap-server kafka:9092 --describe --all-groups
 
 ### list topics
 > connect to `connect` container

@@ -57,7 +57,7 @@ public class DebeziumQuarkusTestResourceLifecycleManager implements QuarkusTestR
                 .withNetwork(network);
         kafkaContainer.start();
         kafkaContainer.followOutput(logConsumer);
-        debeziumContainer = new DebeziumContainer("debezium/connect:1.2.0.Final")
+        debeziumContainer = new DebeziumContainer("damdamdeo/eventsourced-mutable-kafka-connect:1.2.0.Final")
                 .withNetwork(network)
                 .withKafka(kafkaContainer)
                 .dependsOn(kafkaContainer);

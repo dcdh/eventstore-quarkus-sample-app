@@ -54,7 +54,7 @@ services:
       - 9092:9092
     environment:
       - ZOOKEEPER_CONNECT=zookeeper:2181
-      - CREATE_TOPICS=event:1:1:compact
+      - CREATE_TOPICS=event:3:1:compact # 3 partitions 1 replica
       - KAFKA_LOG_RETENTION_MS=5000
       - KAFKA_LOG_RETENTION_CHECK_INTERVAL_MS=5000
       - LOG_LEVEL=WARN
