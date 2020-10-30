@@ -18,7 +18,7 @@ To use it you have to declare an environment variable `SERVER_JVMFLAGS` with thi
 
 ```yaml
   zookeeper:
-      image: debezium/zookeeper-prometheus-exporter:1.1.1.Final
+      image: debezium/zookeeper-prometheus-exporter:1.2.0.Final
       ports:
         - 2181:2181
         - 2888:2888

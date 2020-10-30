@@ -49,7 +49,7 @@ services:
 # TODO exporter kibana
 
   kafka:
-    image: debezium/kafka:1.1.1.Final
+    image: debezium/kafka:1.2.0.Final
     ports:
       - 9092:9092
     environment:

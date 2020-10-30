@@ -1,6 +1,6 @@
 docker pull quay.io/openshift/origin-cli:v3.11 && \
-    docker pull debezium/zookeeper:1.1.1.Final && \
-    docker pull debezium/kafka:1.1.1.Final && \
+    docker pull debezium/zookeeper:1.2.0.Final && \
+    docker pull debezium/kafka:1.2.0.Final && \
     docker pull confluentinc/cp-kafka-rest:5.2.2-1 && \
     docker pull landoop/kafka-topics-ui:0.9.4 && \
     docker pull debezium/connect:1.2.0.Final && \
