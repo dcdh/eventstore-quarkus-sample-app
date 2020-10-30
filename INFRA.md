@@ -32,6 +32,9 @@ You need to wait for services to be up (just a few seconds) before running todo-
 >
 > bin/kafka-topics.sh --bootstrap-server kafka:9092 --describe --topic event
 > bin/kafka-consumer-groups.sh --bootstrap-server kafka:9092 --describe --all-groups
+> bin/kafka-console-consumer.sh --bootstrap-server kafka:9092 --topic event --from-beginning --partition 0 --property print.key=true
+> bin/kafka-console-consumer.sh --bootstrap-server kafka:9092 --topic event --from-beginning --partition 1 --property print.key=true
+> bin/kafka-console-consumer.sh --bootstrap-server kafka:9092 --topic event --from-beginning --partition 2 --property print.key=true
 
 ### list topics
 > connect to `connect` container
