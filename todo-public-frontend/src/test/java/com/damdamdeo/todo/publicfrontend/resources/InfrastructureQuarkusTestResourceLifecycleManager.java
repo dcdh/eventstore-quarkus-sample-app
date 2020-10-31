@@ -127,7 +127,7 @@ public class InfrastructureQuarkusTestResourceLifecycleManager implements Quarku
         debeziumContainer.start();
 //        debeziumContainer.followOutput(logConsumer);
 
-        todoQueryAppContainer = new GenericContainer("damdamdeo/todo-query-app:latest")
+        todoQueryAppContainer = new GenericContainer("damdamdeo/todo-query-native-app:latest")
                 .withExposedPorts(8080)
                 // keep jvm and native declaration for compatibility
                 .withEnv("JAVA_OPTIONS", Stream.of("-Dquarkus.http.host=0.0.0.0",
