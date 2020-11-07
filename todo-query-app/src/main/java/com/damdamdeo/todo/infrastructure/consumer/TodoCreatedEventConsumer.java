@@ -1,6 +1,7 @@
 package com.damdamdeo.todo.infrastructure.consumer;
 
 import com.damdamdeo.eventsourced.consumer.api.eventsourcing.AggregateRootEventConsumable;
+import com.damdamdeo.eventsourced.consumer.api.eventsourcing.Operation;
 import com.damdamdeo.eventsourced.consumer.infra.eventsourcing.JsonObjectAggregateRootEventConsumer;
 import com.damdamdeo.todo.domain.CreateTodoService;
 import org.slf4j.Logger;
@@ -24,7 +25,7 @@ public class TodoCreatedEventConsumer implements JsonObjectAggregateRootEventCon
 
     @Override
     @Transactional
-    public void consume(final AggregateRootEventConsumable<JsonObject> aggregateRootEventConsumable) {
+    public void consume(final AggregateRootEventConsumable<JsonObject> aggregateRootEventConsumable, final Operation operation) {
         logger.info(String.format("Consuming '%s' for '%s'", eventType(), aggregateRootEventConsumable.eventId()));
         createTodoService.createTodo(
                 aggregateRootEventConsumable.eventPayload().getString("todoId"),

@@ -119,7 +119,7 @@ public class InfrastructureQuarkusTestResourceLifecycleManager implements Quarku
         kafkaContainer.start();
 //        kafkaContainer.followOutput(logConsumer);
 
-        debeziumContainer = new DebeziumContainer("damdamdeo/eventsourced-mutable-kafka-connect:1.2.0.Final")
+        debeziumContainer = new DebeziumContainer("damdamdeo/eventsourced-mutable-kafka-connect:1.3.0.Final")
                 .withNetwork(network)
                 .withNetworkAliases("connect")
                 .withKafka(kafkaContainer)

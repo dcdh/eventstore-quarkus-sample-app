@@ -8,17 +8,17 @@ To use it you have to declare an environment variable `CONNECT_OPTS` with this v
 
 ### Build it
 
-> docker build -f Dockerfile -t damdamdeo/debezium-connect-prometheus-exporter:1.2.0.Final .
+> docker build -f Dockerfile -t damdamdeo/debezium-connect-prometheus-exporter:1.3.0.Final .
 
 ### Run it
 
-> docker run -e EXTRA_ARGS="-javaagent:/jmx_prometheus_javaagent.jar=8080:/config.yml" -e BOOTSTRAP_SERVERS="localhost:9092" -e CONFIG_STORAGE_TOPIC="my_connect_configs" -e OFFSET_STORAGE_TOPIC="my_connect_offsets" -e STATUS_STORAGE_TOPIC="my_connect_statuses" damdamdeo/debezium-connect-prometheus-exporter:1.2.0.Final
+> docker run -e EXTRA_ARGS="-javaagent:/jmx_prometheus_javaagent.jar=8080:/config.yml" -e BOOTSTRAP_SERVERS="localhost:9092" -e CONFIG_STORAGE_TOPIC="my_connect_configs" -e OFFSET_STORAGE_TOPIC="my_connect_offsets" -e STATUS_STORAGE_TOPIC="my_connect_statuses" damdamdeo/debezium-connect-prometheus-exporter:1.3.0.Final
 
 ### Docker compose declaration
 
 ```yaml
   connect:
-    image: debezium/connect-prometheus-exporter:1.2.0.Final
+    image: debezium/connect-prometheus-exporter:1.3.0.Final
     ports:
       - 8083:8083
     environment:

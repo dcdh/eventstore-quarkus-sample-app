@@ -2,6 +2,7 @@ package com.damdamdeo.email_notifier.infrastructure.consumer;
 
 import com.damdamdeo.email_notifier.domain.TodoCreatedNotifierService;
 import com.damdamdeo.eventsourced.consumer.api.eventsourcing.AggregateRootEventConsumable;
+import com.damdamdeo.eventsourced.consumer.api.eventsourcing.Operation;
 import com.damdamdeo.eventsourced.consumer.infra.eventsourcing.JsonObjectAggregateRootEventConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +23,7 @@ public class TodoCreatedEventConsumer implements JsonObjectAggregateRootEventCon
     }
 
     @Override
-    public void consume(final AggregateRootEventConsumable<JsonObject> aggregateRootEventConsumable) {
+    public void consume(final AggregateRootEventConsumable<JsonObject> aggregateRootEventConsumable, final Operation operation) {
         logger.info(String.format("Consuming '%s' for '%s'", eventType(), aggregateRootEventConsumable.eventId()));
         final JsonObjectTodo jsonObjectTodo = new JsonObjectTodo(aggregateRootEventConsumable.materializedState(),
                 aggregateRootEventConsumable.eventId());

@@ -3,6 +3,7 @@ package com.damdamdeo.email_notifier.infrastructure.consumer;
 import com.damdamdeo.email_notifier.KafkaDebeziumProducer;
 import com.damdamdeo.email_notifier.domain.TodoDomain;
 import com.damdamdeo.email_notifier.domain.TodoMarkedAsCompletedNotifierService;
+import com.damdamdeo.eventsourced.consumer.api.eventsourcing.Operation;
 import com.damdamdeo.eventsourced.consumer.infra.eventsourcing.DecryptedAggregateRootEventConsumable;
 import com.damdamdeo.eventsourced.consumer.infra.eventsourcing.record.event_in.DebeziumJsonbAggregateRootEventId;
 import com.damdamdeo.eventsourced.consumer.infra.eventsourcing.record.event_in.DebeziumJsonbAggregateRootId;
@@ -95,7 +96,7 @@ public class DebeziumTodoMarkedAsCompletedEventConsumerTest {
                 Json.createReader(new StringReader("{\"todoId\":\"todoId\"}")).readObject(),
                 Json.createReader(new StringReader("{\"user.anonymous\":false,\"user.name\":\"damdamdeo\"}")).readObject(),
                 Json.createReader(new StringReader("{\"description\":\"lorem ipsum\",\"todoId\":\"todoId\",\"todoStatus\":\"COMPLETED\"}")).readObject()
-        ));
+        ), Operation.READ);
 
         verify(todoMarkedAsCompletedEventConsumer, atLeastOnce()).aggregateRootType();
         verify(todoMarkedAsCompletedEventConsumer, atLeastOnce()).eventType();
@@ -127,7 +128,7 @@ public class DebeziumTodoMarkedAsCompletedEventConsumerTest {
         TimeUnit.SECONDS.sleep(2);// je n'ai pas de marqueur de fin d'execution...
 
         // Then
-        verify(todoMarkedAsCompletedEventConsumer, times(1)).consume(any());
+        verify(todoMarkedAsCompletedEventConsumer, times(1)).consume(any(), eq(Operation.READ));
 
         verify(todoMarkedAsCompletedEventConsumer, atLeastOnce()).aggregateRootType();
         verify(todoMarkedAsCompletedEventConsumer, atLeastOnce()).eventType();
