@@ -17,6 +17,29 @@ You need to wait for services to be up (just a few seconds) before running todo-
 
 You need to wait for services to be up (just a few seconds) before running todo-write-app
 
+## docker
+
+docker pull debezium/zookeeper:1.2.0.Final \
+    && docker pull docker.elastic.co/logstash/logstash-oss:6.8.2 \
+    && docker pull mailhog/mailhog:v1.0.0 \
+    && docker pull confluentinc/cp-kafka:5.2.1 \
+    && docker pull jboss/keycloak:10.0.1 \
+    && docker pull dcdh1983/postgresql-10-debezium-centos7:latest \
+    && docker pull debezium/postgres:11-alpine \
+    && docker pull hazelcast/hazelcast:4.0.3 \
+    && docker pull postgres:11-alpine \
+    && docker pull registry.access.redhat.com/ubi8/ubi-minimal:8.1 \
+    && docker pull docker.elastic.co/kibana/kibana-oss:6.8.2 \
+    && docker pull debezium/kafka:1.2.0.Final \
+    && docker pull danielqsj/kafka-exporter:v1.2.0 \
+    && docker pull wrouesnel/postgres_exporter:v0.8.0 \
+    && docker pull jaegertracing/all-in-one:latest \
+    && docker pull prom/prometheus:v2.21.0 \
+    && docker pull grafana/grafana:7.2.1 \
+    && docker pull quay.io/quarkus/ubi-quarkus-native-image:20.2.0-java11 \
+    && docker pull docker.elastic.co/elasticsearch/elasticsearch-oss:6.8.2 \
+    && docker pull justwatch/elasticsearch_exporter:1.1.0
+
 ## todo-query
 > psql -U postgres
 > \c todo-query
