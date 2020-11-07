@@ -32,7 +32,7 @@ public class DebeziumQuarkusTestResourceLifecycleManager implements QuarkusTestR
         // cmd use to run container is hardcoded in PostgreSQLContainer and do not reflect my image
         // I could write one but I also do a big e2e test in OKD for a real application. I will write a specific one in my todo-app ;)
         final String networkAliases = "mutable";
-        postgresMutableContainer = new PostgreSQLContainer<>("debezium/postgres:11")
+        postgresMutableContainer = new PostgreSQLContainer<>("debezium/postgres:11-alpine")
                 .withDatabaseName("mutable")
                 .withUsername("postgresuser")
                 .withPassword("postgrespassword")
