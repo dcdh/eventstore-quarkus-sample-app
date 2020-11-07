@@ -34,7 +34,7 @@ public class KeycloakTestResourceLifecycleManager implements QuarkusTestResource
                 .withNetwork(network)
                 .withNetworkAliases("keycloak-db");
         postgresKeycloakContainer.start();
-        postgresKeycloakContainer.followOutput(logConsumer);
+//        postgresKeycloakContainer.followOutput(logConsumer);
 
         keycloakContainer = new GenericContainer("damdamdeo/todo-keycloak:latest")
                 .withExposedPorts(8080)
@@ -51,7 +51,7 @@ public class KeycloakTestResourceLifecycleManager implements QuarkusTestResource
                         Wait.forLogMessage(".*Started authorizationRevisions.*\\n", 1)
                 );
         keycloakContainer.start();
-        keycloakContainer.followOutput(logConsumer);
+//        keycloakContainer.followOutput(logConsumer);
 
         System.setProperty("quarkus.oidc.auth-server-url",
                 String.format("http://localhost:%d/auth/realms/todos", keycloakContainer.getMappedPort(8080)));

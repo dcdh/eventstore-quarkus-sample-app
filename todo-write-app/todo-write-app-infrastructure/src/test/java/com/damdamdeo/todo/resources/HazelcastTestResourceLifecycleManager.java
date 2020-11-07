@@ -25,7 +25,7 @@ public class HazelcastTestResourceLifecycleManager implements QuarkusTestResourc
                         Wait.forLogMessage(".*is STARTED.*\\n", 1)
                 );
         hazelcastContainer.start();
-        hazelcastContainer.followOutput(logConsumer);
+//        hazelcastContainer.followOutput(logConsumer);
 
         System.setProperty("quarkus.hazelcast-client.cluster-name", "dev");
         System.setProperty("quarkus.hazelcast-client.cluster-members", String.format("localhost:%d", hazelcastContainer.getMappedPort(5701)));

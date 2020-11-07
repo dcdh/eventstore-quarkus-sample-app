@@ -39,7 +39,7 @@ public class DebeziumQuarkusTestResourceLifecycleManager implements QuarkusTestR
                 .withNetwork(network)
                 .withNetworkAliases(networkAliases);
         postgresMutableContainer.start();
-        postgresMutableContainer.followOutput(logConsumer);
+//        postgresMutableContainer.followOutput(logConsumer);
         System.setProperty("quarkus.datasource.jdbc.url", postgresMutableContainer.getJdbcUrl());
         System.setProperty("quarkus.datasource.username", postgresMutableContainer.getUsername());
         System.setProperty("quarkus.datasource.password", postgresMutableContainer.getPassword());
@@ -56,13 +56,13 @@ public class DebeziumQuarkusTestResourceLifecycleManager implements QuarkusTestR
         kafkaContainer = new KafkaContainer("5.2.1")
                 .withNetwork(network);
         kafkaContainer.start();
-        kafkaContainer.followOutput(logConsumer);
-        debeziumContainer = new DebeziumContainer("damdamdeo/eventsourced-mutable-kafka-connect:1.2.0.Final")
+//        kafkaContainer.followOutput(logConsumer);
+        debeziumContainer = new DebeziumContainer("damdamdeo/eventsourced-mutable-kafka-connect:1.3.0.Final")
                 .withNetwork(network)
                 .withKafka(kafkaContainer)
                 .dependsOn(kafkaContainer);
         debeziumContainer.start();
-        debeziumContainer.followOutput(logConsumer);
+//        debeziumContainer.followOutput(logConsumer);
         System.setProperty("mp.messaging.incoming.event-in.bootstrap.servers", kafkaContainer.getBootstrapServers());
         System.setProperty("kafka-connector-api/mp-rest/url",
                 String.format("http://%s:%d", "localhost", debeziumContainer.getMappedPort(8083)));

@@ -23,7 +23,7 @@ public class PostgreSQLQuarkusTestResourceLifecycleManager implements QuarkusTes
                 .withUsername("postgresql")
                 .withPassword("postgresql");
         postgresContainer.start();
-        postgresContainer.followOutput(logConsumer);
+//        postgresContainer.followOutput(logConsumer);
         System.setProperty("quarkus.datasource.jdbc.url", postgresContainer.getJdbcUrl());
         System.setProperty("quarkus.datasource.username", postgresContainer.getUsername());
         System.setProperty("quarkus.datasource.password", postgresContainer.getPassword());

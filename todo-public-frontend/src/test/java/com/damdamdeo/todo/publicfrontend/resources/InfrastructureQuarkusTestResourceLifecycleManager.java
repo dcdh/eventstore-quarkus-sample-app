@@ -56,7 +56,7 @@ public class InfrastructureQuarkusTestResourceLifecycleManager implements Quarku
                 .withNetwork(network)
                 .withNetworkAliases("keycloak-db");
         postgresKeycloakContainer.start();
-        postgresKeycloakContainer.followOutput(logConsumer);
+//        postgresKeycloakContainer.followOutput(logConsumer);
 
         keycloakContainer = new GenericContainer("damdamdeo/todo-keycloak:latest")
                 .withExposedPorts(8080)
@@ -74,7 +74,7 @@ public class InfrastructureQuarkusTestResourceLifecycleManager implements Quarku
                         Wait.forLogMessage(".*Started authorizationRevisions.*\\n", 1)
                 );
         keycloakContainer.start();
-        keycloakContainer.followOutput(logConsumer);
+//        keycloakContainer.followOutput(logConsumer);
 
         mailhogContainer = new GenericContainer("mailhog/mailhog:v1.0.0")
                 .withExposedPorts(1025, 8025)
@@ -84,7 +84,7 @@ public class InfrastructureQuarkusTestResourceLifecycleManager implements Quarku
                         Wait.forLogMessage(".*Serving.*\\n", 1)
                 );
         mailhogContainer.start();
-        mailhogContainer.followOutput(logConsumer);
+//        mailhogContainer.followOutput(logConsumer);
 
         postgresSecretStoreContainer = new PostgreSQLContainer<>("postgres:11-alpine")
                 .withDatabaseName("secret-store")
@@ -93,7 +93,7 @@ public class InfrastructureQuarkusTestResourceLifecycleManager implements Quarku
                 .withNetwork(network)
                 .withNetworkAliases("secret-store");
         postgresSecretStoreContainer.start();
-        postgresSecretStoreContainer.followOutput(logConsumer);
+//        postgresSecretStoreContainer.followOutput(logConsumer);
 
         postgresQueryContainer = new PostgreSQLContainer<>("postgres:11-alpine")
                 .withDatabaseName("todo-query")
@@ -102,7 +102,7 @@ public class InfrastructureQuarkusTestResourceLifecycleManager implements Quarku
                 .withNetwork(network)
                 .withNetworkAliases("todo-query");
         postgresQueryContainer.start();
-        postgresQueryContainer.followOutput(logConsumer);
+//        postgresQueryContainer.followOutput(logConsumer);
 
         postgresMutableContainer = new OkdPostgreSQLContainer<>()
                 .withDatabaseName("mutable")
@@ -111,7 +111,7 @@ public class InfrastructureQuarkusTestResourceLifecycleManager implements Quarku
                 .withNetwork(network)
                 .withNetworkAliases("mutable");
         postgresMutableContainer.start();
-        postgresMutableContainer.followOutput(logConsumer);
+//        postgresMutableContainer.followOutput(logConsumer);
 
         kafkaContainer = new KafkaContainer("5.2.1")
                 .withNetwork(network)
@@ -161,7 +161,7 @@ public class InfrastructureQuarkusTestResourceLifecycleManager implements Quarku
                         Wait.forLogMessage(".*started in.*\\n", 1)
                 );
         todoQueryAppContainer.start();
-        todoQueryAppContainer.followOutput(logConsumer);
+//        todoQueryAppContainer.followOutput(logConsumer);
 
 
         hazelcastContainer = new GenericContainer("hazelcast/hazelcast:4.0.3")
@@ -171,7 +171,7 @@ public class InfrastructureQuarkusTestResourceLifecycleManager implements Quarku
                         Wait.forLogMessage(".*is STARTED.*\\n", 1)
                 );
         hazelcastContainer.start();
-        hazelcastContainer.followOutput(logConsumer);
+//        hazelcastContainer.followOutput(logConsumer);
 
         todoWriteAppContainer = new GenericContainer("damdamdeo/todo-write-app:latest")
                 .withExposedPorts(8080)
@@ -206,7 +206,7 @@ public class InfrastructureQuarkusTestResourceLifecycleManager implements Quarku
                         Wait.forLogMessage(".*started in.*\\n", 1)
                 );
         todoWriteAppContainer.start();
-        todoWriteAppContainer.followOutput(logConsumer);
+//        todoWriteAppContainer.followOutput(logConsumer);
 
         System.setProperty("quarkus.datasource.secret-store.db-kind", "postgresql");
         System.setProperty("quarkus.datasource.secret-store.jdbc.url", postgresSecretStoreContainer.getJdbcUrl());

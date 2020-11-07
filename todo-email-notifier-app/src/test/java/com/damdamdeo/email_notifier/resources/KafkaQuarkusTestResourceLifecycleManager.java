@@ -21,7 +21,7 @@ public class KafkaQuarkusTestResourceLifecycleManager implements QuarkusTestReso
         // confluentinc/cp-kafka:5.2.1
         kafkaContainer = new KafkaContainer("5.2.1");
         kafkaContainer.start();
-        kafkaContainer.followOutput(logConsumer);
+//        kafkaContainer.followOutput(logConsumer);
         System.setProperty("mp.messaging.incoming.event-in.bootstrap.servers", kafkaContainer.getBootstrapServers());
         return Collections.emptyMap();
     }

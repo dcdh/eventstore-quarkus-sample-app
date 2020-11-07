@@ -21,7 +21,7 @@ public class MailhogQuarkusTestResourceLifecycleManager implements QuarkusTestRe
         mailhogGenericContainer = new GenericContainer("mailhog/mailhog:v1.0.0")
                 .withExposedPorts(new Integer[] {1025, 8025});
         mailhogGenericContainer.start();
-        mailhogGenericContainer.followOutput(logConsumer);
+//        mailhogGenericContainer.followOutput(logConsumer);
         System.setProperty("quarkus.mailer.port", mailhogGenericContainer.getMappedPort(1025).toString());
         System.setProperty("quarkus.mailer.api.port", mailhogGenericContainer.getMappedPort(8025).toString());
         return Collections.emptyMap();
