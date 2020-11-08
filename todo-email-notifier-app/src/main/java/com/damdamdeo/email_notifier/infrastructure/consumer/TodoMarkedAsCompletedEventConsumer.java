@@ -24,6 +24,9 @@ public class TodoMarkedAsCompletedEventConsumer implements JsonObjectAggregateRo
 
     @Override
     public void consume(final AggregateRootEventConsumable<JsonObject> aggregateRootEventConsumable, final Operation operation) {
+        if (Operation.READ.equals(operation)) {
+            return;
+        }
         logger.info(String.format("Consuming '%s' for '%s'", eventType(), aggregateRootEventConsumable.eventId()));
         final JsonObjectTodo jsonObjectTodo = new JsonObjectTodo(aggregateRootEventConsumable.materializedState(),
                 aggregateRootEventConsumable.eventId());

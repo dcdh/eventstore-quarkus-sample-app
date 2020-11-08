@@ -96,7 +96,7 @@ public class DebeziumTodoCreatedEventConsumerTest {
                 Json.createReader(new StringReader("{\"todoId\":\"todoId\",\"description\":\"lorem ipsum\"}")).readObject(),
                 Json.createReader(new StringReader("{\"user.anonymous\":false,\"user.name\":\"damdamdeo\"}")).readObject(),
                 Json.createReader(new StringReader("{\"description\":\"lorem ipsum\",\"todoId\":\"todoId\",\"todoStatus\":\"IN_PROGRESS\"}")).readObject()
-        ), Operation.READ);
+        ), Operation.CREATE);
 
         verify(todoCreatedEventConsumer, atLeastOnce()).aggregateRootType();
         verify(todoCreatedEventConsumer, atLeastOnce()).eventType();
