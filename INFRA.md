@@ -22,7 +22,7 @@ You need to wait for services to be up (just a few seconds) before running todo-
 docker pull debezium/zookeeper:1.3.0.Final \
     && docker pull docker.elastic.co/logstash/logstash-oss:6.8.2 \
     && docker pull mailhog/mailhog:v1.0.0 \
-    && docker pull confluentinc/cp-kafka:5.2.1 \
+    && docker pull debezium/connect:1.3.0.Final \
     && docker pull jboss/keycloak:10.0.1 \
     && docker pull dcdh1983/postgresql-10-debezium-centos7:latest \
     && docker pull debezium/postgres:11-alpine \

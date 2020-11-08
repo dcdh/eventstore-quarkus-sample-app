@@ -1,11 +1,9 @@
 package com.damdamdeo.todo.publicfrontend.resources;
 
-import io.debezium.testing.testcontainers.DebeziumContainer;
 import io.quarkus.test.common.QuarkusTestResourceLifecycleManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
@@ -19,6 +17,10 @@ import java.util.stream.Stream;
 public class InfrastructureQuarkusTestResourceLifecycleManager implements QuarkusTestResourceLifecycleManager {
 
     private final Logger logger = LoggerFactory.getLogger(InfrastructureQuarkusTestResourceLifecycleManager.class);
+
+    private final static String DEBEZIUM_VERSION = "1.3.0.Final";
+    private final static Integer KAFKA_PORT = 9092;
+    private final static Integer DEBEZIUM_CONNECT_API_PORT = 8083;
 
     private Network network;
 
@@ -34,9 +36,9 @@ public class InfrastructureQuarkusTestResourceLifecycleManager implements Quarku
 
     private OkdPostgreSQLContainer<?> postgresMutableContainer;
 
-    private KafkaContainer kafkaContainer;
-
-    private DebeziumContainer debeziumContainer;
+    private GenericContainer<?> zookeeperContainer;
+    private GenericContainer<?> kafkaContainer;
+    private GenericContainer<?> debeziumConnectContainer;
 
     private GenericContainer todoQueryAppContainer;
 
@@ -112,20 +114,32 @@ public class InfrastructureQuarkusTestResourceLifecycleManager implements Quarku
                 .withNetworkAliases("mutable");
         postgresMutableContainer.start();
 //        postgresMutableContainer.followOutput(logConsumer);
-
-        kafkaContainer = new KafkaContainer("5.2.1")
+        zookeeperContainer = new GenericContainer<>("debezium/zookeeper:" + DEBEZIUM_VERSION)
                 .withNetwork(network)
-                .withNetworkAliases("kafka");
+                .withNetworkAliases("zookeeper")
+                .waitingFor(Wait.forLogMessage(".*Started.*", 1));
+        zookeeperContainer.start();
+        kafkaContainer = new GenericContainer<>("debezium/kafka:" + DEBEZIUM_VERSION)
+                .withNetwork(network)
+                .withNetworkAliases("kafka")
+                .withExposedPorts(KAFKA_PORT)
+                .withEnv("ZOOKEEPER_CONNECT", "zookeeper:2181")
+                .withEnv("CREATE_TOPICS", "event:3:1:compact") // 3 partitions 1 replica
+                .waitingFor(Wait.forLogMessage(".*started.*", 1));
         kafkaContainer.start();
 //        kafkaContainer.followOutput(logConsumer);
-
-        debeziumContainer = new DebeziumContainer("damdamdeo/eventsourced-mutable-kafka-connect:1.3.0.Final")
+        debeziumConnectContainer = new GenericContainer<>("damdamdeo/eventsourced-mutable-kafka-connect:1.3.0.Final")
                 .withNetwork(network)
-                .withNetworkAliases("connect")
-                .withKafka(kafkaContainer)
-                .dependsOn(kafkaContainer);
-        debeziumContainer.start();
-//        debeziumContainer.followOutput(logConsumer);
+                .withNetworkAliases("debeziumConnect")
+                .withExposedPorts(DEBEZIUM_CONNECT_API_PORT)
+                .withEnv("BOOTSTRAP_SERVERS", "kafka:" + KAFKA_PORT)
+                .withEnv("GROUP_ID", "1")
+                .withEnv("CONFIG_STORAGE_TOPIC", "my_connect_configs")
+                .withEnv("OFFSET_STORAGE_TOPIC", "my_connect_offsets")
+                .withEnv("STATUS_STORAGE_TOPIC", "my_connect_statuses")
+                .waitingFor(Wait.forLogMessage(".*Finished starting connectors and tasks.*", 1));
+        debeziumConnectContainer.start();
+//        debeziumConnectContainer.followOutput(logConsumer);
 
         todoQueryAppContainer = new GenericContainer("damdamdeo/todo-query-native-app:latest")
                 .withExposedPorts(8080)
@@ -156,7 +170,7 @@ public class InfrastructureQuarkusTestResourceLifecycleManager implements Quarku
                 .withEnv("quarkus.datasource.consumed-events.password", postgresQueryContainer.getPassword())
                 .withEnv("quarkus.oidc.auth-server-url", "http://keycloak:8080/auth/realms/todos")
                 .withNetwork(network)
-                .dependsOn(kafkaContainer, debeziumContainer, postgresSecretStoreContainer, postgresQueryContainer)
+                .dependsOn(kafkaContainer, debeziumConnectContainer, postgresSecretStoreContainer, postgresQueryContainer)
                 .waitingFor(
                         Wait.forLogMessage(".*started in.*\\n", 1)
                 );
@@ -189,7 +203,7 @@ public class InfrastructureQuarkusTestResourceLifecycleManager implements Quarku
                         "-Dquarkus.datasource.consumed-events.jdbc.url=jdbc:postgresql://mutable:5432/mutable",
                         "-Dquarkus.datasource.consumed-events.username=" + postgresMutableContainer.getUsername(),
                         "-Dquarkus.datasource.consumed-events.password=" + postgresMutableContainer.getPassword(),
-                        "-Dkafka-connector-api/mp-rest/url=http://connect:8083",
+                        "-Dkafka-connector-api/mp-rest/url=http://debeziumConnect:8083",
                         "-Dconnector.mutable.database.hostname=mutable",
                         "-Dconnector.mutable.database.username=" + postgresMutableContainer.getUsername(),
                         "-Dconnector.mutable.database.password=" + postgresMutableContainer.getPassword(),
@@ -201,7 +215,7 @@ public class InfrastructureQuarkusTestResourceLifecycleManager implements Quarku
                         "-Dquarkus.hazelcast-client.cluster-members=hazelcast:5701"
                 ).collect(Collectors.joining(" ")))
                 .withNetwork(network)
-                .dependsOn(kafkaContainer, debeziumContainer, postgresSecretStoreContainer, postgresMutableContainer)
+                .dependsOn(kafkaContainer, debeziumConnectContainer, postgresSecretStoreContainer, postgresMutableContainer)
                 .waitingFor(
                         Wait.forLogMessage(".*started in.*\\n", 1)
                 );
@@ -236,7 +250,7 @@ public class InfrastructureQuarkusTestResourceLifecycleManager implements Quarku
 
         System.setProperty("quarkus.oidc.auth-server-url",
                 String.format("http://localhost:%d/auth/realms/todos", keycloakContainer.getMappedPort(8080)));
-        System.setProperty("connector.port", debeziumContainer.getMappedPort(8083).toString());
+        System.setProperty("connector.port", debeziumConnectContainer.getMappedPort(8083).toString());
 
         System.setProperty("keycloak.admin.adminRealm", "master");
         System.setProperty("keycloak.admin.clientId", "admin-cli");
@@ -297,14 +311,17 @@ public class InfrastructureQuarkusTestResourceLifecycleManager implements Quarku
         if (postgresMutableContainer != null) {
             postgresMutableContainer.close();
         }
-        if (kafkaContainer != null) {
-            kafkaContainer.close();
-        }
         if (hazelcastContainer != null) {
             hazelcastContainer.close();
         }
-        if (debeziumContainer != null) {
-            debeziumContainer.close();
+        if (zookeeperContainer != null) {
+            zookeeperContainer.close();
+        }
+        if (kafkaContainer != null) {
+            kafkaContainer.close();
+        }
+        if (debeziumConnectContainer != null) {
+            debeziumConnectContainer.close();
         }
         if (todoQueryAppContainer != null) {
             todoQueryAppContainer.close();
