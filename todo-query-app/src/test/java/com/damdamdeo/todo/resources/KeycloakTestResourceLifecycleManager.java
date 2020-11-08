@@ -46,7 +46,6 @@ public class KeycloakTestResourceLifecycleManager implements QuarkusTestResource
                 .withEnv("DB_USER", "keycloak")
                 .withEnv("DB_PASSWORD", "keycloak")
                 .withNetwork(network)
-                .dependsOn(postgresKeycloakContainer)
                 .waitingFor(
                         Wait.forLogMessage(".*Started authorizationRevisions.*\\n", 1)
                 );

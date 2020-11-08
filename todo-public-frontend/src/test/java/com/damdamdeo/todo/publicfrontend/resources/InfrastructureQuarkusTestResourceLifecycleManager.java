@@ -71,7 +71,6 @@ public class InfrastructureQuarkusTestResourceLifecycleManager implements Quarku
                 .withEnv("DB_PASSWORD", "keycloak")
                 .withNetwork(network)
                 .withNetworkAliases("keycloak")
-                .dependsOn(postgresKeycloakContainer)
                 .waitingFor(
                         Wait.forLogMessage(".*Started authorizationRevisions.*\\n", 1)
                 );
@@ -170,7 +169,6 @@ public class InfrastructureQuarkusTestResourceLifecycleManager implements Quarku
                 .withEnv("quarkus.datasource.consumed-events.password", postgresQueryContainer.getPassword())
                 .withEnv("quarkus.oidc.auth-server-url", "http://keycloak:8080/auth/realms/todos")
                 .withNetwork(network)
-                .dependsOn(kafkaContainer, debeziumConnectContainer, postgresSecretStoreContainer, postgresQueryContainer)
                 .waitingFor(
                         Wait.forLogMessage(".*started in.*\\n", 1)
                 );
@@ -215,7 +213,6 @@ public class InfrastructureQuarkusTestResourceLifecycleManager implements Quarku
                         "-Dquarkus.hazelcast-client.cluster-members=hazelcast:5701"
                 ).collect(Collectors.joining(" ")))
                 .withNetwork(network)
-                .dependsOn(kafkaContainer, debeziumConnectContainer, postgresSecretStoreContainer, postgresMutableContainer)
                 .waitingFor(
                         Wait.forLogMessage(".*started in.*\\n", 1)
                 );
