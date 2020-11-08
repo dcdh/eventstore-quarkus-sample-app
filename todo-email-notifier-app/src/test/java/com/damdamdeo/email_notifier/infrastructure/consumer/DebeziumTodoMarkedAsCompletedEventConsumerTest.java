@@ -128,7 +128,7 @@ public class DebeziumTodoMarkedAsCompletedEventConsumerTest {
         TimeUnit.SECONDS.sleep(2);// je n'ai pas de marqueur de fin d'execution...
 
         // Then
-        verify(todoMarkedAsCompletedEventConsumer, times(1)).consume(any(), eq(Operation.READ));
+        verify(todoMarkedAsCompletedEventConsumer, times(1)).consume(any(), any());
 
         verify(todoMarkedAsCompletedEventConsumer, atLeastOnce()).aggregateRootType();
         verify(todoMarkedAsCompletedEventConsumer, atLeastOnce()).eventType();
