@@ -50,7 +50,7 @@ public class TodoEndpointTest {
         doReturn("lorem ipsum").when(todoAggregateRoot).description();
         doReturn(TodoStatus.IN_PROGRESS).when(todoAggregateRoot).todoStatus();
         doReturn(0l).when(todoAggregateRoot).version();
-        doCallRealMethod().when(todoAggregateRoot).canMarkTodoAsCompletedSpecification();
+        doCallRealMethod().when(todoAggregateRoot).canMarkTodoAsCompleted();
         doReturn(todoAggregateRoot).when(createNewTodoCommandHandler)
                 .execute(new CreateNewTodoCommand("lorem ipsum"));
 
@@ -75,7 +75,7 @@ public class TodoEndpointTest {
         verify(todoAggregateRoot, times(1)).description();
         verify(todoAggregateRoot, times(2)).todoStatus();
         verify(todoAggregateRoot, times(1)).version();
-        verify(todoAggregateRoot, times(1)).canMarkTodoAsCompletedSpecification();
+        verify(todoAggregateRoot, times(1)).canMarkTodoAsCompleted();
     }
 
     @Test
@@ -128,7 +128,7 @@ public class TodoEndpointTest {
         doReturn("lorem ipsum").when(todoAggregateRoot).description();
         doReturn(TodoStatus.COMPLETED).when(todoAggregateRoot).todoStatus();
         doReturn(1l).when(todoAggregateRoot).version();
-        doCallRealMethod().when(todoAggregateRoot).canMarkTodoAsCompletedSpecification();
+        doCallRealMethod().when(todoAggregateRoot).canMarkTodoAsCompleted();
         doReturn(todoAggregateRoot).when(markTodoAsCompletedCommandHandler)
                 .execute(new MarkTodoAsCompletedCommand("todoId"));
 
@@ -153,7 +153,7 @@ public class TodoEndpointTest {
         verify(todoAggregateRoot, times(1)).description();
         verify(todoAggregateRoot, times(2)).todoStatus();
         verify(todoAggregateRoot, times(1)).version();
-        verify(todoAggregateRoot, times(1)).canMarkTodoAsCompletedSpecification();
+        verify(todoAggregateRoot, times(1)).canMarkTodoAsCompleted();
     }
 
     @Test
@@ -230,7 +230,7 @@ public class TodoEndpointTest {
         doReturn("lorem ipsum").when(todoAggregateRoot).description();
         doReturn(TodoStatus.COMPLETED).when(todoAggregateRoot).todoStatus();
         doReturn(1l).when(todoAggregateRoot).version();
-        doCallRealMethod().when(todoAggregateRoot).canMarkTodoAsCompletedSpecification();
+        doCallRealMethod().when(todoAggregateRoot).canMarkTodoAsCompleted();
         doReturn(todoAggregateRoot).when(aggregateRootRepository).findMaterializedState("todoId", TodoAggregateRoot.class);
 
         // When && Then
@@ -252,7 +252,7 @@ public class TodoEndpointTest {
         verify(todoAggregateRoot, times(1)).description();
         verify(todoAggregateRoot, times(2)).todoStatus();
         verify(todoAggregateRoot, times(1)).version();
-        verify(todoAggregateRoot, times(1)).canMarkTodoAsCompletedSpecification();
+        verify(todoAggregateRoot, times(1)).canMarkTodoAsCompleted();
     }
 
     @Test

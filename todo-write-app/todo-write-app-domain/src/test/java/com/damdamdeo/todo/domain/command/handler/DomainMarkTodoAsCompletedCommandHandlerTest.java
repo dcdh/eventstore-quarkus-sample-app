@@ -4,9 +4,8 @@ import com.damdamdeo.eventsourced.model.api.AggregateRootId;
 import com.damdamdeo.eventsourced.mutable.api.eventsourcing.UnknownAggregateRootException;
 import com.damdamdeo.todo.domain.TodoAggregateRoot;
 import com.damdamdeo.todo.domain.TodoAggregateRootRepository;
-import com.damdamdeo.todo.domain.api.Todo;
 import com.damdamdeo.todo.domain.api.UnknownTodoException;
-import com.damdamdeo.todo.domain.api.shared.specification.Specification;
+import com.damdamdeo.todo.domain.api.specification.IsTodoNotMarkedAsCompletedSpecification;
 import com.damdamdeo.todo.domain.command.MarkTodoAsCompletedCommand;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,18 +23,20 @@ public class DomainMarkTodoAsCompletedCommandHandlerTest {
 
     TodoAggregateRootRepository mockTodoAggregateRootRepository;
 
+    IsTodoNotMarkedAsCompletedSpecification isTodoNotMarkedAsCompletedSpecification;
+
     @BeforeEach
     public void setup() {
+        isTodoNotMarkedAsCompletedSpecification = mock(IsTodoNotMarkedAsCompletedSpecification.class);
         mockTodoAggregateRootRepository = mock(TodoAggregateRootRepository.class);
-        domainMarkTodoAsCompletedCommandHandler = new DomainMarkTodoAsCompletedCommandHandler(mockTodoAggregateRootRepository);
+        domainMarkTodoAsCompletedCommandHandler = new DomainMarkTodoAsCompletedCommandHandler(mockTodoAggregateRootRepository,
+                isTodoNotMarkedAsCompletedSpecification);
     }
 
     @Test
     public void should_mark_todo_as_completed() throws Throwable {
         // Given
         final TodoAggregateRoot todoAggregateRoot = mock(TodoAggregateRoot.class);
-        final Specification<Todo> canMarkTodoAsCompletedSpecification = mock(Specification.class);
-        doReturn(canMarkTodoAsCompletedSpecification).when(todoAggregateRoot).canMarkTodoAsCompletedSpecification();
         doReturn(todoAggregateRoot).when(mockTodoAggregateRootRepository).load("todoId");
         final MarkTodoAsCompletedCommand markTodoAsCompletedCommand = new MarkTodoAsCompletedCommand("todoId");
 
@@ -43,14 +44,11 @@ public class DomainMarkTodoAsCompletedCommandHandlerTest {
         domainMarkTodoAsCompletedCommandHandler.execute(markTodoAsCompletedCommand);
 
         // Then
-        verify(todoAggregateRoot, times(1)).handle(markTodoAsCompletedCommand);
+        verify(todoAggregateRoot, times(1)).handle(markTodoAsCompletedCommand, isTodoNotMarkedAsCompletedSpecification);
         verify(mockTodoAggregateRootRepository, times(1)).load(any());
-        verify(todoAggregateRoot, times(1)).handle(any(MarkTodoAsCompletedCommand.class));
-        verify(todoAggregateRoot, times(1)).canMarkTodoAsCompletedSpecification();
-        verify(canMarkTodoAsCompletedSpecification, times(1)).checkSatisfiedBy(todoAggregateRoot);
         verify(mockTodoAggregateRootRepository, times(1)).save(todoAggregateRoot);
         verifyNoMoreInteractions(mockTodoAggregateRootRepository, mockTodoAggregateRootRepository,
-                canMarkTodoAsCompletedSpecification,
+                isTodoNotMarkedAsCompletedSpecification,
                 todoAggregateRoot);
     }
 

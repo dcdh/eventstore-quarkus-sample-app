@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
+import org.testcontainers.utility.DockerImageName;
 
 import java.util.Collections;
 import java.util.Map;
@@ -18,7 +19,8 @@ public class PostgreSQLQuarkusTestResourceLifecycleManager implements QuarkusTes
     @Override
     public Map<String, String> start() {
         final Slf4jLogConsumer logConsumer = new Slf4jLogConsumer(logger);
-        postgresContainer = new PostgreSQLContainer<>("debezium/postgres:11-alpine")
+        postgresContainer = new PostgreSQLContainer<>(
+                DockerImageName.parse("debezium/postgres:11-alpine").asCompatibleSubstituteFor("postgres"))
                 .withDatabaseName("secret-store")
                 .withUsername("postgresql")
                 .withPassword("postgresql");

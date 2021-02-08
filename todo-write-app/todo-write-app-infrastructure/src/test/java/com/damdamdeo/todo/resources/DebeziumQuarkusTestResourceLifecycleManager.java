@@ -8,6 +8,7 @@ import org.testcontainers.containers.Network;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
+import org.testcontainers.utility.DockerImageName;
 
 import java.util.Collections;
 import java.util.Map;
@@ -16,7 +17,7 @@ public class DebeziumQuarkusTestResourceLifecycleManager implements QuarkusTestR
 
     private final Logger logger = LoggerFactory.getLogger(DebeziumQuarkusTestResourceLifecycleManager.class);
 
-    private final static String DEBEZIUM_VERSION = "1.3.0.Final";
+    private final static String DEBEZIUM_VERSION = "1.4.1.Final";
     private final static Integer KAFKA_PORT = 9092;
     private final static Integer DEBEZIUM_CONNECT_API_PORT = 8083;
 
@@ -38,7 +39,8 @@ public class DebeziumQuarkusTestResourceLifecycleManager implements QuarkusTestR
         // cmd use to run container is hardcoded in PostgreSQLContainer and do not reflect my image
         // I could write one but I also do a big e2e test in OKD for a real application. I will write a specific one in my todo-app ;)
         final String networkAliases = "mutable";
-        postgresMutableContainer = new PostgreSQLContainer<>("debezium/postgres:11-alpine")
+        postgresMutableContainer = new PostgreSQLContainer<>(
+                DockerImageName.parse("debezium/postgres:11-alpine").asCompatibleSubstituteFor("postgres"))
                 .withDatabaseName("mutable")
                 .withUsername("postgresuser")
                 .withPassword("postgrespassword")
@@ -72,7 +74,7 @@ public class DebeziumQuarkusTestResourceLifecycleManager implements QuarkusTestR
                 .waitingFor(Wait.forLogMessage(".*started.*", 1));
         kafkaContainer.start();
 //        kafkaContainer.followOutput(logConsumer);
-        debeziumConnectContainer = new GenericContainer<>("damdamdeo/eventsourced-mutable-kafka-connect:1.3.0.Final")
+        debeziumConnectContainer = new GenericContainer<>("damdamdeo/eventsourced-mutable-kafka-connect:1.4.1.Final")
                 .withNetwork(network)
                 .withExposedPorts(DEBEZIUM_CONNECT_API_PORT)
                 .withEnv("BOOTSTRAP_SERVERS", "kafka:" + KAFKA_PORT)
@@ -93,6 +95,7 @@ public class DebeziumQuarkusTestResourceLifecycleManager implements QuarkusTestR
         System.setProperty("connector.mutable.database.password", postgresMutableContainer.getPassword());
         System.setProperty("connector.mutable.database.port", "5432");
         System.setProperty("connector.mutable.database.dbname", postgresMutableContainer.getDatabaseName());
+        System.setProperty("connector.mutable.nbOfPartitionsInEventTopic", "3");
         System.setProperty("slot.drop.on.stop", "true");
         return Collections.emptyMap();
     }
@@ -117,6 +120,7 @@ public class DebeziumQuarkusTestResourceLifecycleManager implements QuarkusTestR
         System.clearProperty("connector.mutable.database.password");
         System.clearProperty("connector.mutable.database.port");
         System.clearProperty("connector.mutable.database.dbname");
+        System.clearProperty("connector.mutable.nbOfPartitionsInEventTopic");
         System.clearProperty("slot.drop.on.stop");
         if (postgresMutableContainer != null) {
             postgresMutableContainer.close();

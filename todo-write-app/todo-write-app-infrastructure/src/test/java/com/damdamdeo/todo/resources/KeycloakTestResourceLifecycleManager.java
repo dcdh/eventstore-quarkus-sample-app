@@ -8,6 +8,7 @@ import org.testcontainers.containers.Network;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
+import org.testcontainers.utility.DockerImageName;
 
 import java.util.Collections;
 import java.util.Map;
@@ -27,7 +28,8 @@ public class KeycloakTestResourceLifecycleManager implements QuarkusTestResource
         final Slf4jLogConsumer logConsumer = new Slf4jLogConsumer(logger);
         network = Network.newNetwork();
 
-        postgresKeycloakContainer = new PostgreSQLContainer<>("debezium/postgres:11-alpine")
+        postgresKeycloakContainer = new PostgreSQLContainer<>(
+                DockerImageName.parse("debezium/postgres:11-alpine").asCompatibleSubstituteFor("postgres"))
                 .withDatabaseName("keycloak")
                 .withUsername("keycloak")
                 .withPassword("keycloak")

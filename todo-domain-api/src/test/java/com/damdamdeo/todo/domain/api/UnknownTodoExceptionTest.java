@@ -7,7 +7,9 @@ public class UnknownTodoExceptionTest {
 
     @Test
     public void should_verify_equality() {
-        EqualsVerifier.forClass(UnknownTodoException.class).verify();
+        EqualsVerifier.forClass(UnknownTodoException.class)
+                .withIgnoredFields("detailMessage", "cause", "stackTrace", "suppressedExceptions")
+                .verify();
     }
 
 }

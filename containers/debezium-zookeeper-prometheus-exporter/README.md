@@ -8,17 +8,17 @@ To use it you have to declare an environment variable `SERVER_JVMFLAGS` with thi
 
 ### Build it
 
-> docker build -f Dockerfile -t damdamdeo/debezium-zookeeper-prometheus-exporter:1.3.0.Final .
+> docker build -f Dockerfile -t damdamdeo/debezium-zookeeper-prometheus-exporter:1.4.1.Final .
 
 ### Run it
 
-> docker run -e SERVER_JVMFLAGS="-javaagent:/jmx_prometheus_javaagent.jar=8081:/config.yml" damdamdeo/debezium-zookeeper-prometheus-exporter:1.3.0.Final
+> docker run -e SERVER_JVMFLAGS="-javaagent:/jmx_prometheus_javaagent.jar=8081:/config.yml" damdamdeo/debezium-zookeeper-prometheus-exporter:1.4.1.Final
 
 ### Docker compose declaration
 
 ```yaml
   zookeeper:
-      image: debezium/zookeeper-prometheus-exporter:1.3.0.Final
+      image: debezium/zookeeper-prometheus-exporter:1.4.1.Final
       ports:
         - 2181:2181
         - 2888:2888

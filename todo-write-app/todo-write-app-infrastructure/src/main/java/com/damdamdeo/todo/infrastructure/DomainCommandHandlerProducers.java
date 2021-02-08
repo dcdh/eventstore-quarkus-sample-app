@@ -1,6 +1,7 @@
 package com.damdamdeo.todo.infrastructure;
 
 import com.damdamdeo.todo.domain.TodoAggregateRootRepository;
+import com.damdamdeo.todo.domain.api.specification.IsTodoNotMarkedAsCompletedSpecification;
 import com.damdamdeo.todo.domain.command.handler.*;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -30,7 +31,8 @@ public class DomainCommandHandlerProducers {
     @Produces
     @ApplicationScoped
     public DomainMarkTodoAsCompletedCommandHandler markTodoAsCompletedCommandHandler() {
-        return new DomainMarkTodoAsCompletedCommandHandler(todoAggregateRootRepository);
+        return new DomainMarkTodoAsCompletedCommandHandler(todoAggregateRootRepository,
+                new IsTodoNotMarkedAsCompletedSpecification());
     }
 
 }

@@ -7,7 +7,9 @@ public class TodoAlreadyExistentExceptionTest {
 
     @Test
     public void should_verify_equality() {
-        EqualsVerifier.forClass(TodoAlreadyExistentException.class).verify();
+        EqualsVerifier.forClass(TodoAlreadyExistentException.class)
+                .withIgnoredFields("detailMessage", "cause", "stackTrace", "suppressedExceptions")
+                .verify();
     }
 
 

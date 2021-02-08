@@ -24,8 +24,7 @@ public final class TodoDTO {
         this.description = todo.description();
         this.todoStatus = todo.todoStatus();
         this.canMarkTodoAsCompleted = todo
-                .canMarkTodoAsCompletedSpecification()
-                .isSatisfiedBy(todo);
+                .canMarkTodoAsCompleted();
         this.version = todo.version();
     }
 

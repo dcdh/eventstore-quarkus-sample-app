@@ -3,6 +3,7 @@ package com.damdamdeo.todo.domain;
 import com.damdamdeo.eventsourced.mutable.api.eventsourcing.AggregateRoot;
 import com.damdamdeo.todo.domain.api.Todo;
 import com.damdamdeo.todo.domain.api.TodoStatus;
+import com.damdamdeo.todo.domain.api.specification.IsTodoNotMarkedAsCompletedSpecification;
 import com.damdamdeo.todo.domain.command.CreateNewTodoCommand;
 import com.damdamdeo.todo.domain.command.MarkTodoAsCompletedCommand;
 import com.damdamdeo.todo.domain.event.TodoCreatedEventPayload;
@@ -32,7 +33,9 @@ public class TodoAggregateRoot extends AggregateRoot implements Todo {
                 createNewTodoCommand.description()));
     }
 
-    public void handle(final MarkTodoAsCompletedCommand markTodoAsCompletedCommand) {
+    public void handle(final MarkTodoAsCompletedCommand markTodoAsCompletedCommand,
+                       final IsTodoNotMarkedAsCompletedSpecification specification) {
+        specification.checkSatisfiedBy(this);
         this.apply("TodoMarkedAsCompletedEvent",
                 new TodoMarkedAsCompletedEventPayload(markTodoAsCompletedCommand.todoId()));
     }

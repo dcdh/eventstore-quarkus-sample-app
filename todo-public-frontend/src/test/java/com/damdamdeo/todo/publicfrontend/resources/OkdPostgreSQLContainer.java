@@ -1,6 +1,5 @@
 package com.damdamdeo.todo.publicfrontend.resources;
 
-import org.jetbrains.annotations.NotNull;
 import org.testcontainers.containers.JdbcDatabaseContainer;
 import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy;
 
@@ -24,7 +23,6 @@ public class OkdPostgreSQLContainer<SELF extends OkdPostgreSQLContainer<SELF>> e
                 .withStartupTimeout(Duration.of(60, SECONDS));
     }
 
-    @NotNull
     @Override
     public Set<Integer> getLivenessCheckPortNumbers() {
         return new HashSet<>(getMappedPort(POSTGRESQL_PORT));

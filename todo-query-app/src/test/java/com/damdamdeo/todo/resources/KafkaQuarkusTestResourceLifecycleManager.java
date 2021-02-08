@@ -15,7 +15,7 @@ public class KafkaQuarkusTestResourceLifecycleManager implements QuarkusTestReso
 
     private final Logger logger = LoggerFactory.getLogger(KafkaQuarkusTestResourceLifecycleManager.class);
 
-    private final static String DEBEZIUM_VERSION = "1.3.0.Final";
+    private final static String DEBEZIUM_VERSION = "1.4.1.Final";
     private final static Integer KAFKA_PORT = 9092;
 
     private GenericContainer<?> zookeeperContainer;

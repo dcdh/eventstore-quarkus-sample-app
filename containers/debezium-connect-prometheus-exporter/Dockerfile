@@ -1,4 +1,4 @@
-FROM damdamdeo/eventsourced-mutable-kafka-connect:1.3.0.Final
+FROM damdamdeo/eventsourced-mutable-kafka-connect:1.4.1.Final
 
 ADD https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/0.14.0/jmx_prometheus_javaagent-0.14.0.jar /jmx_prometheus_javaagent.jar
 

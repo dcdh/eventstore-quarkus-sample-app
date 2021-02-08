@@ -8,6 +8,7 @@ import org.testcontainers.containers.Network;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
+import org.testcontainers.utility.DockerImageName;
 
 import java.util.Collections;
 import java.util.Map;
@@ -18,7 +19,7 @@ public class InfrastructureQuarkusTestResourceLifecycleManager implements Quarku
 
     private final Logger logger = LoggerFactory.getLogger(InfrastructureQuarkusTestResourceLifecycleManager.class);
 
-    private final static String DEBEZIUM_VERSION = "1.3.0.Final";
+    private final static String DEBEZIUM_VERSION = "1.4.1.Final";
     private final static Integer KAFKA_PORT = 9092;
     private final static Integer DEBEZIUM_CONNECT_API_PORT = 8083;
 
@@ -51,7 +52,8 @@ public class InfrastructureQuarkusTestResourceLifecycleManager implements Quarku
         final Slf4jLogConsumer logConsumer = new Slf4jLogConsumer(logger);
         network = Network.newNetwork();
 
-        postgresKeycloakContainer = new PostgreSQLContainer<>("debezium/postgres:11-alpine")
+        postgresKeycloakContainer = new PostgreSQLContainer<>(
+                DockerImageName.parse("debezium/postgres:11-alpine").asCompatibleSubstituteFor("postgres"))
                 .withDatabaseName("keycloak")
                 .withUsername("keycloak")
                 .withPassword("keycloak")
@@ -87,7 +89,8 @@ public class InfrastructureQuarkusTestResourceLifecycleManager implements Quarku
         mailhogContainer.start();
 //        mailhogContainer.followOutput(logConsumer);
 
-        postgresSecretStoreContainer = new PostgreSQLContainer<>("postgres:11-alpine")
+        postgresSecretStoreContainer = new PostgreSQLContainer<>(
+                DockerImageName.parse("postgres:11-alpine").asCompatibleSubstituteFor("postgres"))
                 .withDatabaseName("secret-store")
                 .withUsername("postgres")
                 .withPassword("postgres")
@@ -96,7 +99,8 @@ public class InfrastructureQuarkusTestResourceLifecycleManager implements Quarku
         postgresSecretStoreContainer.start();
 //        postgresSecretStoreContainer.followOutput(logConsumer);
 
-        postgresQueryContainer = new PostgreSQLContainer<>("postgres:11-alpine")
+        postgresQueryContainer = new PostgreSQLContainer<>(
+                DockerImageName.parse("postgres:11-alpine").asCompatibleSubstituteFor("postgres"))
                 .withDatabaseName("todo-query")
                 .withUsername("postgres")
                 .withPassword("postgres")
@@ -127,7 +131,7 @@ public class InfrastructureQuarkusTestResourceLifecycleManager implements Quarku
                 .waitingFor(Wait.forLogMessage(".*started.*", 1));
         kafkaContainer.start();
 //        kafkaContainer.followOutput(logConsumer);
-        debeziumConnectContainer = new GenericContainer<>("damdamdeo/eventsourced-mutable-kafka-connect:1.3.0.Final")
+        debeziumConnectContainer = new GenericContainer<>("damdamdeo/eventsourced-mutable-kafka-connect:1.4.1.Final")
                 .withNetwork(network)
                 .withNetworkAliases("debeziumConnect")
                 .withExposedPorts(DEBEZIUM_CONNECT_API_PORT)
@@ -207,6 +211,7 @@ public class InfrastructureQuarkusTestResourceLifecycleManager implements Quarku
                         "-Dconnector.mutable.database.password=" + postgresMutableContainer.getPassword(),
                         "-Dconnector.mutable.database.port=5432",
                         "-Dconnector.mutable.database.dbname=mutable",
+                        "-Dconnector.mutable.nbOfPartitionsInEventTopic=3",
                         "-Dslot.drop.on.stop=true",
                         "-Dquarkus.oidc.auth-server-url=http://keycloak:8080/auth/realms/todos",
                         "-Dquarkus.hazelcast-client.cluster-name=dev",

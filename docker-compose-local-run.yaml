@@ -3,7 +3,7 @@ version: '3'
 services:
 
   zookeeper:
-    image: damdamdeo/debezium-zookeeper-prometheus-exporter:1.3.0.Final
+    image: damdamdeo/debezium-zookeeper-prometheus-exporter:1.4.1.Final
     ports:
       - 2181:2181
       - 2888:2888
@@ -49,7 +49,7 @@ services:
 # TODO exporter kibana
 
   kafka:
-    image: debezium/kafka:1.3.0.Final
+    image: debezium/kafka:1.4.1.Final
     ports:
       - 9092:9092
     environment:
@@ -68,7 +68,7 @@ services:
       - kafka.server=kafka:9092
 
   connect:
-    image: damdamdeo/debezium-connect-prometheus-exporter:1.3.0.Final
+    image: damdamdeo/debezium-connect-prometheus-exporter:1.4.1.Final
     ports:
       - 8083:8083
       - 7073:8080
@@ -191,6 +191,7 @@ services:
         -Dconnector.mutable.database.password=postgrespassword
         -Dconnector.mutable.database.port=5432
         -Dconnector.mutable.database.dbname=mutable
+        -Dconnector.mutable.nbOfPartitionsInEventTopic=3
         -Dquarkus.oidc.auth-server-url=http://keycloak:8080/auth/realms/todos
         -Dquarkus.jaeger.endpoint=http://jaeger:14268/api/traces
         -Dquarkus.jaeger.tags=env=local

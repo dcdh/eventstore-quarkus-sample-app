@@ -1,6 +1,5 @@
 package com.damdamdeo.todo.domain.api;
 
-import com.damdamdeo.todo.domain.api.shared.specification.Specification;
 import com.damdamdeo.todo.domain.api.specification.IsTodoNotMarkedAsCompletedSpecification;
 
 public interface Todo {
@@ -13,7 +12,7 @@ public interface Todo {
 
     Long version();
 
-    default Specification<Todo> canMarkTodoAsCompletedSpecification() {
-        return new IsTodoNotMarkedAsCompletedSpecification();
+    default Boolean canMarkTodoAsCompleted() {
+        return new IsTodoNotMarkedAsCompletedSpecification().isSatisfiedBy(this);
     }
 }
