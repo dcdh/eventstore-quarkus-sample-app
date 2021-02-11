@@ -9,7 +9,8 @@ import com.damdamdeo.eventsourced.encryption.api.SecretStore;
 import com.damdamdeo.eventsourced.encryption.infra.jsonb.JsonObjectEncryptedAggregateRootId;
 import com.damdamdeo.eventsourced.model.api.AggregateRootId;
 import com.damdamdeo.todo.KafkaDebeziumProducer;
-import com.damdamdeo.todo.domain.CreateTodoService;
+import com.damdamdeo.todo.domain.usecase.CreateTodoCommand;
+import com.damdamdeo.todo.domain.usecase.CreateTodoUseCase;
 import io.agroal.api.AgroalDataSource;
 import io.quarkus.agroal.DataSource;
 import io.quarkus.test.junit.QuarkusTest;
@@ -45,7 +46,7 @@ public class DebeziumTodoCreatedEventConsumerTest {
     TodoCreatedEventConsumer todoCreatedEventConsumer;
 
     @InjectMock
-    CreateTodoService createTodoService;
+    CreateTodoUseCase createTodoUseCase;
 
     @InjectMock
     SecretStore secretStore;
@@ -109,11 +110,8 @@ public class DebeziumTodoCreatedEventConsumerTest {
         waitForEventToBeConsumed();
 
         // Then
-        verify(createTodoService, times(1)).createTodo(
-                "todoId",
-                "lorem ipsum",
-                0l
-        );
+        verify(createTodoUseCase, times(1)).execute(
+                new CreateTodoCommand("todoId","lorem ipsum",0l));
     }
 
     @Test

@@ -21,7 +21,7 @@ public class TodoEndpoint {
     public TodoEndpoint(final TodoDomainRepository todoDomainRepository) {
         this.todoDomainRepository = todoDomainRepository;
     }
-
+    // TODO I could use an useCase
     @RolesAllowed("frontend-user")
     @GET
     @Path("/{todoId}")
@@ -30,7 +30,7 @@ public class TodoEndpoint {
                 .map(TodoDTO::new)
                 .get();
     }
-
+    // TODO I could use an useCase
     @RolesAllowed("frontend-user")
     @GET
     public List<TodoDTO> listAllTodos() {

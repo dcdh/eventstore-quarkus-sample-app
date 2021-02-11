@@ -1,5 +1,7 @@
-package com.damdamdeo.todo.domain;
+package com.damdamdeo.todo.domain.usecase;
 
+import com.damdamdeo.todo.domain.TodoDomain;
+import com.damdamdeo.todo.domain.TodoDomainRepository;
 import com.damdamdeo.todo.domain.api.TodoStatus;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -8,16 +10,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class DomainCreateTodoServiceTest {
+public class CreateTodoUseCaseTest {
 
     @Test
     public void should_create_todo() {
         // Given
         final TodoDomainRepository todoDomainRepository = mock(TodoDomainRepository.class);
-        final DomainCreateTodoService domainCreateTodoService = new DomainCreateTodoService(todoDomainRepository);
+        final CreateTodoUseCase createTodoUseCase = new CreateTodoUseCase(todoDomainRepository);
 
         // When
-        domainCreateTodoService.createTodo("todoId", "description", 0l);
+        createTodoUseCase.execute(new CreateTodoCommand("todoId", "description", 0l));
 
         // Then
         verify(todoDomainRepository, times(1)).persist(TodoDomain.newBuilder()

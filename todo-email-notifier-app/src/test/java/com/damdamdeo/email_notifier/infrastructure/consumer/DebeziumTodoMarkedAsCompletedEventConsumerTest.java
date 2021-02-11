@@ -2,7 +2,8 @@ package com.damdamdeo.email_notifier.infrastructure.consumer;
 
 import com.damdamdeo.email_notifier.KafkaDebeziumProducer;
 import com.damdamdeo.email_notifier.domain.TodoDomain;
-import com.damdamdeo.email_notifier.domain.TodoMarkedAsCompletedNotifierService;
+import com.damdamdeo.email_notifier.domain.usecase.NotifyTodoMarkedAsCompletedCommand;
+import com.damdamdeo.email_notifier.domain.usecase.NotifyTodoMarkedAsCompletedUseCase;
 import com.damdamdeo.eventsourced.consumer.api.eventsourcing.Operation;
 import com.damdamdeo.eventsourced.consumer.infra.eventsourcing.DecryptedAggregateRootEventConsumable;
 import com.damdamdeo.eventsourced.consumer.infra.eventsourcing.record.event_in.DebeziumJsonbAggregateRootEventId;
@@ -47,7 +48,7 @@ public class DebeziumTodoMarkedAsCompletedEventConsumerTest {
     TodoMarkedAsCompletedEventConsumer todoMarkedAsCompletedEventConsumer;
 
     @InjectMock
-    TodoMarkedAsCompletedNotifierService todoMarkedAsCompletedNotifierService;
+    NotifyTodoMarkedAsCompletedUseCase notifyTodoMarkedAsCompletedUseCase;
 
     @InjectMock
     SecretStore secretStore;
@@ -111,10 +112,10 @@ public class DebeziumTodoMarkedAsCompletedEventConsumerTest {
         waitForEventToBeConsumed();
 
         // Then
-        verify(todoMarkedAsCompletedNotifierService, times(1)).notify(TodoDomain.newBuilder()
+        verify(notifyTodoMarkedAsCompletedUseCase, times(1)).execute(new NotifyTodoMarkedAsCompletedCommand(TodoDomain.newBuilder()
                 .withTodoId("todoId")
                 .withDescription("lorem ipsum")
-                .build());
+                .build()));
     }
 
     @Test

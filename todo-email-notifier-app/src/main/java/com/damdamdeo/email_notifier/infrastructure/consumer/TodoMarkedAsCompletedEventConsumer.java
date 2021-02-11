@@ -1,6 +1,7 @@
 package com.damdamdeo.email_notifier.infrastructure.consumer;
 
-import com.damdamdeo.email_notifier.domain.TodoMarkedAsCompletedNotifierService;
+import com.damdamdeo.email_notifier.domain.usecase.NotifyTodoMarkedAsCompletedCommand;
+import com.damdamdeo.email_notifier.domain.usecase.NotifyTodoMarkedAsCompletedUseCase;
 import com.damdamdeo.eventsourced.consumer.api.eventsourcing.AggregateRootEventConsumable;
 import com.damdamdeo.eventsourced.consumer.api.eventsourcing.Operation;
 import com.damdamdeo.eventsourced.consumer.infra.eventsourcing.JsonObjectAggregateRootEventConsumer;
@@ -16,10 +17,10 @@ public class TodoMarkedAsCompletedEventConsumer implements JsonObjectAggregateRo
 
     private final Logger logger = LoggerFactory.getLogger(TodoMarkedAsCompletedEventConsumer.class);
 
-    private final TodoMarkedAsCompletedNotifierService todoMarkedAsCompletedNotifierService;
+    private final NotifyTodoMarkedAsCompletedUseCase notifyTodoMarkedAsCompletedUseCase;
 
-    public TodoMarkedAsCompletedEventConsumer(final TodoMarkedAsCompletedNotifierService todoMarkedAsCompletedNotifierService) {
-        this.todoMarkedAsCompletedNotifierService = Objects.requireNonNull(todoMarkedAsCompletedNotifierService);
+    public TodoMarkedAsCompletedEventConsumer(final NotifyTodoMarkedAsCompletedUseCase notifyTodoMarkedAsCompletedUseCase) {
+        this.notifyTodoMarkedAsCompletedUseCase = Objects.requireNonNull(notifyTodoMarkedAsCompletedUseCase);
     }
 
     @Override
@@ -30,7 +31,7 @@ public class TodoMarkedAsCompletedEventConsumer implements JsonObjectAggregateRo
         logger.info(String.format("Consuming '%s' for '%s'", eventType(), aggregateRootEventConsumable.eventId()));
         final JsonObjectTodo jsonObjectTodo = new JsonObjectTodo(aggregateRootEventConsumable.materializedState(),
                 aggregateRootEventConsumable.eventId());
-        todoMarkedAsCompletedNotifierService.notify(jsonObjectTodo.todoDomain());
+        notifyTodoMarkedAsCompletedUseCase.execute(new NotifyTodoMarkedAsCompletedCommand(jsonObjectTodo.todoDomain()));
     }
 
     @Override

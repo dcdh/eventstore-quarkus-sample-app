@@ -9,7 +9,8 @@ import com.damdamdeo.eventsourced.encryption.api.SecretStore;
 import com.damdamdeo.eventsourced.encryption.infra.jsonb.JsonObjectEncryptedAggregateRootId;
 import com.damdamdeo.eventsourced.model.api.AggregateRootId;
 import com.damdamdeo.todo.KafkaDebeziumProducer;
-import com.damdamdeo.todo.domain.MarkTodoAsCompletedService;
+import com.damdamdeo.todo.domain.usecase.MarkTodoAsCompletedCommand;
+import com.damdamdeo.todo.domain.usecase.MarkTodoAsCompletedUseCase;
 import io.agroal.api.AgroalDataSource;
 import io.quarkus.agroal.DataSource;
 import io.quarkus.test.junit.QuarkusTest;
@@ -45,7 +46,7 @@ public class DebeziumTodoMarkedAsCompletedEventConsumerTest {
     TodoMarkedAsCompletedEventConsumer todoMarkedAsCompletedEventConsumer;
 
     @InjectMock
-    MarkTodoAsCompletedService markTodoAsCompletedService;
+    MarkTodoAsCompletedUseCase markTodoAsCompletedUseCase;
 
     @InjectMock
     SecretStore secretStore;
@@ -109,10 +110,8 @@ public class DebeziumTodoMarkedAsCompletedEventConsumerTest {
         waitForEventToBeConsumed();
 
         // Then
-        verify(markTodoAsCompletedService, times(1)).markTodoAsCompleted(
-                "todoId",
-                1l
-        );
+        verify(markTodoAsCompletedUseCase, times(1)).execute(
+                new MarkTodoAsCompletedCommand("todoId",1l));
     }
 
     @Test

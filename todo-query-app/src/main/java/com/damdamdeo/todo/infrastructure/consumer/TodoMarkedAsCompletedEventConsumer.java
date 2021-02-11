@@ -3,7 +3,8 @@ package com.damdamdeo.todo.infrastructure.consumer;
 import com.damdamdeo.eventsourced.consumer.api.eventsourcing.AggregateRootEventConsumable;
 import com.damdamdeo.eventsourced.consumer.api.eventsourcing.Operation;
 import com.damdamdeo.eventsourced.consumer.infra.eventsourcing.JsonObjectAggregateRootEventConsumer;
-import com.damdamdeo.todo.domain.MarkTodoAsCompletedService;
+import com.damdamdeo.todo.domain.usecase.MarkTodoAsCompletedCommand;
+import com.damdamdeo.todo.domain.usecase.MarkTodoAsCompletedUseCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,19 +18,19 @@ public class TodoMarkedAsCompletedEventConsumer implements JsonObjectAggregateRo
 
     private final Logger logger = LoggerFactory.getLogger(TodoMarkedAsCompletedEventConsumer.class);
 
-    private final MarkTodoAsCompletedService markTodoAsCompletedService;
+    private final MarkTodoAsCompletedUseCase markTodoAsCompletedUseCase;
 
-    public TodoMarkedAsCompletedEventConsumer(final MarkTodoAsCompletedService markTodoAsCompletedService) {
-        this.markTodoAsCompletedService = Objects.requireNonNull(markTodoAsCompletedService);
+    public TodoMarkedAsCompletedEventConsumer(final MarkTodoAsCompletedUseCase markTodoAsCompletedUseCase) {
+        this.markTodoAsCompletedUseCase = Objects.requireNonNull(markTodoAsCompletedUseCase);
     }
 
     @Override
     @Transactional
     public void consume(final AggregateRootEventConsumable<JsonObject> aggregateRootEventConsumable, final Operation operation) {
         logger.info(String.format("Consuming '%s' for '%s'", eventType(), aggregateRootEventConsumable.eventId()));
-        markTodoAsCompletedService.markTodoAsCompleted(
+        markTodoAsCompletedUseCase.execute(new MarkTodoAsCompletedCommand(
                 aggregateRootEventConsumable.eventPayload().getString("todoId"),
-                aggregateRootEventConsumable.eventId().version());
+                aggregateRootEventConsumable.eventId().version()));
     }
 
     @Override

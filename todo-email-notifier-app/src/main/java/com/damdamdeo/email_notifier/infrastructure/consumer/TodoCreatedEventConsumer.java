@@ -1,6 +1,7 @@
 package com.damdamdeo.email_notifier.infrastructure.consumer;
 
-import com.damdamdeo.email_notifier.domain.TodoCreatedNotifierService;
+import com.damdamdeo.email_notifier.domain.usecase.NotifyTodoCreatedCommand;
+import com.damdamdeo.email_notifier.domain.usecase.NotifyTodoCreatedUseCase;
 import com.damdamdeo.eventsourced.consumer.api.eventsourcing.AggregateRootEventConsumable;
 import com.damdamdeo.eventsourced.consumer.api.eventsourcing.Operation;
 import com.damdamdeo.eventsourced.consumer.infra.eventsourcing.JsonObjectAggregateRootEventConsumer;
@@ -16,10 +17,10 @@ public class TodoCreatedEventConsumer implements JsonObjectAggregateRootEventCon
 
     private final Logger logger = LoggerFactory.getLogger(TodoCreatedEventConsumer.class);
 
-    private final TodoCreatedNotifierService todoCreatedNotifierService;
+    private final NotifyTodoCreatedUseCase notifyTodoCreatedUseCase;
 
-    public TodoCreatedEventConsumer(final TodoCreatedNotifierService todoCreatedNotifierService) {
-        this.todoCreatedNotifierService = Objects.requireNonNull(todoCreatedNotifierService);
+    public TodoCreatedEventConsumer(final NotifyTodoCreatedUseCase notifyTodoCreatedUseCase) {
+        this.notifyTodoCreatedUseCase = Objects.requireNonNull(notifyTodoCreatedUseCase);
     }
 
     @Override
@@ -30,7 +31,7 @@ public class TodoCreatedEventConsumer implements JsonObjectAggregateRootEventCon
         logger.info(String.format("Consuming '%s' for '%s'", eventType(), aggregateRootEventConsumable.eventId()));
         final JsonObjectTodo jsonObjectTodo = new JsonObjectTodo(aggregateRootEventConsumable.materializedState(),
                 aggregateRootEventConsumable.eventId());
-        todoCreatedNotifierService.notify(jsonObjectTodo.todoDomain());
+        notifyTodoCreatedUseCase.execute(new NotifyTodoCreatedCommand(jsonObjectTodo.todoDomain()));
     }
 
     @Override
