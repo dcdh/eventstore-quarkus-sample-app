@@ -189,8 +189,9 @@ public class InfrastructureQuarkusTestResourceLifecycleManager implements Quarku
         hazelcastContainer.start();
 //        hazelcastContainer.followOutput(logConsumer);
 
-        todoWriteAppContainer = new GenericContainer("damdamdeo/todo-write-app:latest")
+        todoWriteAppContainer = new GenericContainer("damdamdeo/todo-write-native-app:latest")
                 .withExposedPorts(8080)
+                // keep jvm and native declaration for compatibility
                 .withEnv("JAVA_OPTIONS", Stream.of("-Dquarkus.http.host=0.0.0.0",
                         "-Dmp.messaging.incoming.event-in.bootstrap.servers=kafka:9092",
                         "-Dquarkus.datasource.jdbc.url=jdbc:postgresql://mutable:5432/mutable",
@@ -217,6 +218,31 @@ public class InfrastructureQuarkusTestResourceLifecycleManager implements Quarku
                         "-Dquarkus.hazelcast-client.cluster-name=dev",
                         "-Dquarkus.hazelcast-client.cluster-members=hazelcast:5701"
                 ).collect(Collectors.joining(" ")))
+                .withEnv("quarkus.http.host", "0.0.0.0")
+                .withEnv("mp.messaging.incoming.event-in.bootstrap.servers", "kafka:9092")
+                .withEnv("quarkus.datasource.jdbc.url", "jdbc:postgresql://mutable:5432/mutable")
+                .withEnv("quarkus.datasource.username", postgresMutableContainer.getUsername())
+                .withEnv("quarkus.datasource.password", postgresMutableContainer.getPassword())
+                .withEnv("quarkus.datasource.secret-store.jdbc.url", "jdbc:postgresql://secret-store:5432/secret-store")
+                .withEnv("quarkus.datasource.secret-store.username", postgresSecretStoreContainer.getUsername())
+                .withEnv("quarkus.datasource.secret-store.password", postgresSecretStoreContainer.getPassword())
+                .withEnv("quarkus.datasource.mutable.jdbc.url", "jdbc:postgresql://mutable:5432/mutable")
+                .withEnv("quarkus.datasource.mutable.username", postgresMutableContainer.getUsername())
+                .withEnv("quarkus.datasource.mutable.password", postgresMutableContainer.getPassword())
+                .withEnv("quarkus.datasource.consumed-events.jdbc.url", "jdbc:postgresql://mutable:5432/mutable")
+                .withEnv("quarkus.datasource.consumed-events.username", postgresMutableContainer.getUsername())
+                .withEnv("quarkus.datasource.consumed-events.password", postgresMutableContainer.getPassword())
+                .withEnv("kafka-connector-api/mp-rest/url", "http://debeziumConnect:8083")
+                .withEnv("connector.mutable.database.hostname", "mutable")
+                .withEnv("connector.mutable.database.username", postgresMutableContainer.getUsername())
+                .withEnv("connector.mutable.database.password", postgresMutableContainer.getPassword())
+                .withEnv("connector.mutable.database.port", "5432")
+                .withEnv("connector.mutable.database.dbname", "mutable")
+                .withEnv("connector.mutable.nbOfPartitionsInEventTopic", "3")
+                .withEnv("slot.drop.on.stop", "true")
+                .withEnv("quarkus.oidc.auth-server-url", "http://keycloak:8080/auth/realms/todos")
+                .withEnv("quarkus.hazelcast-client.cluster-name", "dev")
+                .withEnv("quarkus.hazelcast-client.cluster-members", "hazelcast:5701")
                 .withNetwork(network)
                 .waitingFor(
                         Wait.forLogMessage(".*started in.*\\n", 1)
