@@ -277,7 +277,7 @@
                                     <goal>npm</goal>
                                 </goals>
                                 <configuration>
-                                    <arguments>install</arguments>
+                                    <arguments>install @nebular/theme @nebular/eva-icons</arguments>
                                 </configuration>
                             </execution>
                             <execution>
