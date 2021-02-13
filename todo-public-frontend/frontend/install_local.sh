@@ -1,3 +1,3 @@
 #!/bin/bash
 
-mvn -f ../pom.xml clean install -Plocal -DskipTests
+node/npm install @nebular/theme @nebular/eva-icons

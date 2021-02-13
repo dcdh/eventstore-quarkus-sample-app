@@ -1,3 +1,4 @@
 #!/bin/bash
 
-ng serve
+export PATH="`pwd`/node:$PATH"
+node_modules/@angular/cli/bin/ng serve

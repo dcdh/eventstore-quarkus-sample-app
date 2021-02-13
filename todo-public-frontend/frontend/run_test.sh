@@ -1,3 +1,4 @@
 #!/bin/bash
 
-ng test
+export PATH="`pwd`/node:$PATH"
+node_modules/@angular/cli/bin/ng test
