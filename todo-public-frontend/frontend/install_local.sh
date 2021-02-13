@@ -1,3 +1,4 @@
 #!/bin/bash
 
-node/npm install @nebular/theme @nebular/eva-icons
+export PATH="`pwd`/node:$PATH"
+npm install @nebular/theme @nebular/eva-icons
