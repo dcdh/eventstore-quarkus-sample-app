@@ -5,7 +5,8 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build --prod",
-    "test": "ng test",
+    "test": "ng test --browsers ChromiumHeadless --watch=true",
+    "test:ci": "ng test --browsers ChromiumHeadless --watch=false",
     "lint": "ng lint",
     "e2e": "ng e2e",
     "api": "json-server api/db.json --port 8086"
