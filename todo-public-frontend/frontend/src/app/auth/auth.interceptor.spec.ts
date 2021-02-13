@@ -170,7 +170,7 @@ describe('AuthInterceptor', () => {
       // When
       const httpReq = httpTestingController.expectOne('https://localhost/authentication/login');
       httpReq.flush('unauthorized', new HttpErrorResponse({ error: '401 error', status: 401, statusText: 'Unauthorized' }));
-      tick();// execute the second http request
+      tick(50);// wait for the second http request to be executed
 
       // Then
       expect(authServiceSpy.renewToken).not.toHaveBeenCalled();
@@ -191,7 +191,7 @@ describe('AuthInterceptor', () => {
       // When
       const httpReq = httpTestingController.expectOne('https://localhost/authentication/refresh-token');
       httpReq.flush('unauthorized', new HttpErrorResponse({ error: '401 error', status: 401, statusText: 'Unauthorized' }));
-      tick();// execute the second http request
+      tick(50);// wait for the second http request to be executed
 
       // Then
       expect(authServiceSpy.renewToken).not.toHaveBeenCalled();
@@ -212,7 +212,7 @@ describe('AuthInterceptor', () => {
       // When
       const httpReq = httpTestingController.expectOne('/fake4');
       httpReq.flush('unauthorized', new HttpErrorResponse({ error: '401 error', status: 401, statusText: 'Unauthorized' }));
-      tick();// execute the second http request
+      tick(50);// wait for the second http request to be executed
 
       // Then
       expect(authServiceSpy.renewToken).toHaveBeenCalled();
@@ -233,7 +233,7 @@ describe('AuthInterceptor', () => {
       firstHttpReq.flush('unauthorized', new HttpErrorResponse({ error: '401 error', status: 401, statusText: 'Unauthorized' }));
 
       // When
-      tick();// execute the second http request
+      tick(50);// wait for the second http request to be executed
 
       // Then
       const secondHttpReq = httpTestingController.expectOne('/fake5');
@@ -260,7 +260,7 @@ describe('AuthInterceptor', () => {
       firstHttpReq.flush('unauthorized', new HttpErrorResponse({ error: '401 error', status: 401, statusText: 'Unauthorized' }));
 
       // When
-      tick();// execute the second http request
+      tick(50);// wait for the second http request to be executed
 
       // Then
       expect(notificationServiceSpy.info).toHaveBeenCalledWith('The action cannot be made because your session is closed. You need to login and retry again.');
@@ -281,7 +281,7 @@ describe('AuthInterceptor', () => {
       firstHttpReq.flush('unauthorized', new HttpErrorResponse({ error: '401 error', status: 401, statusText: 'Unauthorized' }));
 
       // When
-      tick();// execute the second http request
+      tick(50);// wait for the second http request to be executed
 
       // Then
       expect(routerSpy.navigate).toHaveBeenCalledWith(['/auth/login']);
@@ -309,7 +309,7 @@ describe('AuthInterceptor', () => {
       firstHttpReq.flush('unauthorized', new HttpErrorResponse({ error: '401 error', status: 401, statusText: 'Unauthorized' }));
 
       // When
-      tick();// execute the second http request
+      tick(50);// wait for the second http request to be executed
       const secondHttpReq = httpTestingController.expectOne('/fake8');
       secondHttpReq.flush('Internal Server Error ', new HttpErrorResponse({ error: 'Internal Server Error ', status: 500, statusText: 'Internal Server Error ' }));
 
