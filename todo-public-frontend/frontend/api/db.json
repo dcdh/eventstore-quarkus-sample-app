@@ -1,0 +1,18 @@
+{
+  "todos": [
+    {
+      "todoId": 1,
+      "description": "lorem ipsum 2",
+      "todoStatus": "IN_PROGRESS",
+      "version": 0,
+      "canMarkTodoAsCompleted": true
+    },
+    {
+      "todoId": 2,
+      "description": "lorem ipsum 2",
+      "todoStatus": "COMPLETED",
+      "version": 1,
+      "canMarkTodoAsCompleted": false
+    }
+  ]
+}
